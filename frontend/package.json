@@ -1,0 +1,20 @@
+{
+  "name": "t3ll-frontend",
+  "version": "1.0.0",
+  "description": "Frontend of T3LL",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "browser-sync": "^2.14.0",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-compile-handlebars": "^0.6.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-csso": "^2.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.3.2",
+    "gulp-uglify": "^2.0.0",
+    "gulp-uncss": "^1.0.6",
+    "pump": "^1.0.1",
+    "through2": "^2.0.1"
+  }
+}

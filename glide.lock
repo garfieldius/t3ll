@@ -1,0 +1,10 @@
+hash: e8f539440accd89bb02fe93ed2b0f2dc9d61509329522fe67b0c427ad878154b
+updated: 2016-08-19T12:51:44.587836386+02:00
+imports:
+- name: github.com/hydrogen18/stoppableListener
+  version: dadc9ccc400c712e5a316107a5c462863919e579
+- name: github.com/kr/pretty
+  version: 737b74a46c4bf788349f72cb256fed10aea4d0ac
+- name: github.com/kr/text
+  version: 7cafcd837844e784b526369c9bce262804aebc60
+testImports: []

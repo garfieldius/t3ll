@@ -1,0 +1,10 @@
+*.iml
+.idea
+*.xlf
+*.xml
+.vscode
+.glide
+server/data.go
+/t3ll*
+/release
+/vendor

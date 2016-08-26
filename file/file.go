@@ -1,0 +1,188 @@
+package file
+
+/*
+ * Copyright 2016 Georg Großberger
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import (
+	"encoding/xml"
+	"errors"
+	"io/ioutil"
+	"path/filepath"
+	"regexp"
+	"strings"
+	"os"
+	"path"
+
+	"github.com/garfieldius/t3ll/log"
+)
+
+type XmlLayout string
+
+const (
+	XmlXliff  XmlLayout = "xlf"
+	XmlLegacy XmlLayout = "xml"
+)
+
+var (
+	xliffLangPrefix = regexp.MustCompile(`^[a-z]{2,3}\.`)
+	from            LangFile
+)
+
+func New(name string) (*Labels, error) {
+	l := Labels{
+		FromFile: name,
+		Langs:    []string{"en"},
+		Data: map[string]map[string]string{
+			"new.1": {
+				"en": "",
+			},
+		},
+	}
+
+	switch {
+	case strings.HasSuffix(name, ".xml"):
+		l.Type = XmlLegacy
+		break
+	case strings.HasSuffix(name, ".xlf") || strings.HasSuffix(name, ".xlif") || strings.HasSuffix(name, ".xliff"):
+		l.Type = XmlXliff
+
+		base := path.Base(name)
+		if xliffLangPrefix.MatchString(base) {
+			lang := base[0:strings.Index(base, ".")]
+			l.Langs = append(l.Langs, lang)
+			l.Data["new.1"][lang] = ""
+		}
+		break
+
+	default:
+		return nil, errors.New("Invalid file suffix")
+	}
+
+	return &l, nil
+}
+
+func Open(src string) (*Labels, error) {
+	if len(src) < 4 {
+		return nil, errors.New("Filename cannot have less than 4 chars")
+	}
+
+	abs, err := filepath.Abs(src)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = os.Stat(abs)
+	if err != nil {
+		log.Msg("Cannot stat %s: %s", abs, err)
+		log.Msg("Naively assuming file does not exist and create one")
+		return New(abs)
+	}
+
+	data, err := ioutil.ReadFile(abs)
+	if err != nil {
+		return nil, err
+	}
+
+	switch {
+	case strings.HasSuffix(abs, ".xml"):
+		tree := new(T3Root)
+		err = xml.Unmarshal(data, tree)
+
+		if err != nil {
+			return nil, err
+		}
+		tree.Src = abs
+		from = tree
+		return tree.Labels(), nil
+
+	case strings.HasSuffix(abs, ".xlf") || strings.HasSuffix(abs, ".xlif") || strings.HasSuffix(abs, ".xliff"):
+		xlif := new(XliffRoot)
+		err = xml.Unmarshal(data, xlif)
+
+		if err != nil {
+			return nil, err
+		}
+
+		name := filepath.Base(abs)
+		xlif.Src = abs
+		all := &Xliff{
+			StartSrc: abs,
+			Files:    []*XliffRoot{xlif},
+		}
+
+		if xliffLangPrefix.MatchString(name) {
+			xlif.Lang = name[0:strings.Index(name, ".")]
+			name = name[strings.Index(name, ".")+1:]
+		} else {
+			xlif.Lang = "en"
+		}
+
+		dir := filepath.Dir(abs)
+		files, err := ioutil.ReadDir(dir)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, info := range files {
+			path := filepath.Join(dir, info.Name())
+
+			if info.IsDir() || !strings.HasSuffix(path, name) {
+				log.Msg("Ignoring entry %s", path)
+				continue
+			}
+
+			data, err := ioutil.ReadFile(path)
+			if err != nil {
+				log.Msg("Cannot read file %s: %s", err)
+				continue
+			}
+
+			xlif := new(XliffRoot)
+			err = xml.Unmarshal(data, xlif)
+			if err != nil {
+				log.Err("Cannot unmarshal data of file %s: %s", path, err)
+				continue
+			}
+
+			n := filepath.Base(path)
+			if xliffLangPrefix.MatchString(n) {
+				xlif.Lang = n[0:strings.Index(n, ".")]
+			} else {
+				xlif.Lang = "en"
+			}
+
+			xlif.Src = path
+
+			all.Files = append(all.Files, xlif)
+		}
+
+		from = all
+		return all.Labels(), nil
+	}
+
+	return nil, errors.New("Cannot read file " + src)
+}
+
+type LangFile interface {
+	Labels() *Labels
+}
+
+type Labels struct {
+	Type     XmlLayout                    `json:"format"`
+	FromFile string                       `json:"-"`
+	Langs    []string                     `json:"languages"`
+	Data     map[string]map[string]string `json:"labels"`
+}
