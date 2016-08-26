@@ -25,7 +25,7 @@ git clone https://github.com/garfieldius/t3ll.git
 cd t3ll
 
 
-# or using go get, the -d flag is importend because
+# or using go get, the -d flag is important because
 # building will fail without the frontend assets
 
 go get -d github.com/garfieldius/t3ll
@@ -54,18 +54,22 @@ t3ll fr.locallang.xlf
 t3ll locallang.xml
 ```
 
-In the latter case, the file can have a language prefix (or not), t3ll will automatically load all available translations within the same folder. eg.: loading the file `fr.locallang.xlf` will also load `locallang.xlf` and `it.locallang.xlf`, but not `fr.locallang_be.xlf`.
+In the first case, the file can have a language prefix (or not), t3ll will automatically load all available translations within the same folder. eg.: loading the file `fr.locallang.xlf` will also load `locallang.xlf` and `it.locallang.xlf`, but not `fr.locallang_be.xlf`.
 
 If a file does not exist, it will be created.
 
 Once the file is read, the editing mask will open in your default browser. It's interface should be self explanatory as it is very simple and reduced to the absolute minimum.
 
-There are two shortcuts in the browser window:
+There are several shortcuts in the browser window:
 
-1. `Ctrl / Cmd` + `S` will save the file
-2. `Ctrl / Cmd` + `X` or `Ctrl / Cmd` + `Q` will save the file and close the window.
+1. <kbd>Tab</kbd> will focus the first input, jumping to the next if one already is. If the last input, or textarea is active, the first will be focused again.
+2. <kbd>Ctrl</kbd>  / <kbd>⌘</kbd> + <kbd>s</kbd>  will save the file
+3. <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>q</kbd> will save the file and close the window.
+4. <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd> will move the focus accordingly if an input is selected.
+5. <kbd>Shift</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd> will move the row of the entry or the language if an input is focused.
+5. <kbd>Shift</kbd> + <kbd>+</kbd> will add a new entry row below the current if an input is selected.
 
-This are the same actions as the buttons in the upper right corner provide.
+This are the same actions as the buttons on screen provide.
 
 ## Credits & Notices
 
@@ -75,7 +79,7 @@ t3ll uses the following go packages:
 * github.com/kr/pretty
 * github.com/jteeuwen/go-bindata
 
-It also uses CSS Styles and HTML from as well as (naming) references of the [TYPO3 CMS](https://www.typo3.org) project.
+It also uses CSS Styles and HTML from, as well as (naming) references of the [TYPO3 CMS](https://www.typo3.org) project.
 
 ## License
 
