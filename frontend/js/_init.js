@@ -90,11 +90,6 @@ window.addEventListener("keydown", function (event) {
                 event.preventDefault();
                 break;
 
-            case char == 'x' && !event.ctrlKey && !isShift:
-                callbacks.close();
-                event.preventDefault();
-                break;
-
             case (key == 107 || key == 187) && hasInput && !isShift:
                 callbacks.add(el);
                 event.preventDefault();
