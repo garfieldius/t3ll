@@ -1,4 +1,5 @@
 BUILDCMD:=go build -a -tags netgo -ldflags "-w -s -extldflags '-static -s -pie'"
+GOPKGS:= ./vendor/github.com/hydrogen18/stoppableListener/listener.go ./vendor/github.com/kr/pretty/formatter.go
 
 build: ./t3ll
 
@@ -14,12 +15,16 @@ clean:
 	rm -f t3ll t3ll.exe
 	cd frontend; rm -rf _dev _live
 
-
 godeps: $(GOPATH)/bin/go-bindata \
-        ./vendor/github.com/hydrogen18/stoppableListener/listener.go \
-        ./vendor/github.com/kr/pretty/formatter.go
+        $(GOPKGS)
 
 install: $(GOPATH)/bin/t3ll
+
+debug: godeps
+	cd frontend && rm -rf _dev _live && gulp html-debug && cd .. && \
+	rm -f server/data.go && \
+	go-bindata -pkg server -o server/data.go -prefix frontend/_dev/ frontend/_dev/editor.html && \
+	go build -a
 
 .PHONY: default build release deps clean godeps install
 
@@ -78,8 +83,5 @@ $(GOPATH)/bin/t3ll: ./t3ll
 $(GOPATH)/bin/go-bindata:
 	go get github.com/jteeuwen/go-bindata/...
 
-./vendor/github.com/hydrogen18/stoppableListener/listener.go:
-	glide install
-
-./vendor/github.com/kr/pretty/formatter.go:
+$(GOPKGS):
 	glide install

@@ -79,6 +79,16 @@ gulp.task("html-dev", function (cb) {
     pump([
         gulp.src(["templates/*.hbs"]),
         handlebars({dev: true}, {}),
+        rename("editor_tmp.html"),
+        gulp.dest("./_dev/")
+    ], cb);
+});
+
+gulp.task("html-debug", ["css-dev", "js-dev"], function (cb) {
+    pump([
+        gulp.src(["templates/*.hbs"]),
+        handlebars({dev: true}, {}),
+        inline(true),
         rename("editor.html"),
         gulp.dest("./_dev/")
     ], cb);
@@ -101,6 +111,7 @@ gulp.task("clean", function (cb) {
     });
 });
 
+gulp.task("debug", ["html-debug"]);
 gulp.task("dev", ["html-dev", "css-dev", "js-dev"]);
 gulp.task("default", ["dev"]);
 

@@ -3,6 +3,8 @@
 
 module.exports = (converter) => {
     return () => {
+        var args = Array.from(arguments);
+
         return require('through2').obj(function(file, enc, cb) {
 
             if (file.isNull()) {
@@ -22,8 +24,10 @@ module.exports = (converter) => {
             if (isBuffer) {
                 data = data.toString('utf-8');
             }
+            let arg = [data, file];
+            arg.push.apply(arg, args);
 
-            let result = converter(data, file);
+            let result = converter.apply(null, arg);
 
             file.contents = isBuffer ? new Buffer(result) : result;
 

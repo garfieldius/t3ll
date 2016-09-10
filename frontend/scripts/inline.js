@@ -1,13 +1,13 @@
 
 "use strict";
 
-module.exports = require("./change-buffer")(function (data, file) {
+module.exports = require("./change-buffer")(function (data, file, debug) {
     var fs = require("fs");
     var path = require("path");
     var base = path.dirname(file.path);
 
     function abs(p) {
-        return path.join(base, "..", "_live", p)
+        return path.join(base, "..", (debug ? "_dev" : "_live"), p)
     }
 
     data.match(/<link[^>]+href="([^"]+)">/ig).forEach(function (el) {
