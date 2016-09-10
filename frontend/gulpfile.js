@@ -75,6 +75,23 @@ gulp.task("js-dev", function (cb) {
     ], cb);
 });
 
+gulp.task("js-debug", function (cb) {
+    pump([
+        gulp.src([
+            "js/globals.js",
+            "js/livedata.js",
+            "js/dom.js",
+            "js/xhr.js",
+            "js/render.js",
+            "js/callbacks.js",
+            "js/_init.js"
+        ]),
+        concat("scripts.js"),
+        gulp.dest("./_dev/assets/"),
+        bs.stream()
+    ], cb);
+});
+
 gulp.task("html-dev", function (cb) {
     pump([
         gulp.src(["templates/*.hbs"]),
@@ -84,7 +101,7 @@ gulp.task("html-dev", function (cb) {
     ], cb);
 });
 
-gulp.task("html-debug", ["css-dev", "js-dev"], function (cb) {
+gulp.task("html-debug", ["css-dev", "js-debug"], function (cb) {
     pump([
         gulp.src(["templates/*.hbs"]),
         handlebars({dev: true}, {}),
