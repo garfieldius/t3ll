@@ -67,7 +67,7 @@ var callbacks = {
         serializeState();
 
         xhr("save", getFormData(), function (err, data) {
-            showMessage(err || data.error || data.message, (err || data.error)+"" !== "");
+            showMessage(err || data.error || data.message, err || data.error);
             tainted = false;
         });
     },
