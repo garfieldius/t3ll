@@ -20,8 +20,8 @@ import (
 	"encoding/xml"
 	"io/ioutil"
 	"path/filepath"
-	"time"
 	"strings"
+	"time"
 
 	"github.com/garfieldius/t3ll/log"
 	"github.com/kr/pretty"

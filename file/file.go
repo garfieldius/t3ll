@@ -20,13 +20,14 @@ import (
 	"encoding/xml"
 	"errors"
 	"io/ioutil"
+	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
-	"os"
-	"path"
 
 	"github.com/garfieldius/t3ll/log"
+	"github.com/kr/pretty"
 )
 
 type XmlLayout string
@@ -37,6 +38,8 @@ const (
 )
 
 var (
+	xmlSpaces       = regexp.MustCompile(`>\s+<`)
+	xmlSpaceless    = []byte("><")
 	xliffLangPrefix = regexp.MustCompile(`^[a-z]{2,3}\.`)
 	from            LangFile
 )
@@ -95,6 +98,8 @@ func Open(src string) (*Labels, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	data = xmlSpaces.ReplaceAll(data, xmlSpaceless)
 
 	switch {
 	case strings.HasSuffix(abs, ".xml"):
@@ -168,6 +173,8 @@ func Open(src string) (*Labels, error) {
 
 			all.Files = append(all.Files, xlif)
 		}
+
+		log.Msg("Marshalled Xlif into %# v", pretty.Formatter(all))
 
 		from = all
 		return all.Labels(), nil

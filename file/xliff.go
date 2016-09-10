@@ -84,11 +84,22 @@ type XliffFile struct {
 }
 
 type XliffHeader struct {
-	Type   string `xml:"type,omitempty"`
-	Header string `xml:"header,omitempty"`
-	Desc   string `xml:"description,omitempty"`
-	Gen    string `xml:"generator,omitempty"`
-	Mod    string `xml:"module,omitempty"`
+	Skl      string `xml:"skl,omitempty"`
+	PhaseGrp string `xml:"phase-group,omitempty"`
+	Glossary string `xml:"glossary,omitempty"`
+	Ref      string `xml:"reference,omitempty"`
+	CountGrp string `xml:"count-group,omitempty"`
+	Tool     string `xml:"tool,omitempty"`
+	PopGrp   string `xml:"pop-group,omitempty"`
+	Note     string `xml:"note,omitempty"`
+
+	// Non-standard, but common in TYPO3
+	Type        string `xml:"type,omitempty"`
+	Description string `xml:"description,omitempty"`
+	AuthName    string `xml:"authorName,omitempty"`
+	AuthMail    string `xml:"authorEmail,omitempty"`
+	AuthCompany string `xml:"authorCompany,omitempty"`
+	Generator   string `xml:"generator,omitempty"`
 }
 
 type XliffBody struct {

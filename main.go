@@ -25,11 +25,12 @@ import (
 	"github.com/garfieldius/t3ll/file"
 	"github.com/garfieldius/t3ll/log"
 	"github.com/garfieldius/t3ll/server"
+	"github.com/kr/pretty"
 )
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Fatal("Not enough input arguments")
+		log.Fatal("Not enough input arguments: %# v", pretty.Formatter(os.Args))
 		return
 	}
 
