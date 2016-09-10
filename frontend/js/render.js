@@ -151,16 +151,22 @@ function renderState() {
     setButtonVisiblity();
 }
 function showMessage(msg, isError) {
-    var c = findOne("#messages");
-    c.appendChild(tree({
-        name: "span",
-        txt: msg,
-        cls: (isError ? "error" : "success")
-    }));
-    c.classList.add("show");
+    var c = empty(findOne("#messages")),
+        m = tree({
+            name: "span",
+            txt: msg,
+            cls: (isError ? "error" : "success")
+        });
+
+    c.appendChild(m);
+    m.classList.add("show");
 
     setTimeout(function () {
-        c.classList.remove("show");
+        m.classList.remove("show");
+
+        setTimeout(function() {
+            c.removeChild(m);
+        }, 210)
     }, 1000);
 }
 

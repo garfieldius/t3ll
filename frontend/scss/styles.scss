@@ -565,11 +565,10 @@ select.form-control option {
 }
 
 .flash-message {
-  opacity: 0;
-  transition: opacity .2s linear;
-
   .success,
   .error {
+    opacity: 0;
+    transition: opacity .2s linear;
     display: inline-block;
     padding: 0 15px;
     text-align: center;
@@ -577,6 +576,10 @@ select.form-control option {
     color: #fff;
     float: right;
     line-height: 23px;
+
+    &.show {
+      opacity: 1;
+    }
   }
 
   .success {
@@ -586,10 +589,6 @@ select.form-control option {
   .error {
     background: #c83c3c;
   }
-}
-
-.flash-message.show {
-  opacity: 1;
 }
 
 .btn-sm svg {
