@@ -1,6 +1,6 @@
 # TYPO3 Local Lang
 
-This is a small utility program for to create localization files in Xlif or the legacy format for [TYPO3 CMS](https://www.typo3.org/).
+This is a small utility program to edit localization files in Xlif or the legacy format for [TYPO3 CMS](https://www.typo3.org/).
 
 ## Installation
 
@@ -27,6 +27,8 @@ cd t3ll
 
 # or using go get, the -d flag is important because
 # building will fail without the frontend assets
+# which are not included in the repository but must
+# be built before compiling t3ll
 
 go get -d github.com/garfieldius/t3ll
 cd ${GOPATH}/src/github.com/garfieldius/t3ll
@@ -40,9 +42,13 @@ make
 
 # Install the binary into ${GOPATH}/bin
 make install
+
+# This will create a binary with readable 
+# frontend sources, in case you need them
+make debug
 ```
 
-## Useage
+## Usage
 
 t3ll must be called from the command line. It takes exactly one argument: the XML or Xlif file to edit. 
 
@@ -54,7 +60,7 @@ t3ll fr.locallang.xlf
 t3ll locallang.xml
 ```
 
-In the first case, the file can have a language prefix (or not), t3ll will automatically load all available translations within the same folder. eg.: loading the file `fr.locallang.xlf` will also load `locallang.xlf` and `it.locallang.xlf`, but not `fr.locallang_be.xlf`.
+In the former case, the file can have a language prefix, or not. t3ll will automatically load all available translations within the same folder, but only that have the same *base name*. eg.: loading the file `fr.locallang.xlf` will also load `locallang.xlf` and `it.locallang.xlf`, but not `fr.locallang_be.xlf`.
 
 If a file does not exist, it will be created.
 
@@ -67,7 +73,7 @@ There are several shortcuts in the browser window:
 3. <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>q</kbd> will save the file and close the window.
 4. <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd> will move the focus accordingly if an input is selected.
 5. <kbd>Shift</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd> will move the row of the entry or the language if an input is focused.
-5. <kbd>Shift</kbd> + <kbd>+</kbd> will add a new entry row below the current if an input is selected.
+5. <kbd>Shift</kbd> + <kbd>+</kbd> will add a new row below the current if an input is selected.
 
 This are the same actions as the buttons on screen provide.
 
@@ -79,11 +85,11 @@ t3ll uses the following go packages:
 * github.com/kr/pretty
 * github.com/jteeuwen/go-bindata
 
-It also uses CSS Styles and HTML from, as well as (naming) references of the [TYPO3 CMS](https://www.typo3.org) project.
+It also uses CSS Styles and HTML from, as well as (naming) references of, the [TYPO3 CMS](https://www.typo3.org) project.
 
 ## License
 
-(c) 2016 by Georg Großberger
+(c) 2016 Georg Großberger
 
 Released under the Apache License 2.0
 
