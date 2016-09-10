@@ -19,7 +19,7 @@ module.exports = require("./change-buffer")(function (data, file, debug) {
         data = data.replace(el, "<style>" + d + "</style>");
     });
 
-    data.match(/<script[^>]+src="([^"]+)">/ig).forEach(function (el) {
+    data.match(/<script[^>]+src="([^"]+)">\s*<\/script>/ig).forEach(function (el) {
         let start = el.indexOf("src=\"") + 5;
         let p1 = el.substr(start);
         let p = p1.substr(0, p1.indexOf('"'));
