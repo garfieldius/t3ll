@@ -35,7 +35,7 @@ release/linux_amd64/t3ll: godeps server/data.go
 	mkdir -p release/linux_amd64 && GOOS="linux" GOARCH="amd64" $(BUILDCMD) -o release/linux_amd64/t3ll
 
 release/t3ll_linux_386.tar.gz: release/linux_386/t3ll
-	cd  release/linux_amd64 && tar -cf ../t3ll_linux_x64.tar.gz t3ll
+	cd  release/linux_amd64 && tar -cf ../t3ll_linux_386.tar.gz t3ll
 
 release/linux_386/t3ll: godeps server/data.go
 	mkdir -p release/linux_386 && GOOS="linux" GOARCH="386" $(BUILDCMD) -o release/linux_386/t3ll
