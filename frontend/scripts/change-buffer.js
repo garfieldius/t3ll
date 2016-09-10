@@ -2,8 +2,8 @@
 "use strict";
 
 module.exports = (converter) => {
-    return () => {
-        var args = Array.from(arguments);
+    return (flags) => {
+        var args = [flags];
 
         return require('through2').obj(function(file, enc, cb) {
 
