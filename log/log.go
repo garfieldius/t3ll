@@ -24,12 +24,12 @@ import (
 
 const TimeLayout string = "2006-01-02 15:04:05"
 
-var verbose = false
+var Verbose = false
 
 func init() {
 	for _, arg := range os.Args {
 		if arg == "-v" || arg == "--verbose" {
-			verbose = true
+			Verbose = true
 			Msg("Enabling verbose output")
 			break
 		}
@@ -54,7 +54,7 @@ func Err(msg string, a ...interface{}) {
 }
 
 func Msg(msg string, a ...interface{}) {
-	if verbose {
+	if Verbose {
 		fmt.Fprint(os.Stdout, format("INFO", msg, a...))
 	}
 }
