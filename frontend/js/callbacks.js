@@ -48,9 +48,9 @@ var callbacks = {
         } else {
             row.parentNode.appendChild(newRow);
         }
+        tainted = true;
         setButtonVisiblity();
         serializeState();
-        tainted = true;
     },
     remove: function (btn) {
         var row = findParent(btn, "TR");
