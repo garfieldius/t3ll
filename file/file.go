@@ -58,9 +58,11 @@ func New(name string) (*Labels, error) {
 	switch {
 	case strings.HasSuffix(name, ".xml"):
 		l.Type = XmlLegacy
+		log.Msg("Using legacy XML for %s", name)
 		break
 	case strings.HasSuffix(name, ".xlf") || strings.HasSuffix(name, ".xlif") || strings.HasSuffix(name, ".xliff"):
 		l.Type = XmlXliff
+		log.Msg("Using XLIF for %s", name)
 
 		base := path.Base(name)
 		if xliffLangPrefix.MatchString(base) {
@@ -111,6 +113,7 @@ func Open(src string) (*Labels, error) {
 		}
 		tree.Src = abs
 		from = tree
+		log.Msg("Unmarshaled %s into %# v", abs, pretty.Formatter(tree))
 		return tree.Labels(), nil
 
 	case strings.HasSuffix(abs, ".xlf") || strings.HasSuffix(abs, ".xlif") || strings.HasSuffix(abs, ".xliff"):
@@ -175,7 +178,6 @@ func Open(src string) (*Labels, error) {
 		}
 
 		log.Msg("Marshalled Xlif into %# v", pretty.Formatter(all))
-
 		from = all
 		return all.Labels(), nil
 	}

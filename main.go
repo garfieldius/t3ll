@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 
 	"github.com/garfieldius/t3ll/browser"
@@ -64,13 +63,7 @@ limitations under the License.
 `
 
 func main() {
-	if !log.Verbose {
-		defer func() {
-			if err, ok := recover().(error); ok && err != nil {
-				fmt.Printf("%s\n", strings.TrimSpace(err.Error()))
-			}
-		}()
-	}
+	defer log.CatchPanic()
 
 	if len(os.Args) < 2 {
 		log.Fatal("Not enough input arguments\n%s", help)

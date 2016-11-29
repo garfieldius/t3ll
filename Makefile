@@ -24,7 +24,7 @@ debug: godeps
 	cd frontend && rm -rf _dev _live && gulp html-debug && cd .. && \
 	rm -f server/data.go && \
 	go-bindata -pkg server -o server/data.go -prefix frontend/_dev/ frontend/_dev/editor.html && \
-	go build -a
+	go build -a -tags 'debug'
 
 .PHONY: default build release deps clean godeps install
 

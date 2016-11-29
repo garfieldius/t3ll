@@ -1,3 +1,5 @@
+// +build !debug
+
 package log
 
 /*
@@ -18,25 +20,15 @@ package log
 
 import (
 	"fmt"
-	"os"
-	"time"
+	"strings"
 )
 
-const TimeLayout string = "2006-01-02 15:04:05"
-
-func now() string {
-	return time.Now().Format(TimeLayout)
+func Msg(msg string, a ...interface{}) {
+	// noop
 }
 
-func format(severity, msg string, a ...interface{}) string {
-	full := fmt.Sprintf("%s [%s] %s\n", now(), severity, msg)
-	return fmt.Sprintf(full, a...)
-}
-
-func Fatal(msg string, a ...interface{}) {
-	panic(format("ERROR", msg, a...))
-}
-
-func Err(msg string, a ...interface{}) {
-	fmt.Fprint(os.Stderr, format("ERROR", msg, a...))
+func CatchPanic() {
+	if err, ok := recover().(error); ok && err != nil {
+		fmt.Printf("%s\n", strings.TrimSpace(err.Error()))
+	}
 }

@@ -16,7 +16,12 @@ package file
  * limitations under the License.
  */
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+
+	"github.com/garfieldius/t3ll/log"
+	"github.com/kr/pretty"
+)
 
 type T3Root struct {
 	XMLName string  `xml:"T3locallang"`
@@ -80,6 +85,8 @@ func (t T3Root) Labels() *Labels {
 			data.Data[label.Key][l] = label.Cnt
 		}
 	}
+
+	log.Msg("Converted ll tree into %# v", pretty.Formatter(data))
 
 	return data
 }

@@ -16,6 +16,11 @@ package file
  * limitations under the License.
  */
 
+import (
+	"github.com/garfieldius/t3ll/log"
+	"github.com/kr/pretty"
+)
+
 type Xliff struct {
 	StartSrc string
 	Files    []*XliffRoot
@@ -57,6 +62,8 @@ func (x *Xliff) Labels() *Labels {
 	for langCode := range codes {
 		labels.Langs = append(labels.Langs, langCode)
 	}
+
+	log.Msg("Converted xlif into %# v", pretty.Formatter(labels))
 
 	return labels
 }
