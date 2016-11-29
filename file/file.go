@@ -101,8 +101,6 @@ func Open(src string) (*Labels, error) {
 		return nil, err
 	}
 
-	data = xmlSpaces.ReplaceAll(data, xmlSpaceless)
-
 	switch {
 	case strings.HasSuffix(abs, ".xml"):
 		tree := new(T3Root)
