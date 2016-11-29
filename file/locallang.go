@@ -49,7 +49,7 @@ type T3Lang struct {
 
 type T3Label struct {
 	Key string `xml:"index,attr"`
-	Cnt string `xml:",innerXml"`
+	Cnt string `xml:",innerxml"`
 }
 
 func (l *T3Label) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
