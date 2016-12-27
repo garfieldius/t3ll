@@ -66,7 +66,7 @@ func main() {
 	defer log.CatchPanic()
 
 	if len(os.Args) < 2 {
-		log.Fatal("Not enough input arguments\n%s", help)
+		log.Fatal("Not enough input arguments\nRun `help` for details")
 		return
 	}
 
@@ -101,7 +101,8 @@ func main() {
 	}
 
 	if tree == nil {
-		log.Fatal("No valid file argument given\n%s", help)
+		log.Err("No valid file argument given\nRun `help` for details")
+		return
 	}
 
 	stop := make(chan bool)

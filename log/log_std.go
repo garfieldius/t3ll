@@ -19,16 +19,16 @@ package log
  */
 
 import (
-	"fmt"
-	"strings"
+	"os"
 )
 
 func Msg(msg string, a ...interface{}) {
-	// noop
+	// Noop
 }
 
 func CatchPanic() {
-	if err, ok := recover().(error); ok && err != nil {
-		fmt.Printf("%s\n", strings.TrimSpace(err.Error()))
+	if err := recover(); err != nil {
+		Err("%s\n", err)
+		os.Exit(1)
 	}
 }

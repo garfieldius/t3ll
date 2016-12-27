@@ -34,7 +34,7 @@ func format(severity, msg string, a ...interface{}) string {
 }
 
 func Fatal(msg string, a ...interface{}) {
-	panic(format("ERROR", msg, a...))
+	panic(fmt.Sprintf(msg, a...))
 }
 
 func Err(msg string, a ...interface{}) {
