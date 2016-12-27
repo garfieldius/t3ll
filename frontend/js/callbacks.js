@@ -18,14 +18,13 @@
 var callbacks = {
     setKey: function (input) {
         tainted = true;
-        var row = findParent(input, "TR");
+        var row = findParent(input, ["TR"]);
         findAll(".is-label", row).forEach(function (label) {
             label.dataset["key"] = input.value;
         });
     },
-    setContent: function (input) {
+    setContent: function () {
         tainted = true;
-        data.labels[input.dataset["key"]][input.dataset["lang"]] = input.value;
     },
     moveUp: function (el) {
         tainted = true;
@@ -145,12 +144,11 @@ function runCallbacks(event, type) {
 }
 
 function getFormData() {
-    var d = {
-        data: JSON.stringify(data)
-    };
+    var d = new FormData();
+    d.append("data", JSON.stringify(data));
 
     if (findOne("#ToXliff").checked) {
-        d.format = "xlif";
+        d.append("format", "xlif");
     }
 
     return d;
@@ -172,7 +170,7 @@ function serializeState() {
 
         data.labels.push({
             id: key,
-            trans: data
+            trans: labels
         });
     });
 }

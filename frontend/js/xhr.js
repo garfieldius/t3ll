@@ -36,13 +36,8 @@ function xhr(url, vals, cb) {
     });
 
     if (vals) {
-        var payload = new FormData();
-        Object.keys(vals).forEach(function (key) {
-            payload.append(key, vals[key]);
-        });
-
         x.open("POST", u);
-        x.send(payload);
+        x.send(vals);
     } else {
         x.open("GET", u);
         x.send(null);
