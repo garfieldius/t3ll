@@ -137,7 +137,28 @@ gulp.task("watch", ["dev"], function () {
         server: {
             baseDir: "./_dev/"
         },
-        startPath: "/editor_tmp.html"
+        startPath: "/editor_tmp.html",
+        middleware: [
+            {
+                route: "/save",
+                handle: function (req, res) {
+                    res.setHeader('Content-Type', 'application/json;charset=UTF-8');
+                    if (Math.random() * 100 < 10) {
+                        res.statusCode = 503;
+                        res.end('{"success":false,"message":"Error during save"}')
+                    } else {
+                        res.end('{"success":true,"message":"File saved successfully"}');
+                    }
+                }
+            },
+            {
+                route: "/quit",
+                handle: function (req, res) {
+                    res.setHeader('Content-Type', 'application/json;charset=UTF-8');
+                    res.end('{"success":true,"message":""}');
+                }
+            }
+        ]
     });
 
     gulp.watch("scss/*.scss", ["css-dev"]);
