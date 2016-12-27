@@ -88,7 +88,7 @@ function tree(start) {
     return parent;
 }
 
-function makeRow(key) {
+function makeRow(row) {
     var cells = [{
         name: "td",
         sub: [
@@ -97,7 +97,7 @@ function makeRow(key) {
                 cls: "form-control is-key",
                 attr: {
                     type: "text",
-                    value: key
+                    value: row.id
                 },
                 data: {
                     toggle: "setKey",
@@ -116,29 +116,33 @@ function makeRow(key) {
     }];
 
     displayedLanguages.forEach(function (lang) {
-        cells.push({
-            name: "td",
-            sub: [
-                {
-                    name: "textarea",
-                    cls: "form-control is-label",
-                    txt: data.labels[key] && data.labels[key][lang] ? data.labels[key][lang] : "",
-                    data: {
-                        lang: lang,
-                        key: key,
-                        toggle: "setContent",
-                        event: "input"
-                    },
-                    events: {
-                        focus: function () {
-                            activeElement = this;
-                        },
-                        blur: function () {
-                            activeElement = null;
+        row.trans.forEach(function (lbl) {
+            if (lbl.lng == lang) {
+                cells.push({
+                    name: "td",
+                    sub: [
+                        {
+                            name: "textarea",
+                            cls: "form-control is-label",
+                            txt: lbl.content,
+                            data: {
+                                lang: lang,
+                                key: row.id,
+                                toggle: "setContent",
+                                event: "input"
+                            },
+                            events: {
+                                focus: function () {
+                                    activeElement = this;
+                                },
+                                blur: function () {
+                                    activeElement = null;
+                                }
+                            }
                         }
-                    }
-                }
-            ]
+                    ]
+                });
+            }
         });
     });
 

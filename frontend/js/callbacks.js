@@ -157,17 +157,22 @@ function getFormData() {
 }
 
 function serializeState() {
-    data.labels = {};
+    data.labels = [];
 
-    findAll("#dataTable textarea").forEach(function (el) {
-        var lang = el.dataset["lang"],
-            key  = el.dataset["key"],
-            content = el.value;
+    findAll("#dataTable tbody tr").forEach(function (row) {
+        var key, labels = [];
 
-        if (!data.labels[key]) {
-            data.labels[key] = {};
-        }
+        findAll("textarea", row).forEach(function (el) {
+            key = el.dataset["key"];
+            labels.push({
+               lng: el.dataset["lang"],
+                content: el.value
+            });
+        });
 
-        data.labels[key][lang] = content;
+        data.labels.push({
+            id: key,
+            trans: data
+        });
     });
 }

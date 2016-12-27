@@ -19,19 +19,47 @@ var data = {
     "format": (Math.random() > .5 ? "xlf" : "xml"),
     "languages": [
         "en",
+        "de",
     ],
-    "labels": {
-        "mlang_labels_tabdescr": {
-            "en": "Shows this page about available modules.",
-            "de": "Zeige diese Seite über verfügbare Module."
+    "labels": [
+        {
+            "id": "mlang_labels_tabdescr",
+            "trans": [
+                {
+                    "lng": "en",
+                    "content": "Shows this page about available modules."
+                },
+                {
+                    "lng": "de",
+                    "content": "Zeige diese Seite über verfügbare Module."
+                }
+            ]
         },
-        "mlang_labels_tablabel": {
-            "en": "Information about modules",
-            "de": "Über verügbare Module"
+        {
+            "id": "mlang_labels_tablabel",
+            "trans": [
+                {
+                    "lng": "en",
+                    "content": "Information about modules"
+                },
+                {
+                    "lng": "de",
+                    "content": "Über verügbare Module"
+                }
+            ]
         },
-        "mlang_tabs_tab": {
-            "en": "About Modules",
-            "de": "Über Module"
+        {
+            "id": "mlang_tabs_tab",
+            "trans": [
+                {
+                    "lng": "en",
+                    "content": "About Modules"
+                },
+                {
+                    "lng": "de",
+                    "content": "Über Module"
+                }
+            ]
         }
-    }
+    ],
 };

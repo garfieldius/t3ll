@@ -139,8 +139,8 @@ function renderState() {
         ]
     }));
 
-    Object.keys(data.labels).forEach(function (key) {
-        rows.push(makeRow(key));
+    data.labels.forEach(function (label) {
+        rows.push(makeRow(label));
     });
 
     table.appendChild(tree({

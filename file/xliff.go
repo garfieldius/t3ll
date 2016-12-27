@@ -32,7 +32,7 @@ func (x *Xliff) Labels() *Labels {
 		Type:     XmlXliff,
 		FromFile: x.StartSrc,
 		Langs:    make([]string, 0),
-		Data:     make(map[string]map[string]string),
+		Data:     make([]*Label, 0),
 	}
 
 	for _, file := range x.Files {
@@ -45,17 +45,30 @@ func (x *Xliff) Labels() *Labels {
 		codes[langCode] = true
 
 		for _, unit := range file.File.Body.Units {
-			l := unit.To
-
-			if l == "" {
-				l = unit.Src
+			t := &Translation{
+				Lng:     langCode,
+				Content: unit.To,
 			}
 
-			if _, ok := labels.Data[unit.Id]; !ok {
-				labels.Data[unit.Id] = make(map[string]string)
+			if langCode == "en" {
+				t.Content = unit.Src
 			}
 
-			labels.Data[unit.Id][langCode] = l
+			found := false
+
+			for _, label := range labels.Data {
+				if label.Id == unit.Id {
+					found = true
+					label.Trans = append(label.Trans, t)
+				}
+			}
+
+			if !found {
+				labels.Data = append(labels.Data, &Label{
+					Id:    unit.Id,
+					Trans: []*Translation{t},
+				})
+			}
 		}
 	}
 

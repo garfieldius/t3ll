@@ -38,8 +38,6 @@ const (
 )
 
 var (
-	xmlSpaces       = regexp.MustCompile(`>\s+<`)
-	xmlSpaceless    = []byte("><")
 	xliffLangPrefix = regexp.MustCompile(`^[a-z]{2,3}\.`)
 	from            LangFile
 )
@@ -48,11 +46,13 @@ func New(name string) (*Labels, error) {
 	l := Labels{
 		FromFile: name,
 		Langs:    []string{"en"},
-		Data: map[string]map[string]string{
-			"new.1": {
-				"en": "",
-			},
-		},
+		Data: []*Label{{
+			Id: "new.1",
+			Trans: []*Translation{{
+				Lng:     "en",
+				Content: "",
+			}},
+		}},
 	}
 
 	switch {
@@ -68,7 +68,7 @@ func New(name string) (*Labels, error) {
 		if xliffLangPrefix.MatchString(base) {
 			lang := base[0:strings.Index(base, ".")]
 			l.Langs = append(l.Langs, lang)
-			l.Data["new.1"][lang] = ""
+			l.Data[0].Trans = append(l.Data[0].Trans, &Translation{Lng: lang, Content: ""})
 		}
 		break
 
@@ -137,20 +137,29 @@ func Open(src string) (*Labels, error) {
 		}
 
 		dir := filepath.Dir(abs)
+		start := filepath.Base(abs)
 		files, err := ioutil.ReadDir(dir)
 		if err != nil {
 			return nil, err
 		}
 
 		for _, info := range files {
-			path := filepath.Join(dir, info.Name())
+			targetPath := filepath.Join(dir, info.Name())
 
-			if info.IsDir() || !strings.HasSuffix(path, name) {
-				log.Msg("Ignoring entry %s", path)
+			if targetPath == abs {
 				continue
 			}
 
-			data, err := ioutil.ReadFile(path)
+			if !strings.Contains(info.Name(), start) {
+				continue
+			}
+
+			if info.IsDir() || !strings.HasSuffix(targetPath, name) {
+				log.Msg("Ignoring entry %s", targetPath)
+				continue
+			}
+
+			data, err := ioutil.ReadFile(targetPath)
 			if err != nil {
 				log.Msg("Cannot read file %s: %s", err)
 				continue
@@ -159,18 +168,18 @@ func Open(src string) (*Labels, error) {
 			xlif := new(XliffRoot)
 			err = xml.Unmarshal(data, xlif)
 			if err != nil {
-				log.Err("Cannot unmarshal data of file %s: %s", path, err)
+				log.Err("Cannot unmarshal data of file %s: %s", targetPath, err)
 				continue
 			}
 
-			n := filepath.Base(path)
+			n := filepath.Base(targetPath)
 			if xliffLangPrefix.MatchString(n) {
 				xlif.Lang = n[0:strings.Index(n, ".")]
 			} else {
 				xlif.Lang = "en"
 			}
 
-			xlif.Src = path
+			xlif.Src = targetPath
 
 			all.Files = append(all.Files, xlif)
 		}
@@ -188,8 +197,18 @@ type LangFile interface {
 }
 
 type Labels struct {
-	Type     XmlLayout                    `json:"format"`
-	FromFile string                       `json:"-"`
-	Langs    []string                     `json:"languages"`
-	Data     map[string]map[string]string `json:"labels"`
+	Type     XmlLayout `json:"format"`
+	FromFile string    `json:"-"`
+	Langs    []string  `json:"languages"`
+	Data     []*Label  `json:"labels"`
+}
+
+type Label struct {
+	Id    string         `json:"id"`
+	Trans []*Translation `json:"trans"`
+}
+
+type Translation struct {
+	Content string `json:"content"`
+	Lng     string `json:"lng"`
 }

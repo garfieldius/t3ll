@@ -65,24 +65,34 @@ func (t T3Root) Labels() *Labels {
 		Type:     XmlLegacy,
 		FromFile: t.Src,
 		Langs:    make([]string, 0),
-		Data:     make(map[string]map[string]string),
+		Data:     make([]*Label, 0),
 	}
 
 	for _, lang := range t.Data.Langs {
-		l := lang.Lang
+		langKey := lang.Lang
 
-		if l == "default" {
-			l = "en"
+		if langKey == "default" {
+			langKey = "en"
 		}
 
-		data.Langs = append(data.Langs, l)
+		data.Langs = append(data.Langs, langKey)
 
 		for _, label := range lang.Labels {
-			if _, ok := data.Data[label.Key]; !ok {
-				data.Data[label.Key] = make(map[string]string)
+			found := false
+			trans := &Translation{Lng: langKey, Content: label.Cnt}
+
+			for _, l := range data.Data {
+				if l.Id == label.Key {
+					l.Trans = append(l.Trans, trans)
+					found = true
+					break
+				}
 			}
 
-			data.Data[label.Key][l] = label.Cnt
+			if !found {
+				newTrans := &Label{Id: label.Key, Trans: []*Translation{trans}}
+				data.Data = append(data.Data, newTrans)
+			}
 		}
 	}
 

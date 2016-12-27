@@ -87,12 +87,15 @@ func (c *LocallangConverter) Xml() LangFile {
 			Labels: make([]*T3Label, 0, len(c.src.Data)),
 		}
 
-		for key, translations := range c.src.Data {
-			if val, ok := translations[l]; ok && val != "" {
-				lang.Labels = append(lang.Labels, &T3Label{
-					Key: key,
-					Cnt: val,
-				})
+		for _, label := range c.src.Data {
+			for _, trans := range label.Trans {
+				if trans.Lng == l {
+					lang.Labels = append(lang.Labels, &T3Label{
+						Key: label.Id,
+						Cnt: trans.Content,
+					})
+					break
+				}
 			}
 		}
 
@@ -130,27 +133,34 @@ func (c *XliffConverter) Xml() LangFile {
 		Date:    time.Now().Format(time.RFC3339),
 		Body:    b,
 	}
+	l := "en"
 
 	if c.lang != "en" {
 		f.ToLang = c.lang
+		l = c.lang
 	}
 
-	for key, labels := range c.src.Data {
-		if label, ok := labels[c.lang]; ok && label != "" {
-			u := &XliffUnit{
-				Id: key,
-			}
-
-			if c.lang == "en" {
-				u.Src = label
-			} else {
-				u.To = label
-				if orig, ok := labels["en"]; ok && orig != "" {
-					u.Src = orig
+	for _, label := range c.src.Data {
+		for _, trans := range label.Trans {
+			if trans.Lng == l {
+				u := &XliffUnit{
+					Id: label.Id,
 				}
-			}
 
-			b.Units = append(b.Units, u)
+				if c.lang == "en" {
+					u.Src = trans.Content
+				} else {
+					u.To = trans.Content
+
+					for _, orig := range label.Trans {
+						if orig.Lng == "en" {
+							u.Src = orig.Content
+						}
+					}
+				}
+
+				b.Units = append(b.Units, u)
+			}
 		}
 	}
 
