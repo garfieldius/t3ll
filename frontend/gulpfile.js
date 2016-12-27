@@ -137,7 +137,7 @@ gulp.task("watch", ["dev"], function () {
         server: {
             baseDir: "./_dev/"
         },
-        startPath: "/editor.html"
+        startPath: "/editor_tmp.html"
     });
 
     gulp.watch("scss/*.scss", ["css-dev"]);
