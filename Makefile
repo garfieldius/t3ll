@@ -15,10 +15,17 @@ clean:
 	rm -f t3ll t3ll.exe
 	cd frontend; rm -rf _dev _live
 
+clobber: clean
+	cd frontend; rm -rf node_modules
+	rm -rf vendor
+
 godeps: $(GOPATH)/bin/go-bindata \
         $(GOPKGS)
 
 install: $(GOPATH)/bin/t3ll
+
+fmt:
+	go fmt ./...
 
 debug: godeps
 	cd frontend && rm -rf _dev _live && gulp html-debug && cd .. && \

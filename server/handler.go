@@ -30,8 +30,8 @@ var (
 	markerData  = []byte(`"{DATA}"`)
 	markerTitle = []byte("{TITLE}")
 	notFound    = []byte(`{"message":"Resource not found"}`)
-	saveSuccess = []byte(`{"message":"File saved successfully"}`)
-	saveError   = []byte(`{"message":"Error during save"}`)
+	saveSuccess = []byte(`{"success":true,"message":"File saved successfully"}`)
+	saveError   = []byte(`{"success":false,"message":"Error during save"}`)
 )
 
 func indexHandler(res http.ResponseWriter, req *http.Request) {
@@ -54,7 +54,6 @@ func indexHandler(res http.ResponseWriter, req *http.Request) {
 
 	res.WriteHeader(http.StatusOK)
 	res.Write(response)
-
 }
 
 func quitHandler(res http.ResponseWriter, req *http.Request) {

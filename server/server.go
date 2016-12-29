@@ -68,7 +68,7 @@ func Start(start *file.Labels, onstop chan bool) (string, error) {
 		return "", err
 	}
 
-	server := http.Server{}
+	srv := http.Server{}
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/save", saveHandler)
@@ -77,7 +77,7 @@ func Start(start *file.Labels, onstop chan bool) (string, error) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		server.Serve(listener)
+		srv.Serve(listener)
 	}()
 
 	return "http://localhost" + port + "/", nil
