@@ -39,8 +39,17 @@ var callbacks = {
         setButtonVisiblity();
     },
     add: function (btn) {
-        var row = findParent(btn, "TR");
-        var newRow = tree(makeRow("new." + (counter++)));
+        var row = findParent(btn, "TR"),
+            rowData = {
+                id: "new." + (counter++),
+                trans: displayedLanguages.map(function (lang) {
+                    return {
+                        lng: lang,
+                        content: ""
+                    };
+                })
+            };
+        var newRow = tree(makeRow(rowData));
 
         if (row.nextSibling) {
             row.parentNode.insertBefore(newRow, row.nextSibling);
@@ -91,22 +100,6 @@ var callbacks = {
         });
 
         setTimeout(renderState, 10);
-    },
-    moveLeft: function (el) {
-        var lang = el.dataset["language"],
-            pos = displayedLanguages.indexOf(lang);
-
-        displayedLanguages[pos] = displayedLanguages[pos - 1];
-        displayedLanguages[pos - 1] = lang;
-        renderState();
-    },
-    moveRight: function (el) {
-        var lang = el.dataset["language"],
-            pos = displayedLanguages.indexOf(lang);
-
-        displayedLanguages[pos] = displayedLanguages[pos + 1];
-        displayedLanguages[pos + 1] = lang;
-        renderState();
     },
     addLanguage: function (select) {
         var langCode = select.value;

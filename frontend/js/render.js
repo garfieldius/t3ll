@@ -74,28 +74,6 @@ function renderState() {
     });
 
     displayedLanguages.forEach(function (code) {
-        var btns = [];
-
-            btns.push({
-                name: "btn",
-                cls: "btn btn-xs btn-default",
-                txt: iconHtml("move-left"),
-                data: {
-                    toggle: "moveLeft",
-                    language: code
-                }
-            });
-
-            btns.push({
-                name: "btn",
-                cls: "btn btn-xs btn-default",
-                txt: iconHtml("move-right"),
-                data: {
-                    toggle: "moveRight",
-                    language: code
-                }
-            });
-
         headers.push({
             name: "th",
             sub: [
@@ -106,17 +84,6 @@ function renderState() {
                         {
                             name: "span",
                             txt: knownLanguages[code]
-                        },
-                        {
-                            name: "div",
-                            cls: "move-btns",
-                            sub: [
-                                {
-                                    name: "span",
-                                    cls: "btn-group nowrap",
-                                    sub: btns
-                                }
-                            ]
                         }
                     ]
                 }

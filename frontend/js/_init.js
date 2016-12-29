@@ -24,8 +24,8 @@ window.addEventListener("keydown", function (event) {
     var
         key = event.which,
         char = String.fromCharCode(key).toLowerCase(),
-        isCtrl = !!event.ctrlKey,
-        isMeta = !!event.metaKey || !!event.altKey,
+        isCtrl = event.ctrlKey,
+        isMeta = event.metaKey || event.altKey,
         el = activeElement,
         hasInput = false,
         cell, row, table,
@@ -102,82 +102,46 @@ window.addEventListener("keydown", function (event) {
                 break;
 
             case key == 37 && hasInput:
-                if (cell && tdNum > 0) {
-                    // Move lang left
-                    if (isMeta && isCtrl && tdNum > 1) {
-                        callbacks.moveLeft(el)
-                        isCtrl = false;
-                    }
-
-                    // Move focus left
-                    if (isMeta && !isCtrl) {
-                        activeElement = findOne(
-                            "input,textarea",
-                            table.rows[trNum].cells[tdNum - 1]
-                        );
-                        activeElement.focus();
-                        event.preventDefault();
-                    }
+                if (cell && tdNum > 0 && isMeta) {
+                    activeElement = findOne(
+                        "input,textarea",
+                        table.rows[trNum].cells[tdNum - 1]
+                    );
+                    activeElement.focus();
+                    event.preventDefault();
                 }
                 break;
 
             case key == 39 && hasInput:
-                if (cell && tdNum < row.cells.length - 1) {
-                    // Move lang right
-                    if (isMeta && isCtrl && tdNum > 0) {
-                        callbacks.moveRight(el);
-                        isCtrl = false;
-                    }
-
-                    // Move focus right
-                    if (isMeta && !isCtrl) {
-                        activeElement = findOne(
-                            "input,textarea",
-                            table.rows[trNum].cells[tdNum + 1]
-                        );
-                        activeElement.focus();
-                        event.preventDefault();
-                    }
+                if (isMeta && cell && tdNum < row.cells.length - 1) {
+                    activeElement = findOne(
+                        "input,textarea",
+                        table.rows[trNum].cells[tdNum + 1]
+                    );
+                    activeElement.focus();
+                    event.preventDefault();
                 }
                 break;
 
             case key == 38 && hasInput:
-                if (row && row.rowIndex > 1) {
-                    // Move entry up
-                    if (isCtrl && isMeta) {
-                        callbacks.moveUp(activeElement);
-                        isCtrl = false;
-                    }
-
-                    // Move focus up
-                    if (isMeta && !isCtrl)  {
-                        activeElement = findOne(
-                            "input,textarea",
-                            table.rows[trNum - 1].cells[tdNum]
-                        );
-                        activeElement.focus();
-                        event.preventDefault();
-                    }
+                if (isMeta && row && row.rowIndex > 1) {
+                    activeElement = findOne(
+                        "input,textarea",
+                        table.rows[trNum - 1].cells[tdNum]
+                    );
+                    activeElement.focus();
+                    event.preventDefault();
                 }
                 break;
 
             case key == 40 && hasInput:
-                if (row && row.rowIndex < table.rows.length - 1) {
-                    // Move entry down
-                    if (isCtrl && isMeta) {
-                        callbacks.moveDown(activeElement);
-                        isCtrl = false;
-                    }
-
-                    // Move cursor down
-                    if (isMeta && !isCtrl) {
-                        activeElement = findOne(
-                            "input,textarea",
-                            table.rows[trNum + 1].cells[tdNum]
-                        );
-                        activeElement.focus();
-                        event.preventDefault();
-                    }
+                if (isMeta && row && row.rowIndex < table.rows.length - 1) {
+                    activeElement = findOne(
+                        "input,textarea",
+                        table.rows[trNum + 1].cells[tdNum]
+                    );
+                    activeElement.focus();
+                    event.preventDefault();
                 }
         }
     }

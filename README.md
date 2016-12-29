@@ -43,8 +43,9 @@ make
 # Install the binary into ${GOPATH}/bin
 make install
 
-# This will create a binary with readable
-# frontend sources, in case you need them
+# This will create a binary that does not
+# recover from panics, writes a lot of info to
+# the console and uses readable frontend sources
 make debug
 ```
 
@@ -66,19 +67,14 @@ If a file does not exist, it will be created.
 
 Once the file is read, the editing mask will open in your default browser. It's interface should be self explanatory as it is very simple and reduced to the absolute minimum.
 
-There are several shortcuts in the browser window (<kbd>Meta</kbd> means one of <kbd>Alt</kbd> or <kbd>Command</kbd>):
+There are several shortcuts in the browser window (<kbd>Meta</kbd> means one of <kbd>Alt</kbd> or <kbd>Command</kbd> as in <kbd>⌘</kbd> or <kbd>win</kbd>):
 
-1. <kbd>Tab</kbd> will focus the first input, jumping to the next if one already is. If the last input, or textarea is active, the first will be focused again.
-2. <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>s</kbd>  will save the file
-3. <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>q</kbd> / <kbd>w</kbd> will save the file and close the window.
-4. <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd> will move the focus accordingly if an input is selected.
-5. <kbd>Ctrl</kbd> + <kbd>Meta</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd> will move the row of the entry or the language if an input is focused.
-5. <kbd>Ctrl</kbd> / <kbd>Meta</kbd> + <kbd>+</kbd> will add a new row below the current if an input is selected.
-6. <kbd>Ctrl</kbd> / <kbd>Meta</kbd> + (<kbd>Backspace</kbd> / <kbd>Del</kbd>) will remove the current row, if an input field is focused.
-
-This are the same actions as the buttons on screen provide.
-
-Note: The functions for 5. may not work, if another application is capturing this key (- combination), eg.: some media players or screenshot apps that are running in the background. The buttons will still work though.
+* <kbd>Tab</kbd> will focus the first input, jumping to the next if one already is. If the last input, or textarea is active, the first will be focused again.
+* <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>s</kbd>  will save the file
+* <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>q</kbd> / <kbd>w</kbd> will save the file and close the window.
+* <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd> will move the focus accordingly if an input is selected.
+* <kbd>Ctrl</kbd> / <kbd>Meta</kbd> + <kbd>Backspace</kbd> / <kbd>Del</kbd> will delete a row if an input or textarea is focused
+* <kbd>Ctrl</kbd> / <kbd>Meta</kbd> + <kbd>+</kbd> will add a bew row below the current if an input or textarea is focused
 
 ## Credits & Notices
 
@@ -88,7 +84,7 @@ t3ll uses the following go packages:
 * github.com/kr/pretty
 * github.com/jteeuwen/go-bindata
 
-It also uses CSS Styles and HTML from, as well as (naming) references of, the [TYPO3 CMS](https://www.typo3.org) project.
+It also uses CSS Styles and HTML from, as well as (naming) references of the [TYPO3 CMS](https://www.typo3.org) project.
 
 ## License
 
