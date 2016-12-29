@@ -116,34 +116,37 @@ function makeRow(row) {
     }];
 
     displayedLanguages.forEach(function (lang) {
+        var cell = {
+            name: "td",
+            sub: [
+                {
+                    name: "textarea",
+                    cls: "form-control is-label",
+                    data: {
+                        lang: lang,
+                        key: row.id,
+                        toggle: "setContent",
+                        event: "input"
+                    },
+                    events: {
+                        focus: function () {
+                            activeElement = this;
+                        },
+                        blur: function () {
+                            activeElement = null;
+                        }
+                    }
+                }
+            ]
+        };
+
         row.trans.forEach(function (lbl) {
             if (lbl.lng == lang) {
-                cells.push({
-                    name: "td",
-                    sub: [
-                        {
-                            name: "textarea",
-                            cls: "form-control is-label",
-                            txt: lbl.content,
-                            data: {
-                                lang: lang,
-                                key: row.id,
-                                toggle: "setContent",
-                                event: "input"
-                            },
-                            events: {
-                                focus: function () {
-                                    activeElement = this;
-                                },
-                                blur: function () {
-                                    activeElement = null;
-                                }
-                            }
-                        }
-                    ]
-                });
+                cell.sub[0].txt = lbl.content;
             }
         });
+
+        cells.push(cell);
     });
 
     cells.push({
