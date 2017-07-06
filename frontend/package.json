@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Frontend of T3LL",
   "license": "Apache-2.0",
+  "private": true,
   "dependencies": {
     "browser-sync": "^2.18.2",
     "del": "^2.2.2",
@@ -13,7 +14,6 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.2",
     "gulp-uglify": "^2.0.0",
-    "gulp-uncss": "^1.0.6",
     "pump": "^1.0.1",
     "through2": "^2.0.3"
   }

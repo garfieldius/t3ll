@@ -4,7 +4,6 @@ var sass = require("gulp-sass");
 var del = require("del");
 var bs = require("browser-sync").create();
 var pump = require("pump");
-var uncss = require("gulp-uncss");
 var csso = require("gulp-csso");
 var uglify = require("gulp-uglify");
 var concat = require("gulp-concat");
@@ -16,9 +15,6 @@ var wrap = require("./scripts/wrap");
 gulp.task("css-live", ["css-dev", "html-dev"], function (cb) {
     pump([
         gulp.src("./_dev/assets/styles.css"),
-        uncss({
-            html: ["./_dev/*.html"]
-        }),
         csso(),
         rename("styles.css"),
         gulp.dest("./_live/assets/")
@@ -87,6 +83,7 @@ gulp.task("js-debug", function (cb) {
             "js/_init.js"
         ]),
         concat("scripts.js"),
+        wrap(),
         gulp.dest("./_dev/assets/"),
         bs.stream()
     ], cb);
@@ -167,4 +164,3 @@ gulp.task("watch", ["dev"], function () {
 });
 
 gulp.task("live", ["html-live"]);
-
