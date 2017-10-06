@@ -1,4 +1,0 @@
-package: github.com/garfieldius/t3ll
-import:
-- package: github.com/hydrogen18/stoppableListener
-- package: github.com/kr/pretty
