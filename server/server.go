@@ -17,6 +17,7 @@ package server
  */
 
 import (
+	"context"
 	"errors"
 	"net"
 	"net/http"
@@ -26,27 +27,24 @@ import (
 
 	"github.com/garfieldius/t3ll/file"
 	"github.com/garfieldius/t3ll/log"
-	"github.com/hydrogen18/stoppableListener"
 )
 
 var (
-	wg       sync.WaitGroup
-	listener *stoppableListener.StoppableListener
-	data     *file.Labels
-	stop     chan bool
+	srv  *http.Server
+	wg   sync.WaitGroup
+	data *file.Labels
 )
 
-func Start(start *file.Labels, onstop chan bool) (string, error) {
+func Start(start *file.Labels) (string, error) {
 	data = start
-	stop = onstop
 
-	var originalListener net.Listener
+	var l net.Listener
 	var err error
 	var port string
 
 	for i := 2000; i < 8000; i++ {
 		port = ":" + strconv.Itoa(i)
-		originalListener, err = net.Listen("tcp", port)
+		l, err = net.Listen("tcp", port)
 
 		if err != nil {
 			log.Msg("Cannot start server on port %s: %s", port, err)
@@ -56,19 +54,11 @@ func Start(start *file.Labels, onstop chan bool) (string, error) {
 		}
 	}
 
-	if originalListener == nil {
-		if err == nil {
-			err = errors.New("Cannot start listener")
-		}
-		return "", err
+	if l == nil {
+		return "", errors.New("Cannot start server")
 	}
 
-	listener, err = stoppableListener.New(originalListener)
-	if err != nil {
-		return "", err
-	}
-
-	srv := http.Server{}
+	srv = &http.Server{}
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/save", saveHandler)
@@ -77,25 +67,21 @@ func Start(start *file.Labels, onstop chan bool) (string, error) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		srv.Serve(listener)
+		srv.Serve(l)
 	}()
 
 	return "http://localhost" + port + "/", nil
 }
 
 func Stop() {
-	if listener == nil {
+	if srv == nil {
 		return
 	}
 
 	log.Msg("Stopping HTTP server")
 
-	listener.Stop()
-	listener = nil
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-	wg.Wait()
-
-	time.AfterFunc(10*time.Millisecond, func() {
-		stop <- true
-	})
+	srv.Shutdown(ctx)
 }

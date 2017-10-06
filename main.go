@@ -118,7 +118,7 @@ func main() {
 	}
 
 	cancel := make(chan os.Signal)
-	signal.Notify(cancel, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(cancel, os.Interrupt)
 
 	select {
 	case <-cancel:
