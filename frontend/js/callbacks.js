@@ -24,6 +24,7 @@ var callbacks = {
         });
     },
     setContent: function () {
+        serializeState();
         tainted = true;
     },
     moveUp: function (el) {
@@ -31,12 +32,14 @@ var callbacks = {
         var row = findParent(el, ["TR"]);
         row.parentNode.insertBefore(row, row.previousSibling);
         setButtonVisiblity();
+        serializeState();
     },
     moveDown: function (el) {
         tainted = true;
         var row = findParent(el, ["TR"]);
         row.parentNode.insertBefore(row, row.nextSibling.nextSibling);
         setButtonVisiblity();
+        serializeState();
     },
     add: function (btn) {
         var row = findParent(btn, "TR"),
@@ -66,18 +69,14 @@ var callbacks = {
         row.parentNode.removeChild(row);
         tainted = true;
         setButtonVisiblity();
+        serializeState();
     },
     save: function () {
-        if (!tainted) {
-            return showMessage("Data not changed");
-        }
-
-        serializeState();
-
-        xhr("save", getFormData(), function (err, data) {
-            showMessage(err || data.error || data.message, err || data.error);
-            tainted = false;
-        });
+        doSave();
+    },
+    convert: function () {
+        findOne("#ToXliff").value = "1";
+        doSave(true);
     },
     close: function () {
         if (!tainted) {
@@ -110,10 +109,28 @@ var callbacks = {
 
         data.languages.push(langCode);
         displayedLanguages.push(langCode);
+        serializeState();
 
         renderState();
     }
 };
+
+function doSave(reload) {
+    if (!tainted && !reload) {
+        return showMessage("Data not changed");
+    }
+
+    serializeState();
+
+    xhr("save", getFormData(), function (err, data) {
+        showMessage(err || data.error || data.message, err || data.error);
+        tainted = false;
+
+        if (reload === true) {
+            location.reload();
+        }
+    });
+}
 
 function quit() {
     xhr("quit", function () {
