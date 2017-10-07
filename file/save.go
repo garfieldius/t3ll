@@ -150,8 +150,10 @@ func (c *XliffConverter) Xml() LangFile {
 				if c.lang == "en" {
 					u.Src = trans.Content
 				} else {
+					if trans.Content == "" {
+						continue
+					}
 					u.To = trans.Content
-
 					for _, orig := range label.Trans {
 						if orig.Lng == "en" {
 							u.Src = orig.Content
@@ -162,6 +164,10 @@ func (c *XliffConverter) Xml() LangFile {
 				b.Units = append(b.Units, u)
 			}
 		}
+	}
+
+	if len(b.Units) < 1 {
+		return nil
 	}
 
 	x := &XliffRoot{
@@ -204,21 +210,22 @@ func (c *XliffConverter) File() string {
 }
 
 func doSave(d converter, done chan error) {
-	buf, err := xml.MarshalIndent(d.Xml(), "", "    ")
+	if langData := d.Xml(); langData != nil {
+		buf, err := xml.MarshalIndent(langData, "", "    ")
+		if err != nil {
+			done <- err
+			return
+		}
 
-	if err != nil {
-		done <- err
-		return
-	}
+		filename := d.File()
+		if strings.HasSuffix(filename, ".xlf") {
+			buf = append(xmlStart, buf...)
+		}
 
-	filename := d.File()
-	if strings.HasSuffix(filename, ".xlf") {
-		buf = append(xmlStart, buf...)
-	}
-
-	if err := ioutil.WriteFile(filename, buf, 0644); err != nil {
-		done <- err
-		return
+		if err := ioutil.WriteFile(filename, buf, 0644); err != nil {
+			done <- err
+			return
+		}
 	}
 
 	done <- nil
