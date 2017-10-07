@@ -66,6 +66,7 @@ func quitHandler(res http.ResponseWriter, req *http.Request) {
 	res.Write([]byte{})
 
 	Stop()
+	stop <- true
 }
 
 func saveHandler(res http.ResponseWriter, req *http.Request) {
