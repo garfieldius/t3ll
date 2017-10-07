@@ -1,5 +1,5 @@
 BUILDCMD:=go build -a -tags netgo -ldflags "-w -s -extldflags '-static -s -pie'"
-GOPKGS:= ./vendor/github.com/hydrogen18/stoppableListener/listener.go ./vendor/github.com/kr/pretty/formatter.go
+GOPKGS:= ./vendor/github.com/kr/pretty/formatter.go
 
 build: ./t3ll
 
@@ -27,8 +27,8 @@ install: $(GOPATH)/bin/t3ll
 fmt:
 	go fmt ./...
 
-debug: godeps
-	cd frontend && rm -rf _dev _live && gulp html-debug && cd .. && \
+debug: godeps frontend/node_modules/.bin/gulp
+	cd frontend && rm -rf _dev _live && yarn exec gulp html-debug && cd .. && \
 	rm -f server/data.go && \
 	go-bindata -pkg server -o server/data.go -prefix frontend/_dev/ frontend/_dev/editor.html && \
 	go build -a -tags 'debug'
@@ -76,10 +76,10 @@ server/data.go: frontend/_live/editor.html
 		-prefix frontend/_live/ frontend/_live/editor.html
 
 frontend/_live/editor.html: frontend/node_modules/.bin/gulp
-	cd frontend; gulp clean; gulp live
+	cd frontend; yarn exec gulp clean; yarn exec gulp live
 
 frontend/node_modules/.bin/gulp:
-	cd frontend; npm install
+	cd frontend; yarn install
 
 ./t3ll: godeps server/data.go
 	$(BUILDCMD) -o t3ll main.go
@@ -91,4 +91,4 @@ $(GOPATH)/bin/go-bindata:
 	go get github.com/jteeuwen/go-bindata/...
 
 $(GOPKGS):
-	glide install
+	dep ensure
