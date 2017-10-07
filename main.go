@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"syscall"
 
 	"github.com/garfieldius/t3ll/browser"
 	"github.com/garfieldius/t3ll/file"
@@ -118,7 +117,7 @@ func main() {
 	}
 
 	cancel := make(chan os.Signal)
-	signal.Notify(cancel, os.Interrupt)
+	signal.Notify(cancel, os.Interrupt, os.Kill)
 
 	select {
 	case <-cancel:
