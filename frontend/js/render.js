@@ -73,9 +73,10 @@ function renderState() {
         txt: "Key"
     });
 
-    displayedLanguages.forEach(function (code) {
+    data.languages.forEach(function (code) {
         headers.push({
             name: "th",
+            hidden: displayedLanguages.indexOf(code) === -1,
             sub: [
                 {
                     name: "div",

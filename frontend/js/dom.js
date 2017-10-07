@@ -75,6 +75,10 @@ function tree(start) {
         });
     }
 
+    if (start.hidden) {
+        parent.style.display = "none";
+    }
+
     if (start.txt) {
         parent.innerHTML = start.txt;
     }
@@ -115,9 +119,10 @@ function makeRow(row) {
         ]
     }];
 
-    displayedLanguages.forEach(function (lang) {
+    data.languages.forEach(function (lang) {
         var cell = {
             name: "td",
+            hidden: displayedLanguages.indexOf(lang) === -1,
             sub: [
                 {
                     name: "textarea",
