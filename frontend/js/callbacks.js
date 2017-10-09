@@ -112,6 +112,19 @@ var callbacks = {
         serializeState();
 
         renderState();
+    },
+    importCsv: function () {
+      findOne("#FileSelect").click();
+    },
+    uploadCsv: function (file) {
+      showMessage("Uploading");
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        xhr("/csv", evt.target.result, function () {
+          location.reload();
+        });
+      };
+      reader.readAsBinaryString(file);
     }
 };
 

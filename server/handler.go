@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"encoding/csv"
 	"encoding/json"
+	"io"
 	"net/http"
 	"path"
 	"sort"
@@ -117,6 +118,42 @@ func csvHandler(res http.ResponseWriter, req *http.Request) {
 	}
 
 	switch req.Method {
+	case "POST":
+		r := csv.NewReader(req.Body)
+		newData := new(file.Labels)
+		newData.FromFile = data.FromFile
+		newData.Type = data.Type
+		newData.Data = make([]*file.Label, 0)
+
+		for {
+			row, err := r.Read()
+			if err != nil {
+				if err != io.EOF {
+
+				} else {
+					data = newData
+				}
+				break
+			}
+
+			if len(newData.Langs) == 0 {
+				newData.Langs = row[1:]
+			} else {
+				l := new(file.Label)
+				l.Id = row[0]
+				l.Trans = make([]*file.Translation, 0, len(newData.Langs))
+
+				for i, c := range row[1:] {
+					l.Trans = append(l.Trans, &file.Translation{
+						Lng:     newData.Langs[i],
+						Content: c,
+					})
+				}
+
+				newData.Data = append(newData.Data, l)
+			}
+		}
+		break
 	case "GET":
 		res.Header().Set("Content-Type", "text/csv;charset=UTF-8")
 		res.Header().Set("Content-Disposition", "attachment; filename=locallang.csv")
