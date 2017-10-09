@@ -18,9 +18,11 @@ package server
 
 import (
 	"bytes"
+	"encoding/csv"
 	"encoding/json"
 	"net/http"
 	"path"
+	"sort"
 
 	"github.com/garfieldius/t3ll/file"
 	"github.com/garfieldius/t3ll/log"
@@ -102,6 +104,51 @@ func saveHandler(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	res.WriteHeader(http.StatusCreated)
 	res.Write(saveSuccess)
+}
+
+func csvHandler(res http.ResponseWriter, req *http.Request) {
+	if req.URL.Path != "/csv" {
+		notFoundHandler(res, req)
+		return
+	}
+
+	switch req.Method {
+	case "GET":
+		res.Header().Set("Content-Type", "text/csv;charset=UTF-8")
+		res.Header().Set("Content-Disposition", "attachment; filename=locallang.csv")
+
+		w := csv.NewWriter(res)
+		codes := make([]string, 0)
+
+		for _, lang := range data.Langs {
+			if lang != "en" {
+				codes = append(codes, lang)
+			}
+		}
+
+		sort.Strings(codes)
+		codes = append([]string{"en"}, codes...)
+
+		w.Write(append([]string{"key"}, codes...))
+
+		for _, label := range data.Data {
+			row := []string{label.Id}
+
+			for _, c := range codes {
+				for _, t := range label.Trans {
+					if t.Lng == c {
+						row = append(row, t.Content)
+					}
+				}
+			}
+			w.Write(row)
+		}
+		w.Flush()
+		break
+
+	default:
+		notFoundHandler(res, req)
+	}
 }
 
 func quitWithError(res http.ResponseWriter) {

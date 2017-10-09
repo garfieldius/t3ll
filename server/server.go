@@ -65,6 +65,7 @@ func Start(start *file.Labels, stopper chan bool) (string, error) {
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/save", saveHandler)
 	http.HandleFunc("/quit", quitHandler)
+	http.HandleFunc("/csv", csvHandler)
 
 	wg.Add(1)
 	go func() {
