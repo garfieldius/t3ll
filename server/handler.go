@@ -86,13 +86,15 @@ func saveHandler(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	newData.FromFile = data.FromFile
+	newData.Type = data.Type
+
 	if setType := req.FormValue("format"); setType == "xlif" {
+		log.Msg("Converting to xliff")
 		newData.Type = file.XmlXliff
-	} else {
-		newData.Type = data.Type
+		newData.FromFile = data.FromFile[:len(data.FromFile)-3] + "xlf"
 	}
 
-	newData.FromFile = data.FromFile
 	err = file.Save(newData)
 
 	if err != nil {
@@ -100,6 +102,8 @@ func saveHandler(res http.ResponseWriter, req *http.Request) {
 		quitWithError(res)
 		return
 	}
+
+	data = newData
 
 	res.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	res.WriteHeader(http.StatusCreated)

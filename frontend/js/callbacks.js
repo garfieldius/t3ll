@@ -157,7 +157,7 @@ function getFormData() {
     var d = new FormData();
     d.append("data", JSON.stringify(data));
 
-    if (findOne("#ToXliff").checked) {
+    if (findOne("#ToXliff").value === "1") {
         d.append("format", "xlif");
     }
 
