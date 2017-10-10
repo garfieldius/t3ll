@@ -70,17 +70,18 @@ Once the file is read, the editing mask will open in your default browser. It's 
 There are several shortcuts in the browser window (<kbd>Meta</kbd> means one of <kbd>Alt</kbd> or <kbd>Command</kbd> as in <kbd>⌘</kbd> or <kbd>win</kbd>):
 
 * <kbd>Tab</kbd> will focus the first input, jumping to the next if one already is. If the last input, or textarea is active, the first will be focused again.
-* <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>s</kbd>  will save the file
-* <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>q</kbd> / <kbd>w</kbd> will save the file and close the window.
-* <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd> will move the focus accordingly if an input is selected.
+* <kbd>Meta</kbd> + <kbd>s</kbd>  will save the file
+* <kbd>Meta</kbd> + <kbd>q</kbd> / <kbd>w</kbd> will save the file and close the window.
+* <kbd>Meta</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd> will move the focus accordingly if an input is selected.
 * <kbd>Ctrl</kbd> / <kbd>Meta</kbd> + <kbd>Backspace</kbd> / <kbd>Del</kbd> will delete a row if an input or textarea is focused
 * <kbd>Ctrl</kbd> / <kbd>Meta</kbd> + <kbd>+</kbd> will add a bew row below the current if an input or textarea is focused
+
+When converting from XML to XLIF, the old .xml file will not be deleted, this must be done manually.
 
 ## Credits & Notices
 
 t3ll uses the following go packages:
 
-* github.com/hydrogen18/stoppableListener
 * github.com/kr/pretty
 * github.com/jteeuwen/go-bindata
 
@@ -88,7 +89,7 @@ It also uses CSS Styles and HTML from, as well as (naming) references of the [TY
 
 ## License
 
-(c) 2016 Georg Großberger
+(c) 2017 Georg Großberger
 
 Released under the Apache License 2.0
 
