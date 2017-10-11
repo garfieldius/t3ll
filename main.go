@@ -32,8 +32,8 @@ const help = `Usage: t3ll <filename>|help|version
 <filename> must be a text file in UTF-8 encoding, containing
 a xliff or TYPO3 locallang XML structure.
 
-If the filename argument is valid, but does not point to an existing
-file, it is created.
+If the filename argument is valid, but does not point to an
+existing file, it is created.
 
 There are two additional commands:
 
@@ -42,10 +42,10 @@ version: Print version and license
 
 `
 
-const version = `t3ll - TYPO3 Localization Labels editing
+const version = `t3ll - TYPO3 Localization Labels Editor
 Version: 1.0.0
 
-Copyright 2016 Georg Großberger
+Copyright 2017 Georg Großberger <contact@grossberger-ge.org>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
