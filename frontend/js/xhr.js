@@ -36,8 +36,8 @@ function xhr(url, vals, cb) {
     });
 
     if (vals) {
+        x.overrideMimeType('text/plain; charset=x-user-defined-binary');
         x.open("POST", u);
-        xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
         x.send(vals);
     } else {
         x.open("GET", u);
