@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-var callbacks = {
+callbacks = {
     setKey: function (input) {
         tainted = true;
         var row = findParent(input, ["TR"]);
@@ -113,20 +113,50 @@ var callbacks = {
 
         renderState();
     },
-    importCsv: function () {
-      findOne("#FileSelect").click();
+    uploadReplace: function (file) {
+      doUpload(file, true)
     },
-    uploadCsv: function (file) {
-      showMessage("Uploading");
-      var reader = new FileReader();
-      reader.onload = function(evt) {
-        xhr("/csv", evt.target.result, function () {
-          location.reload();
-        });
-      };
-      reader.readAsBinaryString(file);
+    uploadMerge: function (file) {
+      doUpload(file, false)
+    },
+    initMerge: function () {
+      findOne("#FileSelectMerge").click();
+    },
+    initReplace: function () {
+      findOne("#FileSelectReplace").click();
+    },
+    csvDropdown: function () {
+      var cl = findOne("#CsvDropdown").classList;
+      cl[cl.contains("active") ? "remove" : "add"]("active");
+    },
+    csvHide: function () {
+      findOne("#CsvDropdown").classList.remove("active");
     }
 };
+
+function doUpload(file, replace) {
+  callbacks.csvHide();
+  showMessage("Uploading");
+  var reader = new FileReader();
+
+  reader.onload = function(evt) {
+    var url = "/csv";
+
+    if (replace === true) {
+      url += "?mode=replace"
+    }
+
+    xhr(url, evt.target.result, function () {
+      location.reload();
+    });
+  };
+
+  reader.onerror = function (err) {
+    showMessage(err, true)
+  };
+
+  reader.readAsBinaryString(file);
+}
 
 function doSave(reload) {
     if (!tainted && !reload) {

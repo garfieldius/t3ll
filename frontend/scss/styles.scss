@@ -631,3 +631,18 @@ tr:hover th .btn-group {
   float: left;
   margin: 3px 20px 0 0;
 }
+
+.dropdown {
+  z-index: 5000;
+  display: none;
+  position:absolute;
+  right: 60px;
+  top: 40px;
+  background-color: #eee;
+  right: 112px;
+  top: 35px;
+
+  &.active {
+    display:block;
+  }
+}

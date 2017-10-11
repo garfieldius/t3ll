@@ -19,6 +19,7 @@ var
     activeElement,
     counter = 1,
     displayedLanguages = [],
+    callbacks = {},
     tainted = false,
     knownLanguages = {
         "en": "English",
@@ -74,4 +75,3 @@ var
         "vi": "Vietnamese",
         "zh": "Chinese (Trad.)"
     };
-

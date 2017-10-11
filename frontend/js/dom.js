@@ -228,3 +228,14 @@ function findParent(el, tags) {
     }
     return el;
 }
+
+function contains(el, container) {
+  while (el) {
+    if (el.id && el.id == container) {
+      return true;
+    }
+    el = el.parentNode;
+  }
+
+  return false;
+}

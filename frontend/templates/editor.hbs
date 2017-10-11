@@ -48,17 +48,13 @@
             </div>
             <div style="display:none">
               <input type="hidden" value="0" id="ToXliff">
-              <input type="file" id="FileSelect" accept="text/csv,text/comma-separated-values" onchange="callbacks.uploadCsv(this.files[0])">
+              <input type="file" id="FileSelectMerge" accept="text/csv,text/comma-separated-values" onchange="callbacks.uploadMerge(this.files[0])">
+              <input type="file" id="FileSelectReplace" accept="text/csv,text/comma-separated-values" onchange="callbacks.uploadReplace(this.files[0])">
             </div>
             <div class="module-docheader-bar-column-right">
-                <div class="btn-group" style="float:left">
-                  <label class="btn" style="pointer:default">CSV</label>
-                  <a class="btn btn-default" href="/csv">Export</a>
-                  <button class="btn btn-default" data-toggle="importCsv" data-event="click">Import</button>
-                  <i class="btn" style="width:20px;">&nbsp;</i>
-                </div>
-                <div class="btn-group" style="float:left">
+                <div class="btn-group main-buttons pull-left">
                     <button class="btn btn-default" data-toggle="convert" id="ToXliffMessage" style="display:none">Convert to XLIFF</button>
+                        <button class="btn btn-default" data-toggle="csvDropdown">CSV</button>
                     <button class="btn btn-default" data-toggle="save">Save</button>
                     <button class="btn btn-default" data-toggle="close">Close</button>
                 </div>
@@ -172,7 +168,28 @@
             </table>
         </div>
     </div>
-
+</div>
+<div class="dropdown" id="CsvDropdown">
+    <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <th>Export</th>
+          <td>
+            <div class="btn-group">
+              <a href="/csv" class="btn btn-default" onclick="callbacks.csvHide()">Download</a>
+            </div>
+          </td>
+      </tr>
+      <tbody>
+        <tr>
+          <th>Import</th>
+          <td><div class="btn-group">
+          <button class="btn btn-default" data-toggle="initMerge" data-event="click">Merge</button>
+          <button class="btn btn-default" data-toggle="initReplace" data-event="click">Replace</button>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 <script src="assets/scripts.js"></script>
 </body>
