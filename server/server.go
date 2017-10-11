@@ -31,9 +31,9 @@ import (
 
 var (
 	srv  *http.Server
-	wg   sync.WaitGroup
 	data *file.Labels
 	stop chan bool
+	mu   sync.Mutex
 )
 
 func Start(start *file.Labels, stopper chan bool) (string, error) {
@@ -67,11 +67,7 @@ func Start(start *file.Labels, stopper chan bool) (string, error) {
 	http.HandleFunc("/quit", quitHandler)
 	http.HandleFunc("/csv", csvHandler)
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		srv.Serve(l)
-	}()
+	go srv.Serve(l)
 
 	return "http://localhost" + port + "/", nil
 }
@@ -83,8 +79,13 @@ func Stop() {
 
 	log.Msg("Stopping HTTP server")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
-	srv.Shutdown(ctx)
+	err := srv.Shutdown(ctx)
+	if err != nil {
+		srv.Close()
+	}
+
+	srv = nil
 }

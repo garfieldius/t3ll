@@ -18,12 +18,10 @@ package server
 
 import (
 	"bytes"
-	"encoding/csv"
 	"encoding/json"
 	"io"
 	"net/http"
 	"path"
-	"sort"
 
 	"github.com/garfieldius/t3ll/file"
 	"github.com/garfieldius/t3ll/log"
@@ -35,6 +33,7 @@ var (
 	notFound    = []byte(`{"message":"Resource not found"}`)
 	saveSuccess = []byte(`{"success":true,"message":"File saved successfully"}`)
 	saveError   = []byte(`{"success":false,"message":"Error during save"}`)
+	invalidCSV  = []byte(`{"success":false,"message":"Invalid CSV data"}`)
 )
 
 func indexHandler(res http.ResponseWriter, req *http.Request) {
@@ -43,7 +42,9 @@ func indexHandler(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	mu.Lock()
 	initState, err := json.Marshal(data)
+	mu.Unlock()
 
 	if err != nil {
 		log.Fatal("Cannot marshall data to JSON: %s", err)
@@ -104,7 +105,9 @@ func saveHandler(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	mu.Lock()
 	data = newData
+	mu.Unlock()
 
 	res.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	res.WriteHeader(http.StatusCreated)
@@ -119,77 +122,39 @@ func csvHandler(res http.ResponseWriter, req *http.Request) {
 
 	switch req.Method {
 	case "POST":
-		r := csv.NewReader(req.Body)
-		newData := new(file.Labels)
-		newData.FromFile = data.FromFile
-		newData.Type = data.Type
-		newData.Data = make([]*file.Label, 0)
-
-		for {
-			row, err := r.Read()
-			if err != nil {
-				if err != io.EOF {
-
-				} else {
-					data = newData
-				}
-				break
-			}
-
-			if len(newData.Langs) == 0 {
-				newData.Langs = row[1:]
-			} else {
-				l := new(file.Label)
-				l.Id = row[0]
-				l.Trans = make([]*file.Translation, 0, len(newData.Langs))
-
-				for i, c := range row[1:] {
-					l.Trans = append(l.Trans, &file.Translation{
-						Lng:     newData.Langs[i],
-						Content: c,
-					})
-				}
-
-				newData.Data = append(newData.Data, l)
-			}
+		mu.Lock()
+		err := readCsv(req.Body, req.URL.Query().Get("mode"))
+		mu.Unlock()
+		if err != nil {
+			quitWithBadRequest(res, invalidCSV)
+		} else {
+			res.Header().Set("Content-Type", "application/json;charset=UTF-8")
+			res.Write([]byte(`{"success":true,"message":"CSV imported"}`))
 		}
 		break
 	case "GET":
-		res.Header().Set("Content-Type", "text/csv;charset=UTF-8")
-		res.Header().Set("Content-Disposition", "attachment; filename=locallang.csv")
-
-		w := csv.NewWriter(res)
-		codes := make([]string, 0)
-
-		for _, lang := range data.Langs {
-			if lang != "en" {
-				codes = append(codes, lang)
-			}
+		buf := new(bytes.Buffer)
+		mu.Lock()
+		err := writeCsv(data, buf)
+		mu.Unlock()
+		if err != nil {
+			quitWithBadRequest(res, invalidCSV)
+		} else {
+			res.Header().Set("Content-Type", "text/csv;charset=UTF-8")
+			res.Header().Set("Content-Disposition", "attachment; filename=locallang.csv")
+			io.Copy(res, buf)
 		}
-
-		sort.Strings(codes)
-		codes = append([]string{"en"}, codes...)
-
-		w.Write(append([]string{"key"}, codes...))
-
-		for _, label := range data.Data {
-			row := []string{label.Id}
-
-			for _, c := range codes {
-				for _, t := range label.Trans {
-					if t.Lng == c {
-						row = append(row, t.Content)
-					}
-				}
-			}
-			w.Write(row)
-		}
-		w.Flush()
 		break
 
 	default:
 		notFoundHandler(res, req)
 	}
+}
+
+func quitWithBadRequest(res http.ResponseWriter, msg []byte) {
+	res.WriteHeader(http.StatusBadRequest)
+	res.Header().Set("Content-Type", "application/json;charset=UTF-8")
+	res.Write(msg)
 }
 
 func quitWithError(res http.ResponseWriter) {
