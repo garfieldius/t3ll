@@ -68,6 +68,9 @@ func readCsv(from io.Reader, mode string) error {
 			l.Trans = make([]*file.Translation, 0, len(newData.Langs))
 
 			for i, c := range row[1:] {
+				if c == "" {
+					continue
+				}
 				l.Trans = append(l.Trans, &file.Translation{
 					Lng:     newData.Langs[i],
 					Content: c,
@@ -161,14 +164,20 @@ func mergeLabels(a, b *file.Labels) *file.Labels {
 			old := res.Data
 			res.Data = make([]*file.Label, len(old)+1)
 			k := 0
+			added := false
 
 			for j := 0; j < len(old)+1; j++ {
 				if j == i {
 					res.Data[j] = ln
+					added = true
 				} else {
 					res.Data[j] = old[k]
 					k++
 				}
+			}
+
+			if !added {
+				res.Data = append(res.Data, ln)
 			}
 		}
 
