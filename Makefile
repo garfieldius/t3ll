@@ -1,5 +1,6 @@
-BUILDCMD:=go build -a -tags netgo -ldflags "-w -s -extldflags '-static -s -pie'"
+BUILDCMD:=go build -ldflags "-w -s -extldflags '-s -pie'"
 GOPKGS:= ./vendor/github.com/kr/pretty/formatter.go
+GOBIN=$(shell go env GOPATH)
 
 build: ./t3ll
 
@@ -19,10 +20,11 @@ clobber: clean
 	cd frontend; rm -rf node_modules
 	rm -rf vendor
 
-godeps: $(GOPATH)/bin/go-bindata \
-        $(GOPKGS)
+godeps: $(GOBIN)/bin/go-bindata \
+				$(GOBIN)/bin/dep \
+				$(GOPKGS)
 
-install: $(GOPATH)/bin/t3ll
+install: $(GOBIN)/bin/t3ll
 
 fmt:
 	go fmt ./...
@@ -84,11 +86,14 @@ frontend/node_modules/.bin/gulp:
 ./t3ll: godeps server/data.go
 	$(BUILDCMD) -o t3ll main.go
 
-$(GOPATH)/bin/t3ll: ./t3ll
+$(GOBIN)/bin/t3ll: ./t3ll
 	cp t3ll $(GOPATH)/bin/t3ll
 
-$(GOPATH)/bin/go-bindata:
+$(GOBIN)/bin/go-bindata:
 	go get github.com/jteeuwen/go-bindata/...
 
-$(GOPKGS):
+$(GOBIN)/bin/dep:
+	go get -u github.com/golang/dep/cmd/dep
+
+$(GOPKGS): $(GOBIN)/bin/dep
 	dep ensure
