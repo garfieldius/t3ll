@@ -53,10 +53,12 @@ type T3Label struct {
 }
 
 func (l *T3Label) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	start.Attr = []xml.Attr{{Name: xml.Name{Local: "index"}, Value: l.Key}}
-	e.EncodeToken(start)
-	e.EncodeToken(xml.CharData(l.Cnt))
-	e.EncodeToken(xml.EndElement{Name: start.Name})
+	if l.Cnt != "" {
+		start.Attr = []xml.Attr{{Name: xml.Name{Local: "index"}, Value: l.Key}}
+		e.EncodeToken(start)
+		e.EncodeToken(xml.CharData(l.Cnt))
+		e.EncodeToken(xml.EndElement{Name: start.Name})
+	}
 	return nil
 }
 
