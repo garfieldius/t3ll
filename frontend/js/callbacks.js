@@ -63,7 +63,8 @@ callbacks = {
 	},
 	convert: function () {
 		findOne("#ToXliff").value = "1";
-		doSave(true);
+		doSave();
+		findOne("#ToXliffMessage").style.display = "none";
 	},
 	isDirty: function () {
 		return tainted;
@@ -137,8 +138,8 @@ function doUpload(file, replace) {
 	reader.readAsBinaryString(file);
 }
 
-function doSave(reload) {
-	if (!tainted && !reload) {
+function doSave() {
+	if (!tainted) {
 		return showMessage("Data not changed");
 	}
 
@@ -147,10 +148,6 @@ function doSave(reload) {
 	xhr("save", getFormData(), function (err, data) {
 		showMessage(err || data.error || data.message, err || data.error);
 		tainted = false;
-
-		if (reload === true) {
-			location.reload();
-		}
 	});
 }
 
