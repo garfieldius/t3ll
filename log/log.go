@@ -1,20 +1,10 @@
-package log
+// Package log is a convenience wrapper around go's log and fmt packages
 
-/*
- * Copyright 2016 Georg Großberger
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// This is free software; it is provided under the terms of the MIT License
+// See the file LICENSE or <https://opensource.org/licenses/MIT> for details
+
+package log
 
 import (
 	"fmt"
@@ -22,21 +12,18 @@ import (
 	"time"
 )
 
-const TimeLayout string = "2006-01-02 15:04:05"
+const timeLayout = "2006-01-02 15:04:05"
 
 func now() string {
-	return time.Now().Format(TimeLayout)
+	return time.Now().Format(timeLayout)
 }
 
 func format(severity, msg string, a ...interface{}) string {
-	full := fmt.Sprintf("%s [%s] %s\n", now(), severity, msg)
+	full := fmt.Sprintf("%s [%s] %s", now(), severity, msg)
 	return fmt.Sprintf(full, a...)
 }
 
-func Fatal(msg string, a ...interface{}) {
-	panic(fmt.Sprintf(msg, a...))
-}
-
+// Err prints a formatted message to stderr
 func Err(msg string, a ...interface{}) {
-	fmt.Fprint(os.Stderr, format("ERROR", msg, a...))
+	fmt.Fprintln(os.Stderr, format("ERROR", msg, a...))
 }

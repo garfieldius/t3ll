@@ -1,20 +1,8 @@
-package server
+// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// This is free software; it is provided under the terms of the MIT License
+// See the file LICENSE or <https://opensource.org/licenses/MIT> for details
 
-/*
- * Copyright 2016 Georg Großberger
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package server
 
 import (
 	"context"
@@ -25,31 +13,28 @@ import (
 	"sync"
 	"time"
 
-	"github.com/garfieldius/t3ll/file"
+	"github.com/garfieldius/t3ll/labels"
 	"github.com/garfieldius/t3ll/log"
 )
 
-var (
+// Server is a http server sending and receiving data of the app
+type Server struct {
 	srv  *http.Server
-	data *file.Labels
-	stop chan bool
-	mu   sync.Mutex
-)
+	Done chan error
+	Host string
+}
 
-func Start(start *file.Labels, stopper chan bool) (string, error) {
-	data = start
-	stop = stopper
-
+// Start creates a http server listener
+func (s *Server) Start(state *labels.Labels) error {
 	var l net.Listener
 	var err error
-	var port string
 
-	for i := 2000; i < 8000; i++ {
-		port = ":" + strconv.Itoa(i)
-		l, err = net.Listen("tcp", port)
+	for i := 1025; i < 65000; i++ {
+		s.Host = "127.0.0.1:" + strconv.Itoa(i)
+		l, err = net.Listen("tcp", s.Host)
 
 		if err != nil {
-			log.Msg("Cannot start server on port %s: %s", port, err)
+			log.Msg("Cannot start server on %s: %s", s.Host, err)
 			time.Sleep(10 * time.Millisecond)
 		} else {
 			break
@@ -57,35 +42,35 @@ func Start(start *file.Labels, stopper chan bool) (string, error) {
 	}
 
 	if l == nil {
-		return "", errors.New("Cannot start server")
+		return errors.New("Cannot start server")
 	}
 
-	srv = &http.Server{}
+	s.srv = &http.Server{}
+	s.srv.Handler = handler{state: state, mu: new(sync.Mutex)}
+	s.Done = make(chan error)
 
-	http.HandleFunc("/", indexHandler)
-	http.HandleFunc("/save", saveHandler)
-	http.HandleFunc("/quit", quitHandler)
-	http.HandleFunc("/csv", csvHandler)
+	go func() {
+		if err := s.srv.Serve(l); err != nil && err != http.ErrServerClosed {
+			s.Done <- err
+		} else {
+			s.Done <- nil
+		}
+	}()
 
-	go srv.Serve(l)
-
-	return "http://localhost" + port + "/", nil
+	return nil
 }
 
-func Stop() {
-	if srv == nil {
+// Stop will stop the running server
+func (s *Server) Stop() {
+	if s.srv == nil {
 		return
 	}
-
-	log.Msg("Stopping HTTP server")
-
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()
-
-	err := srv.Shutdown(ctx)
+	err := s.srv.Shutdown(ctx)
 	if err != nil {
-		srv.Close()
+		s.srv.Close()
 	}
+	cancel()
 
-	srv = nil
+	s.srv = nil
 }

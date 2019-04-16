@@ -1,32 +1,36 @@
+// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// This is free software; it is provided under the terms of the MIT License
+// See the labels LICENSE or <https://opensource.org/licenses/MIT> for details
 
 "use strict";
 
-module.exports = require("./change-buffer")(function (data, file, debug) {
-    var fs = require("fs");
-    var path = require("path");
-    var base = path.dirname(file.path);
+const path = require("path");
+const fs = require("fs");
 
-    function abs(p) {
-        return path.join(base, "..", (debug ? "_dev" : "_live"), p)
-    }
+module.exports = require("./change-buffer")(function (data, file) {
+	const base = path.join(path.dirname(file.path), "..", "build");
 
-    data.match(/<link[^>]+href="([^"]+)">/ig).forEach(function (el) {
-        let start = el.indexOf("href=\"") + 6;
-        let p1 = el.substr(start);
-        let p = p1.substr(0, p1.indexOf('"'));
-        let d = fs.readFileSync(abs(p));
+	function abs(p) {
+		return path.join(base, p)
+	}
 
-        data = data.replace(el, "<style>" + d + "</style>");
-    });
+	data.match(/<link[^>]+href="([^"]+)">/ig).forEach(function (el) {
+		let start = el.indexOf("href=\"") + 6;
+		let p1 = el.substr(start);
+		let p = p1.substr(0, p1.indexOf('"'));
+		let d = fs.readFileSync(abs(p));
 
-    data.match(/<script[^>]+src="([^"]+)">\s*<\/script>/ig).forEach(function (el) {
-        let start = el.indexOf("src=\"") + 5;
-        let p1 = el.substr(start);
-        let p = p1.substr(0, p1.indexOf('"'));
-        let d = fs.readFileSync(abs(p))
+		data = data.replace(el, "<style>" + d + "</style>");
+	});
 
-        data = data.replace(el, "<script>" + d + "</script>");
-    });
+	data.match(/<script[^>]+src="([^"]+)">\s*<\/script>/ig).forEach(function (el) {
+		let start = el.indexOf("src=\"") + 5;
+		let p1 = el.substr(start);
+		let p = p1.substr(0, p1.indexOf('"'));
+		let d = fs.readFileSync(abs(p))
 
-    return data;
+		data = data.replace(el, "<script>" + d + "</script>");
+	});
+
+	return data;
 });

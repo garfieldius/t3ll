@@ -1,46 +1,33 @@
-
-/*
- * Copyright 2016 Georg Großberger
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// This is free software; it is provided under the terms of the MIT License
+// See the labels LICENSE or <https://opensource.org/licenses/MIT> for details
 
 function xhr(url, vals, cb) {
-    if (!cb && vals) {
-        cb = vals;
-        vals = null
-    }
+	if (!cb && vals) {
+		cb = vals;
+		vals = null
+	}
 
-    var x = new XMLHttpRequest();
-    var u = location.protocol + "//" + location.host + "/" + url;
+	var x = new XMLHttpRequest();
+	var u = location.protocol + "//" + location.host + "/" + url;
 
-    x.addEventListener("readystatechange", function () {
-        if (this.readyState == 4) {
-            try {
-                var res = JSON.parse(this.responseText);
-                cb(null, res);
-            } catch (err) {
-                return cb(err);
-            }
-        }
-    });
+	x.addEventListener("readystatechange", function () {
+		if (this.readyState == 4) {
+			try {
+				var res = JSON.parse(this.responseText);
+				cb(null, res);
+			} catch (err) {
+				return cb(err);
+			}
+		}
+	});
 
-    if (vals) {
-        x.overrideMimeType('text/plain; charset=x-user-defined-binary');
-        x.open("POST", u);
-        x.send(vals);
-    } else {
-        x.open("GET", u);
-        x.send(null);
-    }
+	if (vals) {
+		x.overrideMimeType('text/plain; charset=x-user-defined-binary');
+		x.open("POST", u);
+		x.send(vals);
+	} else {
+		x.open("GET", u);
+		x.send(null);
+	}
 }

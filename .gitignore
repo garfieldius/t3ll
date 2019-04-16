@@ -3,8 +3,6 @@
 *.xlf
 *.xml
 .vscode
-.glide
-server/data.go
+server/html.go
 /t3ll*
-/release
-/vendor
+/dist

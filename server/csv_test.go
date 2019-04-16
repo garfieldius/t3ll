@@ -1,64 +1,57 @@
+// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// This is free software; it is provided under the terms of the MIT License
+// See the file LICENSE or <https://opensource.org/licenses/MIT> for details
+
 package server
+
+// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// This is free software; it is provided under the terms of the MIT License
+// See the file LICENSE or <https://opensource.org/licenses/MIT> for details
 
 import (
 	"bytes"
 	"testing"
 
-	"github.com/garfieldius/t3ll/file"
 	"github.com/kr/pretty"
+
+	"github.com/garfieldius/t3ll/labels"
 )
 
-/*
- * Copyright 2016 Georg Großberger
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 func TestCsvExport(t *testing.T) {
-	l := file.Labels{
-		Langs: []string{"fr", "en", "it"},
-		Data: []*file.Label{
-			&file.Label{
-				Id: "l1",
-				Trans: []*file.Translation{
-					&file.Translation{
-						Lng:     "en",
-						Content: "l1.en",
+	l := labels.Labels{
+		Languages: []string{"fr", "en", "it"},
+		Data: []*labels.Label{
+			&labels.Label{
+				ID: "l1",
+				Translations: []*labels.Translation{
+					&labels.Translation{
+						Language: "en",
+						Content:  "l1.en",
 					},
-					&file.Translation{
-						Lng:     "fr",
-						Content: "l1.fr",
+					&labels.Translation{
+						Language: "fr",
+						Content:  "l1.fr",
 					},
-					&file.Translation{
-						Lng:     "it",
-						Content: "l1.it",
+					&labels.Translation{
+						Language: "it",
+						Content:  "l1.it",
 					},
 				},
 			},
-			&file.Label{
-				Id: "l2",
-				Trans: []*file.Translation{
-					&file.Translation{
-						Lng:     "it",
-						Content: "l2.it",
+			&labels.Label{
+				ID: "l2",
+				Translations: []*labels.Translation{
+					&labels.Translation{
+						Language: "it",
+						Content:  "l2.it",
 					},
-					&file.Translation{
-						Lng:     "fr",
-						Content: "l2.fr",
+					&labels.Translation{
+						Language: "fr",
+						Content:  "l2.fr",
 					},
-					&file.Translation{
-						Lng:     "en",
-						Content: "l2.en",
+					&labels.Translation{
+						Language: "en",
+						Content:  "l2.en",
 					},
 				},
 			},
@@ -90,8 +83,7 @@ l1,l1.en,l1.fr,l1.it
 l2,l2.en,l2.fr,l2.it
 `)
 
-	data = &file.Labels{}
-	err := readCsv(src, "replace")
+	data, err := readCsv(src, &labels.Labels{}, "replace")
 
 	if err != nil {
 		t.Errorf("Unexpected error: %s", err)
@@ -101,8 +93,8 @@ l2,l2.en,l2.fr,l2.it
 		t.Error("Expected data to be set, but is nil")
 	}
 
-	if data.Langs == nil || len(data.Langs) != 3 {
-		t.Errorf("Invalid number of languages: %# v", pretty.Formatter(data.Langs))
+	if data.Languages == nil || len(data.Languages) != 3 {
+		t.Errorf("Invalid number of languages: %# v", pretty.Formatter(data.Languages))
 	}
 
 	if data.Data == nil || len(data.Data) != 2 {
@@ -117,7 +109,7 @@ l2,l2.en,l2.fr,l2.it
 l4,l4.en,l4.fr,l4.it
 `)
 
-	err := readCsv(existing, "replace")
+	data, err := readCsv(existing, &labels.Labels{}, "replace")
 	if err != nil {
 		t.Errorf("Cannot set existing labels: %s", err)
 	}
@@ -128,7 +120,7 @@ l2,l2.en,l2.fr,l2.it
 l3,l3.en,l3.fr,l3.it
 `)
 
-	err = readCsv(additional, "")
+	data, err = readCsv(additional, data, "")
 	if err != nil {
 		t.Errorf("Cannot merge new labels labels: %s", err)
 	}

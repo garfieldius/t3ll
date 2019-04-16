@@ -2,19 +2,18 @@
   "name": "t3ll-frontend",
   "version": "1.0.0",
   "description": "Frontend of T3LL",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "private": true,
   "dependencies": {
-    "browser-sync": "^2.18.2",
-    "del": "^2.2.2",
-    "gulp": "^3.9.1",
-    "gulp-compile-handlebars": "^0.6.1",
+    "browser-sync": "^2.26.3",
+    "gulp": "^4.0.0",
     "gulp-concat": "^2.6.1",
-    "gulp-csso": "^2.0.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-sass": "^2.3.2",
-    "gulp-uglify": "^2.0.0",
-    "pump": "^1.0.1",
-    "through2": "^2.0.3"
+    "gulp-csso": "^3.0.1",
+    "gulp-if": "^2.0.2",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-uglify": "^3.0.2",
+    "plugin-error": "^1.0.1",
+    "through2": "^3.0.1"
   }
 }

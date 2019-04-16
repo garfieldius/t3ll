@@ -1,166 +1,135 @@
-var gulp = require("gulp");
-var handlebars = require("gulp-compile-handlebars");
-var sass = require("gulp-sass");
-var del = require("del");
-var bs = require("browser-sync").create();
-var pump = require("pump");
-var csso = require("gulp-csso");
-var uglify = require("gulp-uglify");
-var concat = require("gulp-concat");
-var rename = require("gulp-rename");
-var inline = require("./scripts/inline");
-var chtml = require("./scripts/compress-html");
-var wrap = require("./scripts/wrap");
+// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// This is free software; it is provided under the terms of the MIT License
+// See the labels LICENSE or <https://opensource.org/licenses/MIT> for details
 
-gulp.task("css-live", ["css-dev", "html-dev"], function (cb) {
-    pump([
-        gulp.src("./_dev/assets/styles.css"),
-        csso(),
-        rename("styles.css"),
-        gulp.dest("./_live/assets/")
-    ], cb);
+const gulp = require("gulp");
+const sass = require("gulp-sass");
+const bs = require("browser-sync").create();
+const csso = require("gulp-csso");
+const uglify = require("gulp-uglify");
+const concat = require("gulp-concat");
+const rename = require("gulp-rename");
+const inline = require("./scripts/inline");
+const chtml = require("./scripts/compress-html");
+const wrap = require("./scripts/wrap");
+const when = require("gulp-if");
+const {pipeline} = require("stream");
+const isProd = process.env.NODE_ENV === "production";
+
+gulp.task("css", () => {
+	return pipeline(
+		gulp.src("scss/styles.scss"),
+		sass(),
+		rename("styles.css"),
+		when(isProd, csso()),
+		gulp.dest("./build/assets/")
+	)
 });
 
-gulp.task("css-dev", function (cb) {
-    pump([
-        gulp.src("scss/styles.scss"),
-        sass(),
-        rename("styles.css"),
-        gulp.dest("./_dev/assets/"),
-        bs.stream()
-    ], cb);
+gulp.task("js", () => {
+	return pipeline(
+		gulp.src([
+			"js/globals.js",
+			"js/dom.js",
+			"js/xhr.js",
+			"js/render.js",
+			"js/callbacks.js",
+			"js/_init.js"
+		]),
+		concat("scripts.js"),
+		wrap(),
+		when(isProd, uglify({
+			mangle: {
+				toplevel: true
+			},
+			compress: {
+				drop_console: true,
+				keep_fargs: false,
+				toplevel: true,
+				global_defs: {
+					NODE_ENV: "production"
+				}
+			},
+			output: {
+				comments: false
+			}
+		})),
+		gulp.dest("./build/assets/")
+	);
 });
 
-gulp.task("js-live", function (cb) {
-    pump([
-        gulp.src([
-            "js/globals.js",
-            "js/livedata.js",
-            "js/dom.js",
-            "js/xhr.js",
-            "js/render.js",
-            "js/callbacks.js",
-            "js/_init.js"
-        ]),
-        concat("scripts.js"),
-        wrap(),
-        uglify({
-            preserveComments: function () {
-                return false;
-            }
-        }),
-        gulp.dest("./_live/assets/")
-    ], cb);
+gulp.task("html", gulp.series(gulp.parallel("css", "js"), () => {
+	return pipeline(
+		gulp.src(["templates/*.html"]),
+		inline(),
+		when(isProd, chtml()),
+		gulp.dest("./build/")
+	);
+}));
+
+gulp.task("default", gulp.parallel("html"));
+
+gulp.task("serve", (cb) => {
+	bs.init({
+		server: {
+			baseDir: "./build/"
+		},
+		startPath: "/index.html",
+		middleware: [
+			{
+				route: "/data",
+				handle: function (req, res) {
+					res.setHeader('Content-Type', 'application/json;charset=UTF-8');
+					res.end(JSON.stringify({
+						format: "xlif",
+						languages: ["en", "fr", "de"],
+						labels: [
+							{
+								id: "hello.world",
+								trans: [
+									{
+										content: "Hello World",
+										lng: "en"
+									},
+									{
+										content: "Bonjour le monde",
+										lng: "fr"
+									},
+									{
+										content: "Hallo Welt",
+										lng: "de"
+									}
+								]
+							}
+						]
+					}));
+				}
+			},
+			{
+				route: "/save",
+				handle: function (req, res) {
+					res.setHeader('Content-Type', 'application/json;charset=UTF-8');
+					if (Math.random() * 100 < 10) {
+						res.statusCode = 503;
+						res.end('{"success":false,"message":"Error during save"}')
+					} else {
+						res.end('{"success":true,"message":"File saved successfully"}');
+					}
+				}
+			},
+			{
+				route: "/data",
+				handle: function (req, res) {
+					res.setHeader('Content-Type', 'application/json;charset=UTF-8');
+					res.end('{"success":true,"message":""}');
+				}
+			}
+		]
+	}, cb);
 });
 
-gulp.task("js-dev", function (cb) {
-    pump([
-        gulp.src([
-            "js/globals.js",
-            "js/testdata.js",
-            "js/dom.js",
-            "js/xhr.js",
-            "js/render.js",
-            "js/callbacks.js",
-            "js/_init.js"
-        ]),
-        concat("scripts.js"),
-        wrap(),
-        gulp.dest("./_dev/assets/"),
-        bs.stream()
-    ], cb);
-});
-
-gulp.task("js-debug", function (cb) {
-    pump([
-        gulp.src([
-            "js/globals.js",
-            "js/livedata.js",
-            "js/dom.js",
-            "js/xhr.js",
-            "js/render.js",
-            "js/callbacks.js",
-            "js/_init.js"
-        ]),
-        concat("scripts.js"),
-        wrap(),
-        gulp.dest("./_dev/assets/"),
-        bs.stream()
-    ], cb);
-});
-
-gulp.task("html-dev", function (cb) {
-    pump([
-        gulp.src(["templates/*.hbs"]),
-        handlebars({dev: true}, {}),
-        rename("editor_tmp.html"),
-        gulp.dest("./_dev/")
-    ], cb);
-});
-
-gulp.task("html-debug", ["css-dev", "js-debug"], function (cb) {
-    pump([
-        gulp.src(["templates/*.hbs"]),
-        handlebars({dev: true}, {}),
-        inline(true),
-        rename("editor.html"),
-        gulp.dest("./_dev/")
-    ], cb);
-});
-
-gulp.task("html-live", ["js-live", "css-live"], function (cb) {
-    pump([
-        gulp.src(["templates/*.hbs"]),
-        handlebars({dev: false}, {}),
-        inline(),
-        chtml(),
-        rename("editor.html"),
-        gulp.dest("./_live/")
-    ], cb);
-});
-
-gulp.task("clean", function (cb) {
-    del(["./_dev/**.*", "./_live/**.*"], {force: true}).then(function () {
-        cb();
-    });
-});
-
-gulp.task("debug", ["html-debug"]);
-gulp.task("dev", ["html-dev", "css-dev", "js-dev"]);
-gulp.task("default", ["dev"]);
-
-gulp.task("watch", ["dev"], function () {
-    bs.init({
-        server: {
-            baseDir: "./_dev/"
-        },
-        startPath: "/editor_tmp.html",
-        middleware: [
-            {
-                route: "/save",
-                handle: function (req, res) {
-                    res.setHeader('Content-Type', 'application/json;charset=UTF-8');
-                    if (Math.random() * 100 < 10) {
-                        res.statusCode = 503;
-                        res.end('{"success":false,"message":"Error during save"}')
-                    } else {
-                        res.end('{"success":true,"message":"File saved successfully"}');
-                    }
-                }
-            },
-            {
-                route: "/quit",
-                handle: function (req, res) {
-                    res.setHeader('Content-Type', 'application/json;charset=UTF-8');
-                    res.end('{"success":true,"message":""}');
-                }
-            }
-        ]
-    });
-
-    gulp.watch("scss/*.scss", ["css-dev"]);
-    gulp.watch("js/*.js", ["js-dev"]);
-    gulp.watch(["templates/*.hbs"], ["html-dev"]).on("change", bs.reload);
-});
-
-gulp.task("live", ["html-live"]);
+gulp.task("watch", gulp.series("serve", () => {
+	gulp.watch("scss/*.scss", gulp.series("css", "html"));
+	gulp.watch("js/*.js", gulp.series("js", "html"));
+	gulp.watch(["templates/*.html"], gulp.series("html"));
+}));

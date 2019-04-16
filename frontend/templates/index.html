@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- Copyright 2019 Georg Großberger <contact@grossberger-ge.org> -->
+	<!-- This is free software; it is provided under the terms of the MIT License -->
+	<!-- See the labels LICENSE or <https://opensource.org/licenses/MIT> for details -->
+	<meta charset="UTF-8">
+	<title>t3ll</title>
+	<link rel="stylesheet" href="assets/styles.css">
+<body>
+<svg style="display:none">
+	<symbol id="move-up">
+		<path
+			d="M8.407 4.57l4.028 5.64c.236.33 0 .79-.407.79H3.972c-.407 0-.643-.46-.407-.79l4.028-5.64c.2-.28.614-.28.814 0z"></path>
+	</symbol>
+	<symbol id="move-down">
+		<path
+			d="M7.593 11.43L3.565 5.79c-.237-.33 0-.79.407-.79h8.057c.406 0 .642.46.406.79l-4.028 5.64c-.2.28-.615.28-.815 0z"></path>
+	</symbol>
+	<symbol id="move-left">
+		<path
+			d="M4.57 7.593l5.64-4.028c.33-.237.79 0 .79.407v8.057c0 .406-.46.642-.79.406l-5.64-4.03c-.28-.2-.28-.613 0-.813z"></path>
+	</symbol>
+	<symbol id="move-right">
+		<path
+			d="M11.43 8.407l-5.64 4.028c-.33.237-.79 0-.79-.407V3.972c0-.407.46-.643.79-.407l5.64 4.028c.28.2.28.614 0 .814z"></path>
+	</symbol>
+	<symbol id="delete">
+		<path d="M7 5H6v8h1M10 5H9v8h1"></path>
+		<path
+			d="M13 3h-2v-.75C11 1.56 10.44 1 9.75 1h-3.5C5.56 1 5 1.56 5 2.25V3H3v10.75c0 .69.56 1.25 1.25 1.25h7.5c.69 0 1.25-.56 1.25-1.25V3zm-7-.75c0-.138.112-.25.25-.25h3.5c.138 0 .25.112.25.25V3H6v-.75zm6 11.5c0 .138-.112.25-.25.25h-7.5c-.138 0-.25-.112-.25-.25V4h8v9.75z"></path>
+		<path d="M13.5 4h-11c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h11c.276 0 .5.224.5.5s-.224.5-.5.5z"></path>
+	</symbol>
+	<symbol id="add">
+		<path
+			d="M12.5 9H9v3.5c0 .3-.2.5-.5.5h-1c-.3 0-.5-.2-.5-.5V9H3.5c-.3 0-.5-.2-.5-.5v-1c0-.3.2-.5.5-.5H7V3.5c0-.3.2-.5.5-.5h1c.3 0 .5.2.5.5V7h3.5c.3 0 .5.2.5.5v1c0 .3-.2.5-.5.5z"></path>
+	</symbol>
+</svg>
+<div class="module">
+	<div class="module-docheader t3js-module-docheader" style="height: auto;">
+		<div
+			class="module-docheader-bar module-docheader-bar-navigation t3js-module-docheader-bar t3js-module-docheader-bar-navigation" style="height: auto;">
+			<div class="module-docheader-bar-column-left">
+				<div class="form-inline">
+
+					<div class="form-group form-group-sm">
+						<select class="form-control" data-toggle="addLanguage" data-event="change" id="availableLanguages">
+						</select>
+					</div>
+
+				</div>
+			</div>
+			<div style="display:none">
+				<input type="hidden" value="0" id="ToXliff">
+				<input type="file" id="FileSelectMerge" accept="text/csv,text/comma-separated-values" data-toggle="uploadMerge">
+				<input type="file" id="FileSelectReplace" accept="text/csv,text/comma-separated-values" data-toggle="uploadReplace">
+			</div>
+			<div class="module-docheader-bar-column-right">
+				<div class="btn-group main-buttons pull-left">
+					<button class="btn btn-default" data-toggle="convert" id="ToXliffMessage" style="display:none">Convert to XLIFF</button>
+					<button class="btn btn-default" data-toggle="csvDropdown">CSV</button>
+					<button class="btn btn-default" data-toggle="save">Save</button>
+				</div>
+			</div>
+		</div>
+		<div
+			class="module-docheader-bar module-docheader-bar-buttons t3js-module-docheader-bar t3js-module-docheader-bar-buttons"
+			style="height: auto;">
+			<div class="module-docheader-bar-column-left">
+
+				<div class="form-inline">
+					<label>Display language:</label>
+					<div class="inline" id="visibleLanguages">
+					</div>
+				</div>
+			</div>
+			<div class="module-docheader-bar-column-right">
+				<div class="btn-toolbar" role="toolbar">
+					<span class="flash-message show" id="messages"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="module-body t3js-module-body" style="padding-top: 89px;">
+
+		<div class="t3-grid-container">
+			<table id="dataTable" cellspacing="0" cellpadding="0"
+				   class="table table-striped table-bordered table-hover">
+			</table>
+		</div>
+	</div>
+</div>
+<div class="dropdown" id="CsvDropdown">
+	<table class="table table-bordered">
+		<tbody>
+		<tr>
+			<th>Export</th>
+			<td>
+				<div class="btn-group">
+					<a href="/csv" class="btn btn-default">Download</a>
+				</div>
+			</td>
+		</tr>
+		<tbody>
+		<tr>
+			<th>Import</th>
+			<td>
+				<div class="btn-group">
+					<button class="btn btn-default" data-toggle="initMerge" data-event="click">Merge</button>
+					<button class="btn btn-default" data-toggle="initReplace" data-event="click">Replace</button>
+				</div>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+<script src="assets/scripts.js"></script>
+</body>
+</html>

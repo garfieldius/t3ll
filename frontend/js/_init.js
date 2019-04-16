@@ -1,168 +1,160 @@
-/*
- * Copyright 2016 Georg Großberger
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// This is free software; it is provided under the terms of the MIT License
+// See the labels LICENSE or <https://opensource.org/licenses/MIT> for details
 
 ["input", "change", "click"].forEach(function (eventName) {
-    document.addEventListener(eventName, function (event) {
-        runCallbacks(event, eventName);
-    });
+	document.addEventListener(eventName, function (event) {
+		runCallbacks(event, eventName);
+	});
 });
 
 window.addEventListener("keydown", function (event) {
-    var
-        key = event.which,
-        char = String.fromCharCode(key).toLowerCase(),
-        isCtrl = event.ctrlKey,
-        isMeta = event.metaKey || event.altKey,
-        el = activeElement,
-        hasInput = false,
-        cell, row, table,
-        tdNum = 0,
-        trNum = 0,
-        isQuit = char == "w" || char == "q";
+	var
+		key = event.which,
+		char = String.fromCharCode(key).toLowerCase(),
+		isCtrl = event.ctrlKey,
+		isMeta = event.metaKey || event.altKey,
+		el = activeElement,
+		hasInput = false,
+		cell, row, table,
+		tdNum = 0,
+		trNum = 0,
+		isQuit = char == "w" || char == "q";
 
-    if (key == 9 || isMeta || isCtrl) {
-        hasInput = el && ["INPUT", "TEXTAREA"].indexOf(el.tagName) > -1;
+	if (key == 9 || isMeta || isCtrl) {
+		hasInput = el && ["INPUT", "TEXTAREA"].indexOf(el.tagName) > -1;
 
-        if (hasInput) {
-            cell = findParent(el, ["TD"]);
-            row = findParent(cell, ["TR"]);
-            table = findParent(row, ["TABLE"]);
+		if (hasInput) {
+			cell = findParent(el, ["TD"]);
+			row = findParent(cell, ["TR"]);
+			table = findParent(row, ["TABLE"]);
 
-            tdNum = cell.cellIndex;
-            trNum = row.rowIndex;
-        }
-    }
+			tdNum = cell.cellIndex;
+			trNum = row.rowIndex;
+		}
+	}
 
-    if (key == 9) {
-        if (hasInput) {
-            tdNum++;
-            if (tdNum >= row.cells.length - 1) {
-                tdNum = 0;
-                trNum++;
-            }
+	if (key == 9) {
+		if (hasInput) {
+			tdNum++;
+			if (tdNum >= row.cells.length - 1) {
+				tdNum = 0;
+				trNum++;
+			}
 
-            if (trNum >= table.rows.length) {
-                trNum = 1;
-            }
-        } else {
-            tdNum = 0;
-            trNum = 1;
-        }
+			if (trNum >= table.rows.length) {
+				trNum = 1;
+			}
+		} else {
+			tdNum = 0;
+			trNum = 1;
+		}
 
-        activeElement = findOne(
-            "input,textarea",
-            findOne("#dataTable").rows[trNum].cells[tdNum]
-        );
-        activeElement.focus();
-        event.preventDefault();
-    } else if (isMeta || isCtrl) {
-        hasInput = el && ["INPUT", "TEXTAREA"].indexOf(el.tagName) > -1;
+		activeElement = findOne(
+			"input,textarea",
+			findOne("#dataTable").rows[trNum].cells[tdNum]
+		);
+		activeElement.focus();
+		event.preventDefault();
+	} else if (isMeta || isCtrl) {
+		hasInput = el && ["INPUT", "TEXTAREA"].indexOf(el.tagName) > -1;
 
-        if (hasInput) {
-            cell = findParent(el, ["TD"]);
-            row = findParent(cell, ["TR"]);
-            table = findParent(row, ["TABLE"]);
+		if (hasInput) {
+			cell = findParent(el, ["TD"]);
+			row = findParent(cell, ["TR"]);
+			table = findParent(row, ["TABLE"]);
 
-            tdNum = cell.cellIndex;
-            trNum = row.rowIndex;
-        }
+			tdNum = cell.cellIndex;
+			trNum = row.rowIndex;
+		}
 
-        switch (true) {
-            case char == 's':
-                callbacks.save();
-                event.preventDefault();
-                break;
+		switch (true) {
+			case char == 's':
+				callbacks.save();
+				event.preventDefault();
+				break;
 
-            case isQuit:
-                callbacks.close();
-                event.preventDefault();
-                break;
+			case isQuit:
+				callbacks.close();
+				event.preventDefault();
+				break;
 
-            case (key == 8 || key == 46) && hasInput:
-                callbacks.remove(el);
-                event.preventDefault();
-                break;
+			case (key == 8 || key == 46) && hasInput:
+				callbacks.remove(el);
+				event.preventDefault();
+				break;
 
-            case (key == 107 || key == 187) && hasInput:
-                callbacks.add(el);
-                event.preventDefault();
-                break;
+			case (key == 107 || key == 187) && hasInput:
+				callbacks.add(el);
+				event.preventDefault();
+				break;
 
-            case key == 37 && hasInput:
-                if (cell && tdNum > 0 && isMeta) {
-                    activeElement = findOne(
-                        "input,textarea",
-                        table.rows[trNum].cells[tdNum - 1]
-                    );
-                    activeElement.focus();
-                    event.preventDefault();
-                }
-                break;
+			case key == 37 && hasInput:
+				if (cell && tdNum > 0 && isMeta) {
+					activeElement = findOne(
+						"input,textarea",
+						table.rows[trNum].cells[tdNum - 1]
+					);
+					activeElement.focus();
+					event.preventDefault();
+				}
+				break;
 
-            case key == 39 && hasInput:
-                if (isMeta && cell && tdNum < row.cells.length - 1) {
-                    activeElement = findOne(
-                        "input,textarea",
-                        table.rows[trNum].cells[tdNum + 1]
-                    );
-                    activeElement.focus();
-                    event.preventDefault();
-                }
-                break;
+			case key == 39 && hasInput:
+				if (isMeta && cell && tdNum < row.cells.length - 1) {
+					activeElement = findOne(
+						"input,textarea",
+						table.rows[trNum].cells[tdNum + 1]
+					);
+					activeElement.focus();
+					event.preventDefault();
+				}
+				break;
 
-            case key == 38 && hasInput:
-                if (isMeta && row && row.rowIndex > 1) {
-                    activeElement = findOne(
-                        "input,textarea",
-                        table.rows[trNum - 1].cells[tdNum]
-                    );
-                    activeElement.focus();
-                    event.preventDefault();
-                }
-                break;
+			case key == 38 && hasInput:
+				if (isMeta && row && row.rowIndex > 1) {
+					activeElement = findOne(
+						"input,textarea",
+						table.rows[trNum - 1].cells[tdNum]
+					);
+					activeElement.focus();
+					event.preventDefault();
+				}
+				break;
 
-            case key == 40 && hasInput:
-                if (isMeta && row && row.rowIndex < table.rows.length - 1) {
-                    activeElement = findOne(
-                        "input,textarea",
-                        table.rows[trNum + 1].cells[tdNum]
-                    );
-                    activeElement.focus();
-                    event.preventDefault();
-                }
-        }
-    }
+			case key == 40 && hasInput:
+				if (isMeta && row && row.rowIndex < table.rows.length - 1) {
+					activeElement = findOne(
+						"input,textarea",
+						table.rows[trNum + 1].cells[tdNum]
+					);
+					activeElement.focus();
+					event.preventDefault();
+				}
+		}
+	}
 });
 
-var sortedLangs = data.languages.filter(function (lang) {
-    return (lang != "en");
-});
-sortedLangs.sort(function (a, b) {
-    return knownLanguages[a] < knownLanguages[b];
-});
-sortedLangs.unshift("en");
+xhr("data", function (_, resp) {
+	data = resp;
 
-data.languages = sortedLangs;
-[].push.apply(displayedLanguages, data.languages);
+	sortedLangs = data.languages.filter(function (lang) {
+		return (lang != "en");
+	});
+	sortedLangs.sort(function (a, b) {
+		return knownLanguages[a] < knownLanguages[b];
+	});
+	sortedLangs.unshift("en");
 
-if (data.format == "xml") {
-    findOne("#ToXliffMessage").style.display = "";
-}
+	data.languages = sortedLangs;
+	[].push.apply(displayedLanguages, data.languages);
 
-findOne("#messages").className = "flash-message";
-findOne("#messages").innerHTML = "";
+	if (data.format == "xml") {
+		findOne("#ToXliffMessage").style.display = "";
+	}
 
-renderState(data);
+	findOne("#messages").className = "flash-message";
+	findOne("#messages").innerHTML = "";
+
+	renderState(data);
+})

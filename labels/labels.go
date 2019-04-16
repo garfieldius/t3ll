@@ -1,20 +1,10 @@
-package file
+// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// This is free software; it is provided under the terms of the MIT License
+// See the file LICENSE or <https://opensource.org/licenses/MIT> for details
 
-/*
- * Copyright 2016 Georg Großberger
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Package labels offes types and functions to load and save XLIFF v1 and
+// TYPO3 locallang XML files
+package labels
 
 import (
 	"encoding/xml"
@@ -26,62 +16,65 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/garfieldius/t3ll/log"
 	"github.com/kr/pretty"
+
+	"github.com/garfieldius/t3ll/log"
 )
 
-type XmlLayout string
+// XMLType sets the type of XML schema a file has
+type XMLType string
 
 const (
-	XmlXliff  XmlLayout = "xlf"
-	XmlLegacy XmlLayout = "xml"
+	// XMLXliffv1 is the new XLIF schema
+	XMLXliffv1 XMLType = "xlf"
+	// XMLLegacy is the old TYPO3 schema
+	XMLLegacy XMLType = "xml"
 )
 
-var (
-	xliffLangPrefix = regexp.MustCompile(`^[a-z]{2,3}\.`)
-	from            LangFile
-)
+var xliffLangPrefix = regexp.MustCompile(`^[a-z]{2,3}\.`)
 
+// New create a new Labels object for the given file
+// That file should not exist yet, because its content will
+// be overwritten upon the first save
 func New(name string) (*Labels, error) {
 	l := Labels{
-		FromFile: name,
-		Langs:    []string{"en"},
+		FromFile:  name,
+		Languages: []string{"en"},
 		Data: []*Label{{
-			Id: "new.1",
-			Trans: []*Translation{{
-				Lng:     "en",
-				Content: "",
+			ID: "new.1",
+			Translations: []*Translation{{
+				Language: "en",
+				Content:  "",
 			}},
 		}},
 	}
 
 	switch {
 	case strings.HasSuffix(name, ".xml"):
-		l.Type = XmlLegacy
+		l.Type = XMLLegacy
 		log.Msg("Using legacy XML for %s", name)
 		break
 	case strings.HasSuffix(name, ".xlf") || strings.HasSuffix(name, ".xlif") || strings.HasSuffix(name, ".xliff"):
-		l.Type = XmlXliff
+		l.Type = XMLXliffv1
 		log.Msg("Using XLIF for %s", name)
-
 		base := path.Base(name)
 		if xliffLangPrefix.MatchString(base) {
 			lang := base[0:strings.Index(base, ".")]
-			l.Langs = append(l.Langs, lang)
-			l.Data[0].Trans = append(l.Data[0].Trans, &Translation{Lng: lang, Content: ""})
+			l.Languages = append(l.Languages, lang)
+			l.Data[0].Translations = append(l.Data[0].Translations, &Translation{Language: lang, Content: ""})
 		}
 		break
-
 	default:
-		return nil, errors.New("Invalid file suffix")
+		return nil, errors.New("invalid file suffix")
 	}
 
 	return &l, nil
 }
 
+// Open creates a new Labels object with the content of the given file
 func Open(src string) (*Labels, error) {
 	if len(src) < 4 {
-		return nil, errors.New("Filename cannot have less than 4 chars")
+		return nil, errors.New("filename cannot have less than 4 chars")
 	}
 
 	abs, err := filepath.Abs(src)
@@ -109,8 +102,7 @@ func Open(src string) (*Labels, error) {
 		if err != nil {
 			return nil, err
 		}
-		tree.Src = abs
-		from = tree
+		tree.SourceFile = abs
 		log.Msg("Unmarshaled %s into %# v", abs, pretty.Formatter(tree))
 		return tree.Labels(), nil
 
@@ -123,17 +115,17 @@ func Open(src string) (*Labels, error) {
 		}
 
 		name := filepath.Base(abs)
-		xlif.Src = abs
+		xlif.SourceFile = abs
 		all := &Xliff{
-			StartSrc: abs,
-			Files:    []*XliffRoot{xlif},
+			SourceFile: abs,
+			Files:      []*XliffRoot{xlif},
 		}
 
 		if xliffLangPrefix.MatchString(name) {
-			xlif.Lang = name[0:strings.Index(name, ".")]
+			xlif.Language = name[0:strings.Index(name, ".")]
 			name = name[strings.Index(name, ".")+1:]
 		} else {
-			xlif.Lang = "en"
+			xlif.Language = "en"
 		}
 
 		dir := filepath.Dir(abs)
@@ -174,41 +166,44 @@ func Open(src string) (*Labels, error) {
 
 			n := filepath.Base(targetPath)
 			if xliffLangPrefix.MatchString(n) {
-				xlif.Lang = n[0:strings.Index(n, ".")]
+				xlif.Language = n[0:strings.Index(n, ".")]
 			} else {
-				xlif.Lang = "en"
+				xlif.Language = "en"
 			}
 
-			xlif.Src = targetPath
+			xlif.SourceFile = targetPath
 
 			all.Files = append(all.Files, xlif)
 		}
 
 		log.Msg("Marshalled Xlif into %# v", pretty.Formatter(all))
-		from = all
 		return all.Labels(), nil
 	}
 
 	return nil, errors.New("Cannot read file " + src)
 }
 
+// LangFile describes a reader for Labels from a XML source
 type LangFile interface {
 	Labels() *Labels
 }
 
+// Labels is the root object of all translations
 type Labels struct {
-	Type     XmlLayout `json:"format"`
-	FromFile string    `json:"-"`
-	Langs    []string  `json:"languages"`
-	Data     []*Label  `json:"labels"`
+	Type      XMLType  `json:"format"`
+	FromFile  string   `json:"-"`
+	Languages []string `json:"languages"`
+	Data      []*Label `json:"labels"`
 }
 
+// Label is a single label, containing one or more translations
 type Label struct {
-	Id    string         `json:"id"`
-	Trans []*Translation `json:"trans"`
+	ID           string         `json:"id"`
+	Translations []*Translation `json:"trans"`
 }
 
+// Translation is the text of a label in the given language
 type Translation struct {
-	Content string `json:"content"`
-	Lng     string `json:"lng"`
+	Content  string `json:"content"`
+	Language string `json:"lng"`
 }

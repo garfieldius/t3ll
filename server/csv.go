@@ -1,34 +1,26 @@
+// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// This is free software; it is provided under the terms of the MIT License
+// See the file LICENSE or <https://opensource.org/licenses/MIT> for details
+
 package server
 
-/*
- * Copyright 2016 Georg Großberger
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// This is free software; it is provided under the terms of the MIT License
+// See the file LICENSE or <https://opensource.org/licenses/MIT> for details
 
 import (
 	"encoding/csv"
 	"io"
 	"sort"
 
-	"github.com/garfieldius/t3ll/file"
+	"github.com/garfieldius/t3ll/labels"
 )
 
-func writeCsv(src *file.Labels, to io.Writer) error {
+func writeCsv(src *labels.Labels, to io.Writer) error {
 	w := csv.NewWriter(to)
 	codes := make([]string, 0)
 
-	for _, lang := range src.Langs {
+	for _, lang := range src.Languages {
 		if lang != "en" {
 			codes = append(codes, lang)
 		}
@@ -36,15 +28,14 @@ func writeCsv(src *file.Labels, to io.Writer) error {
 
 	sort.Strings(codes)
 	codes = append([]string{"en"}, codes...)
-
 	w.Write(append([]string{"key"}, codes...))
 
 	for _, label := range src.Data {
-		row := []string{label.Id}
+		row := []string{label.ID}
 
 		for _, c := range codes {
-			for _, t := range label.Trans {
-				if t.Lng == c {
+			for _, t := range label.Translations {
+				if t.Language == c {
 					row = append(row, t.Content)
 				}
 			}
@@ -59,12 +50,12 @@ func writeCsv(src *file.Labels, to io.Writer) error {
 	return nil
 }
 
-func readCsv(from io.Reader, mode string) error {
+func readCsv(from io.Reader, data *labels.Labels, mode string) (*labels.Labels, error) {
 	r := csv.NewReader(from)
-	newData := new(file.Labels)
+	newData := new(labels.Labels)
 	newData.FromFile = data.FromFile
 	newData.Type = data.Type
-	newData.Data = make([]*file.Label, 0)
+	newData.Data = make([]*labels.Label, 0)
 
 	for {
 		row, err := r.Read()
@@ -72,24 +63,24 @@ func readCsv(from io.Reader, mode string) error {
 			if err == io.EOF {
 				break
 			} else {
-				return err
+				return nil, err
 			}
 		}
 
-		if len(newData.Langs) == 0 {
-			newData.Langs = row[1:]
+		if len(newData.Languages) == 0 {
+			newData.Languages = row[1:]
 		} else {
-			l := new(file.Label)
-			l.Id = row[0]
-			l.Trans = make([]*file.Translation, 0, len(newData.Langs))
+			l := new(labels.Label)
+			l.ID = row[0]
+			l.Translations = make([]*labels.Translation, 0, len(newData.Languages))
 
 			for i, c := range row[1:] {
 				if c == "" {
 					continue
 				}
-				l.Trans = append(l.Trans, &file.Translation{
-					Lng:     newData.Langs[i],
-					Content: c,
+				l.Translations = append(l.Translations, &labels.Translation{
+					Language: newData.Languages[i],
+					Content:  c,
 				})
 			}
 
@@ -97,21 +88,23 @@ func readCsv(from io.Reader, mode string) error {
 		}
 	}
 
-	if mode == "replace" {
-		data = newData
-	} else {
-		data = mergeLabels(data, newData)
+	if mode != "replace" {
+		newData = mergeLabels(data, newData)
 	}
 
-	return file.Save(data)
+	if err := newData.Save(); err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }
 
-func mergeLabels(a, b *file.Labels) *file.Labels {
-	res := &file.Labels{
-		Langs:    []string{"en"},
-		Data:     make([]*file.Label, 0),
-		Type:     a.Type,
-		FromFile: a.FromFile,
+func mergeLabels(a, b *labels.Labels) *labels.Labels {
+	res := &labels.Labels{
+		Languages: []string{"en"},
+		Data:      make([]*labels.Label, 0),
+		Type:      a.Type,
+		FromFile:  a.FromFile,
 	}
 
 	if b.Type != "" {
@@ -122,16 +115,16 @@ func mergeLabels(a, b *file.Labels) *file.Labels {
 		res.FromFile = b.FromFile
 	}
 
-	for _, l := range a.Langs {
+	for _, l := range a.Languages {
 		if l != "en" {
-			res.Langs = append(res.Langs, l)
+			res.Languages = append(res.Languages, l)
 		}
 	}
 
-	for _, l := range b.Langs {
+	for _, l := range b.Languages {
 		found := false
 
-		for _, la := range a.Langs {
+		for _, la := range a.Languages {
 			if la == l {
 				found = true
 				break
@@ -139,46 +132,46 @@ func mergeLabels(a, b *file.Labels) *file.Labels {
 		}
 
 		if !found {
-			res.Langs = append(res.Langs, l)
+			res.Languages = append(res.Languages, l)
 		}
 	}
 
 	for _, la := range a.Data {
-		ln := &file.Label{
-			Id:    la.Id,
-			Trans: make([]*file.Translation, 0),
+		ln := &labels.Label{
+			ID:           la.ID,
+			Translations: make([]*labels.Translation, 0),
 		}
 
-		for _, ta := range la.Trans {
-			tn := &file.Translation{
-				Lng:     ta.Lng,
-				Content: ta.Content,
+		for _, ta := range la.Translations {
+			tn := &labels.Translation{
+				Language: ta.Language,
+				Content:  ta.Content,
 			}
 
-			ln.Trans = append(ln.Trans, tn)
+			ln.Translations = append(ln.Translations, tn)
 		}
 
 		res.Data = append(res.Data, ln)
 	}
 
 	for i, lb := range b.Data {
-		var ln *file.Label
+		var ln *labels.Label
 
 		for _, la := range res.Data {
-			if la.Id == lb.Id {
+			if la.ID == lb.ID {
 				ln = lb
 				break
 			}
 		}
 
 		if ln == nil {
-			ln = &file.Label{
-				Id:    lb.Id,
-				Trans: make([]*file.Translation, 0),
+			ln = &labels.Label{
+				ID:           lb.ID,
+				Translations: make([]*labels.Translation, 0),
 			}
 
 			old := res.Data
-			res.Data = make([]*file.Label, 0)
+			res.Data = make([]*labels.Label, 0)
 			k := 0
 			added := false
 
@@ -197,10 +190,10 @@ func mergeLabels(a, b *file.Labels) *file.Labels {
 			}
 		}
 
-		for _, tb := range lb.Trans {
+		for _, tb := range lb.Translations {
 			found := false
-			for _, tn := range ln.Trans {
-				if tn.Lng == tb.Lng {
+			for _, tn := range ln.Translations {
+				if tn.Language == tb.Language {
 					tn.Content = tb.Content
 					found = true
 					break
@@ -208,9 +201,9 @@ func mergeLabels(a, b *file.Labels) *file.Labels {
 			}
 
 			if !found {
-				ln.Trans = append(ln.Trans, &file.Translation{
-					Lng:     tb.Lng,
-					Content: tb.Content,
+				ln.Translations = append(ln.Translations, &labels.Translation{
+					Language: tb.Language,
+					Content:  tb.Content,
 				})
 			}
 		}
