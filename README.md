@@ -24,8 +24,8 @@ VERSION=1.0.0
 ARCH=linux_x64
 
 # Download binary and signature
-curl -sSLo t3ll https://github.com/lextoumbourou/goodhosts/releases/download/v${VERSION}/t3ll_${ARCH}
-curl -sSLo t3ll.sig https://github.com/lextoumbourou/goodhosts/releases/download/v${VERSION}/t3ll_${ARCH}.sig
+curl -sSLo t3ll https://github.com/garfieldius/t3ll/releases/download/v${VERSION}/t3ll_${ARCH}
+curl -sSLo t3ll.sig https://github.com/garfieldius/t3ll/releases/download/v${VERSION}/t3ll_${ARCH}.sig
 
 # Verify
 gpg --verify t3ll.sig.sig t3ll.sig
@@ -75,7 +75,7 @@ make dist
 
 ## Usage
 
-t3ll is called from the command line. It takes exactly one argument: the XML or Xlif file to edit.
+t3ll is called from the command line. It takes exactly one argument: the XML or Xliff file to edit.
 
 ```bash
 labels
@@ -104,6 +104,4 @@ When converting from XML to XLIF, the old .xml file will not be deleted, this mu
 
 ## License
 
-(c) 2019 Georg Großberger <contact@grossberger-ge.org>
-
-Released under the MIT License; see the file [LICENSE](LICENSE) for further information
+[MIT](https://opensource.org/licenses/MIT)
