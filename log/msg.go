@@ -6,7 +6,17 @@
 
 package log
 
+import (
+	"fmt"
+	"os"
+)
+
 // Msg does not do anything in default build
 func Msg(msg string, a ...interface{}) {
 	// Noop
+}
+
+// Err prints a message to stderr
+func Err(msg string, a ...interface{}) {
+	_, _ = fmt.Fprintln(os.Stderr, fmt.Sprintf(msg, a...))
 }

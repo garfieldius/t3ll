@@ -13,5 +13,10 @@ import (
 
 // Msg prints a message to stdout in debug build
 func Msg(msg string, a ...interface{}) {
-	fmt.Fprintln(os.Stdout, format("INFO", msg, a...))
+	_, _ = fmt.Fprintln(os.Stdout, format("INFO", msg, a...))
+}
+
+// Err prints a formatted message to stderr
+func Err(msg string, a ...interface{}) {
+	_, _ = fmt.Fprintln(os.Stderr, format("ERROR", msg, a...))
 }
