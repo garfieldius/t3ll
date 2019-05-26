@@ -28,7 +28,7 @@ curl -sSLo t3ll https://github.com/garfieldius/t3ll/releases/download/v${VERSION
 curl -sSLo t3ll.sig https://github.com/garfieldius/t3ll/releases/download/v${VERSION}/t3ll_${ARCH}.sig
 
 # Verify
-gpg --verify t3ll.sig.sig t3ll.sig
+gpg --verify t3ll.sig t3ll
 
 # Install
 mv t3ll /usr/local/bin
