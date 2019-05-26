@@ -13,32 +13,28 @@ const inline = require("./scripts/inline");
 const chtml = require("./scripts/compress-html");
 const wrap = require("./scripts/wrap");
 const when = require("gulp-if");
-const {pipeline} = require("stream");
 const isProd = process.env.NODE_ENV === "production";
 
 gulp.task("css", () => {
-	return pipeline(
-		gulp.src("scss/styles.scss"),
-		sass(),
-		rename("styles.css"),
-		when(isProd, csso()),
-		gulp.dest("./build/assets/")
-	)
+	return gulp.src("scss/styles.scss")
+		.pipe(sass())
+		.pipe(rename("styles.css"))
+		.pipe(when(isProd, csso()))
+		.pipe(gulp.dest("./build/assets/"))
 });
 
 gulp.task("js", () => {
-	return pipeline(
-		gulp.src([
+	return gulp.src([
 			"js/globals.js",
 			"js/dom.js",
 			"js/xhr.js",
 			"js/render.js",
 			"js/callbacks.js",
 			"js/_init.js"
-		]),
-		concat("scripts.js"),
-		wrap(),
-		when(isProd, uglify({
+		])
+		.pipe(concat("scripts.js"))
+		.pipe(wrap())
+		.pipe(when(isProd, uglify({
 			mangle: {
 				toplevel: true
 			},
@@ -53,18 +49,15 @@ gulp.task("js", () => {
 			output: {
 				comments: false
 			}
-		})),
-		gulp.dest("./build/assets/")
-	);
+		})))
+		.pipe(gulp.dest("./build/assets/"))
 });
 
 gulp.task("html", gulp.series(gulp.parallel("css", "js"), () => {
-	return pipeline(
-		gulp.src(["templates/*.html"]),
-		inline(),
-		when(isProd, chtml()),
-		gulp.dest("./build/")
-	);
+	return gulp.src(["templates/*.html"])
+		.pipe(inline())
+		.pipe(when(isProd, chtml()))
+		.pipe(gulp.dest("./build/"))
 }));
 
 gulp.task("default", gulp.parallel("html"));
