@@ -138,6 +138,10 @@ window.addEventListener("keydown", function (event) {
 xhr("data", function (_, resp) {
 	data = resp;
 
+	window.addEventListener("unload", function () {
+		xhr("quit");
+	});
+
 	sortedLangs = data.languages.filter(function (lang) {
 		return (lang != "en");
 	});

@@ -24,6 +24,7 @@ var (
 type handler struct {
 	state *labels.Labels
 	mu    *sync.Mutex
+	quitSig chan struct{}
 }
 
 func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +40,10 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case r.Method == "GET" && r.URL.Path == "/":
 		d.body = html
 		d.ctype = "text/html"
+		break
+	case r.Method == "GET" && r.URL.Path == "/quit":
+		log.Msg("Received quit signal")
+		h.quitSig <- struct{}{}
 		break
 	case r.Method == "GET" && r.URL.Path == "/csv":
 		buf := new(bytes.Buffer)

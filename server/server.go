@@ -25,7 +25,7 @@ type Server struct {
 }
 
 // Start creates a http server listener
-func (s *Server) Start(state *labels.Labels) error {
+func (s *Server) Start(state *labels.Labels, quitSig chan struct{}) error {
 	var l net.Listener
 	var err error
 
@@ -46,7 +46,7 @@ func (s *Server) Start(state *labels.Labels) error {
 	}
 
 	s.srv = &http.Server{}
-	s.srv.Handler = handler{state: state, mu: new(sync.Mutex)}
+	s.srv.Handler = handler{state: state, quitSig: quitSig, mu: new(sync.Mutex)}
 	s.Done = make(chan error)
 
 	go func() {

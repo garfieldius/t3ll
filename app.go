@@ -27,7 +27,8 @@ type App struct {
 func (a *App) Run(state *labels.Labels) error {
 	s := server.Server{}
 	b := browser.Browser{}
-	if err := s.Start(state); err != nil {
+	quitSig := make(chan struct{})
+	if err := s.Start(state, quitSig); err != nil {
 		return err
 	}
 	if err := b.Start("http://" + s.Host + "/"); err != nil {
@@ -39,6 +40,7 @@ func (a *App) Run(state *labels.Labels) error {
 	signal.Notify(cancel, os.Interrupt)
 
 	select {
+	case <-quitSig:
 	case <-cancel:
 		s.Stop()
 		b.Stop()
@@ -58,6 +60,8 @@ func (a *App) Run(state *labels.Labels) error {
 		s.Stop()
 		return nil
 	}
+
+	return nil
 }
 
 // Init will try to find a file to edit based on
