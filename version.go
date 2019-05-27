@@ -7,7 +7,7 @@ package main
 // Version defines the current version of t3ll
 var Version string
 
-const helpText = `t3ll - TYPO3 LL Editor %s
+const helpText = `t3ll - TYPO3 Locallang Editor %s
 
 Usage: t3ll <filename>|help|version
 
@@ -23,7 +23,7 @@ help:    Print this help text
 version: Print version and license
 `
 
-const versionText = `t3ll - TYPO3 LL Editor %s
+const versionText = `t3ll - TYPO3 Locallang Editor %s
 
 Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
 
