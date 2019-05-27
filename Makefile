@@ -1,15 +1,17 @@
 
-NODE_ENV = development
-BUILDFLAGS = -tags debug -ldflags "-X main.Version=master@$(shell git rev-parse --short HEAD) -X github.com/garfieldius/t3ll/server.Dir=$(shell pwd)"
+NODE_ENV = production
+BUILDFLAGS = -ldflags "-w -s -X main.Version=$(shell git tag -l | sort | tail -n 1)"
 
-ifneq ($(findstring $(MAKECMDGOALS), dist),)
-    NODE_ENV = production
-    BUILDFLAGS = -ldflags "-w -s -X main.Version=$(shell git tag -l | sort | tail -n 1)"
+ifneq ($(findstring $(MAKECMDGOALS), debug),)
+	NODE_ENV = development
+	BUILDFLAGS = -tags debug -ldflags "-X main.Version=master@$(shell git rev-parse --short HEAD) -X github.com/garfieldius/t3ll/server.Dir=$(shell pwd)"
 endif
 
 .PHONY: build
-build: frontend/build/index.html
-	go build $(BUILDFLAGS)
+build: t3ll
+
+.PHONY: debug
+debug: t3ll
 
 .PHONY: clean
 clean:
@@ -18,11 +20,14 @@ clean:
 	rm -f server/html.go
 
 .PHONY: install
-install: frontend/build/index.html
-	go install $(BUILDFLAGS)
+install: t3ll
+	mv t3ll /usr/local/bin/t3ll
 
 .PHONY: dist
 dist: dist/t3ll_linux_x64.sig dist/t3ll_macosx_x64.sig dist/t3ll_windows_x64.exe.sig
+
+t3ll: frontend/build/index.html
+	go build $(BUILDFLAGS)
 
 frontend/build/index.html: frontend/node_modules/.bin/gulp
 	cd frontend; NODE_ENV=$(NODE_ENV) yarn run gulp
