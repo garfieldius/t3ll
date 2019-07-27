@@ -42,11 +42,13 @@ func (a *App) Run(state *labels.Labels) error {
 	select {
 	case <-quitSig:
 	case <-cancel:
+		log.Msg("Received quit signal")
 		s.Stop()
 		b.Stop()
 		return nil
 
 	case err := <-s.Done:
+		log.Msg("Server quit, stop browser and quit")
 		if err != nil {
 			log.Err("Server stopped with error: %s", err)
 		}
@@ -54,6 +56,7 @@ func (a *App) Run(state *labels.Labels) error {
 		return nil
 
 	case err := <-b.Done:
+		log.Msg("Browser quit, stop server and quit")
 		if err != nil {
 			log.Err("Browser stopped with error: %s", err)
 		}

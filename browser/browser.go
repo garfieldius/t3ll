@@ -31,6 +31,7 @@ func (b *Browser) Start(url string) error {
 	cmd := exec.CommandContext(ctx, bin, "--disable-background-mode", "--disable-plugins", "--disable-plugins-discovery", "--reset-variation-state", "--single-tab-mode", "--app="+url)
 	err = cmd.Start()
 	if err != nil {
+		log.Err("Did not start: %s", err)
 		cancel()
 		return err
 	}
@@ -38,7 +39,10 @@ func (b *Browser) Start(url string) error {
 	b.Done = make(chan error)
 
 	go func() {
-		if err := cmd.Wait(); err != nil && !cmd.ProcessState.Success() {
+		err := cmd.Wait()
+		log.Msg("Finished browser process with %s", err)
+		if err != nil && !cmd.ProcessState.Success() {
+			log.Err("Browser quit unexpectedly")
 			b.Done <- err
 		} else {
 			b.Done <- nil
