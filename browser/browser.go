@@ -44,8 +44,6 @@ func (b *Browser) Start(url string) error {
 		if err != nil && !cmd.ProcessState.Success() {
 			log.Err("Browser quit unexpectedly")
 			b.Done <- err
-		} else {
-			b.Done <- nil
 		}
 	}()
 
