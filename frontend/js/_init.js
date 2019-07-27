@@ -161,4 +161,16 @@ xhr("data", function (_, resp) {
 	findOne("#messages").innerHTML = "";
 
 	renderState(data);
+
+	function heartbeat() {
+		xhr("hb", function (err, resp) {
+			if (err || !resp || !resp.success) {
+				showMessage("t3ll does not seem to be running. Close and reopen this window", true, true);
+			} else {
+				setTimeout(heartbeat, 800);
+			}
+		})
+	}
+
+	heartbeat();
 })

@@ -106,7 +106,7 @@ function renderState() {
 	setButtonVisiblity();
 }
 
-function showMessage(msg, isError) {
+function showMessage(msg, isError, persistent) {
 	var c = empty(findOne("#messages")),
 		m = tree({
 			name: "span",
@@ -117,13 +117,15 @@ function showMessage(msg, isError) {
 	c.appendChild(m);
 	m.classList.add("show");
 
-	setTimeout(function () {
-		m.classList.remove("show");
-
+	if (!persistent) {
 		setTimeout(function () {
-			c.removeChild(m);
-		}, 210)
-	}, 1000);
+			m.classList.remove("show");
+
+			setTimeout(function () {
+				c.removeChild(m);
+			}, 210)
+		}, 1000);
+	}
 }
 
 function setButtonVisiblity() {
