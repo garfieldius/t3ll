@@ -26,7 +26,7 @@ install: t3ll
 .PHONY: dist
 dist: dist/t3ll_linux_x64.sig dist/t3ll_macosx_x64.sig dist/t3ll_windows_x64.exe.sig
 
-t3ll: frontend/build/index.html
+t3ll: server/html.go frontend/build/index.html
 	go build $(BUILDFLAGS)
 
 frontend/build/index.html: frontend/node_modules/.bin/gulp
