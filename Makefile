@@ -21,7 +21,7 @@ clean:
 
 .PHONY: install
 install: t3ll
-	mv t3ll /usr/local/bin/t3ll
+	install -m 0755 t3ll /usr/local/bin/
 
 .PHONY: dist
 dist: dist/t3ll_linux_x64.sig dist/t3ll_macosx_x64.sig dist/t3ll_windows_x64.exe.sig
