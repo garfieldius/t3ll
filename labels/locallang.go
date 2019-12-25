@@ -58,10 +58,11 @@ func (l *T3Label) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 }
 
 // Labels returns all Labels of a XML
-func (t T3Root) Labels() *Labels {
+func (t *T3Root) Labels() *Labels {
 	data := &Labels{
 		Type:      XMLLegacy,
 		FromFile:  t.SourceFile,
+		SrcLegacy: t,
 		Languages: make([]string, 0),
 		Data:      make([]*Label, 0),
 	}

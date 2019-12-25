@@ -30,10 +30,16 @@ func (l *Labels) Save() error {
 		jobs = make([]converter, len(l.Languages))
 
 		for i, lang := range l.Languages {
-			jobs[i] = &XliffConverter{
+			c := &XliffConverter{
 				src:  l,
 				lang: lang,
 			}
+
+			if len(l.SrcXlif.Files) >= i+1 {
+				c.file = l.SrcXlif.Files[i].File
+			}
+
+			jobs[i] = c
 		}
 		break
 	}

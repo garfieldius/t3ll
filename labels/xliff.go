@@ -24,6 +24,7 @@ func (x *Xliff) Labels() *Labels {
 	codes := make(map[string]bool)
 	labels := &Labels{
 		Type:      XMLXliffv1,
+		SrcXlif:   x,
 		FromFile:  x.SourceFile,
 		Languages: make([]string, 0),
 		Data:      make([]*Label, 0),
@@ -136,6 +137,7 @@ type XliffUnit struct {
 // XliffConverter will convert a Xliff structure to struct Lables
 type XliffConverter struct {
 	src  *Labels
+	file *XliffFile
 	lang string
 }
 
@@ -149,6 +151,13 @@ func (c *XliffConverter) XML() LangFile {
 		Date:    time.Now().Format(time.RFC3339),
 		Body:    b,
 	}
+
+	if c.file != nil {
+		f.Header = c.file.Header
+		f.Orig = c.file.Orig
+		f.Name = c.file.Name
+	}
+
 	l := "en"
 
 	if c.lang != "en" {

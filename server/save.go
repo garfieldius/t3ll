@@ -11,20 +11,22 @@ import (
 	"github.com/garfieldius/t3ll/log"
 )
 
-func saveHandler(data []byte, format, f string, typ labels.XMLType) (*labels.Labels, error) {
+func saveHandler(data []byte, format string, cur *labels.Labels) (*labels.Labels, error) {
 	newData := new(labels.Labels)
 
 	if err := json.Unmarshal(data, newData); err != nil {
 		return nil, err
 	}
 
-	newData.FromFile = f
-	newData.Type = typ
+	newData.SrcXlif = cur.SrcXlif
+	newData.SrcLegacy = cur.SrcLegacy
+	newData.FromFile = cur.FromFile
+	newData.Type = cur.Type
 
-	if format == "xlif" {
+	if format == string(labels.XMLXliffv1) {
 		log.Msg("Converting to xliff")
 		newData.Type = labels.XMLXliffv1
-		newData.FromFile = f[:len(f)-3] + "xlf"
+		newData.FromFile = newData.FromFile[:len(newData.FromFile)-3] + "xlf"
 	}
 
 	if err := newData.Save(); err != nil {

@@ -56,6 +56,8 @@ func readCsv(from io.Reader, data *labels.Labels, mode string) (*labels.Labels, 
 	newData.FromFile = data.FromFile
 	newData.Type = data.Type
 	newData.Data = make([]*labels.Label, 0)
+	newData.SrcXlif = data.SrcXlif
+	newData.SrcLegacy = data.SrcLegacy
 
 	for {
 		row, err := r.Read()

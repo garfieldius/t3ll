@@ -192,6 +192,8 @@ type LangFile interface {
 type Labels struct {
 	Type      XMLType  `json:"format"`
 	FromFile  string   `json:"-"`
+	SrcXlif   *Xliff   `json:"-"`
+	SrcLegacy *T3Root  `json:"-"`
 	Languages []string `json:"languages"`
 	Data      []*Label `json:"labels"`
 }

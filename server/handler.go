@@ -23,8 +23,8 @@ var (
 )
 
 type handler struct {
-	state *labels.Labels
-	mu    *sync.Mutex
+	state   *labels.Labels
+	mu      *sync.Mutex
 	quitSig chan struct{}
 }
 
@@ -76,7 +76,7 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		break
 	case r.Method == "POST" && r.URL.Path == "/save":
 		src := []byte(r.FormValue("data"))
-		newState, err := saveHandler(src, r.FormValue("format"), h.state.FromFile, h.state.Type)
+		newState, err := saveHandler(src, r.FormValue("format"), h.state)
 		if err != nil {
 			log.Err("Cannot save data: %s", err)
 			d.body = saveError
