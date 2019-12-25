@@ -124,8 +124,10 @@ func Open(src string) (*Labels, error) {
 		if xliffLangPrefix.MatchString(name) {
 			xlif.Language = name[0:strings.Index(name, ".")]
 			name = name[strings.Index(name, ".")+1:]
+		} else if xlif.File.ToLang != "" {
+			xlif.Language = xlif.File.ToLang
 		} else {
-			xlif.Language = "en"
+			xlif.Language = xlif.File.SrcLang
 		}
 
 		dir := filepath.Dir(abs)
@@ -167,8 +169,10 @@ func Open(src string) (*Labels, error) {
 			n := filepath.Base(targetPath)
 			if xliffLangPrefix.MatchString(n) {
 				xlif.Language = n[0:strings.Index(n, ".")]
+			} else if xlif.File.ToLang != "" {
+				xlif.Language = xlif.File.ToLang
 			} else {
-				xlif.Language = "en"
+				xlif.Language = xlif.File.SrcLang
 			}
 
 			xlif.SourceFile = targetPath
