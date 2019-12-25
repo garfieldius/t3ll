@@ -13,7 +13,8 @@ window.addEventListener("keydown", function (event) {
 		key = event.which,
 		char = String.fromCharCode(key).toLowerCase(),
 		isCtrl = event.ctrlKey,
-		isMeta = event.metaKey || event.altKey,
+		isMeta = event.metaKey,
+		isAlt = event.altKey,
 		el = activeElement,
 		hasInput = false,
 		cell, row, table,
@@ -21,7 +22,7 @@ window.addEventListener("keydown", function (event) {
 		trNum = 0,
 		isQuit = char == "w" || char == "q";
 
-	if (key == 9 || isMeta || isCtrl) {
+	if (key == 9 || isMeta) {
 		hasInput = el && ["INPUT", "TEXTAREA"].indexOf(el.tagName) > -1;
 
 		if (hasInput) {
@@ -56,7 +57,7 @@ window.addEventListener("keydown", function (event) {
 		);
 		activeElement.focus();
 		event.preventDefault();
-	} else if (isMeta || isCtrl) {
+	} else if (isMeta || isCtrl || isAlt) {
 		hasInput = el && ["INPUT", "TEXTAREA"].indexOf(el.tagName) > -1;
 
 		if (hasInput) {
@@ -69,27 +70,27 @@ window.addEventListener("keydown", function (event) {
 		}
 
 		switch (true) {
-			case char == 's':
+			case char == 's' && (isMeta || isCtrl || isAlt):
 				callbacks.save();
 				event.preventDefault();
 				break;
 
-			case isQuit:
+			case isQuit && (isMeta || isCtrl || isAlt):
 				callbacks.close();
 				event.preventDefault();
 				break;
 
-			case (key == 8 || key == 46) && hasInput:
+			case (key == 8 || key == 46) && hasInput && (isMeta || isCtrl || isAlt):
 				callbacks.remove(el);
 				event.preventDefault();
 				break;
 
-			case (key == 107 || key == 187) && hasInput:
+			case (key == 107 || key == 187) && hasInput && isCtrl:
 				callbacks.add(el);
 				event.preventDefault();
 				break;
 
-			case key == 37 && hasInput:
+			case key == 37 && hasInput && isCtrl:
 				if (cell && tdNum > 0 && isMeta) {
 					activeElement = findOne(
 						"input,textarea",
@@ -100,7 +101,7 @@ window.addEventListener("keydown", function (event) {
 				}
 				break;
 
-			case key == 39 && hasInput:
+			case key == 39 && hasInput && isCtrl:
 				if (isMeta && cell && tdNum < row.cells.length - 1) {
 					activeElement = findOne(
 						"input,textarea",
@@ -111,7 +112,7 @@ window.addEventListener("keydown", function (event) {
 				}
 				break;
 
-			case key == 38 && hasInput:
+			case key == 38 && hasInput && isCtrl:
 				if (isMeta && row && row.rowIndex > 1) {
 					activeElement = findOne(
 						"input,textarea",
@@ -122,7 +123,7 @@ window.addEventListener("keydown", function (event) {
 				}
 				break;
 
-			case key == 40 && hasInput:
+			case key == 40 && hasInput && isCtrl:
 				if (isMeta && row && row.rowIndex < table.rows.length - 1) {
 					activeElement = findOne(
 						"input,textarea",
