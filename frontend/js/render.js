@@ -98,6 +98,19 @@ function renderState() {
 		rows.push(makeRow(label));
 	});
 
+	if (filterNonTranslated) {
+		rows = rows.map(function (row) {
+			row.hidden = row.sub.slice(1, -1).reduce(function (prev, cell) {
+				if (cell.hidden) {
+					return prev;
+				} else {
+					return ('' + cell.sub[0].txt).trim() + prev;
+				}
+			}, '') === '';
+			return row;
+		})
+	}
+
 	table.appendChild(tree({
 		name: "tbody",
 		sub: rows

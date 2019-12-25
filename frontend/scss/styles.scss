@@ -392,7 +392,8 @@ textarea.form-control {
 }
 
 .btn-toolbar {
-	margin-left: -5px;
+	margin-top: 6px;
+	margin-right: 10px;
 }
 
 .btn-group > .btn:first-child {
@@ -445,6 +446,7 @@ textarea.form-control {
 
 .module-docheader .module-docheader-bar-column-right {
 	float: right;
+	width: 400px;
 }
 
 .module-body {
@@ -663,4 +665,12 @@ tr:hover th .btn-group {
 	&.active {
 		display: block;
 	}
+}
+
+.pull-left {
+	float: left;
+}
+
+.pull-right {
+	float: right;
 }

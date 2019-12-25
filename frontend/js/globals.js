@@ -7,6 +7,7 @@ var
 	counter = 1,
 	displayedLanguages = [],
 	callbacks = {},
+	filterNonTranslated = false,
 	tainted = false,
 	knownLanguages = {
 		"en": "English",

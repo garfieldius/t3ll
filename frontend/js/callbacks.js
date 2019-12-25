@@ -3,6 +3,12 @@
 // See the labels LICENSE or <https://opensource.org/licenses/MIT> for details
 
 callbacks = {
+	filterNotTranslated: function () {
+		setTimeout(function () {
+			filterNonTranslated = !!findOne('[data-toggle=filterNotTranslated]').checked;
+			renderState();
+		}, 20);
+	},
 	setKey: function (input) {
 		tainted = true;
 		var row = findParent(input, ["TR"]);
@@ -106,8 +112,7 @@ callbacks = {
 		findOne("#FileSelectReplace").click();
 	},
 	csvDropdown: function () {
-		var cl = findOne("#CsvDropdown").classList;
-		cl[cl.contains("active") ? "remove" : "add"]("active");
+		findOne("#CsvDropdown").classList.toggle('active');
 	},
 	csvHide: function () {
 		findOne("#CsvDropdown").classList.remove("active");

@@ -43,7 +43,6 @@
 			class="module-docheader-bar module-docheader-bar-navigation t3js-module-docheader-bar t3js-module-docheader-bar-navigation" style="height: auto;">
 			<div class="module-docheader-bar-column-left">
 				<div class="form-inline">
-
 					<div class="form-group form-group-sm">
 						<select class="form-control" data-toggle="addLanguage" data-event="change" id="availableLanguages">
 						</select>
@@ -57,10 +56,13 @@
 				<input type="file" id="FileSelectReplace" accept="text/csv,text/comma-separated-values" data-toggle="uploadReplace">
 			</div>
 			<div class="module-docheader-bar-column-right">
-				<div class="btn-group main-buttons pull-left">
+				<div class="btn-group main-buttons pull-right">
 					<button class="btn btn-default" data-toggle="convert" id="ToXliffMessage" style="display:none">Convert to XLIFF</button>
 					<button class="btn btn-default" data-toggle="csvDropdown">CSV</button>
 					<button class="btn btn-default" data-toggle="save">Save</button>
+				</div>
+				<div class="btn-toolbar pull-right" role="toolbar">
+					<span class="flash-message show" id="messages"></span>
 				</div>
 			</div>
 		</div>
@@ -76,9 +78,10 @@
 				</div>
 			</div>
 			<div class="module-docheader-bar-column-right">
-				<div class="btn-toolbar" role="toolbar">
-					<span class="flash-message show" id="messages"></span>
-				</div>
+				<label>
+					<input type="checkbox" data-event="click" data-toggle="filterNotTranslated">
+					Show only not translated
+				</label>
 			</div>
 		</div>
 	</div>
