@@ -6,7 +6,8 @@ function renderState() {
 	var visibleLangs = empty(findOne("#visibleLanguages")),
 		selectLangs = empty(findOne("#availableLanguages")),
 		table = empty(findOne("#dataTable")),
-		headers = [], rows = [];
+		headers = [],
+		rows = [];
 
 	selectLangs.appendChild(tree({
 		name: "option",
@@ -78,6 +79,7 @@ function renderState() {
 			]
 		});
 	});
+
 	headers.push({
 		name: "th",
 		cls: "actions",
@@ -106,7 +108,7 @@ function renderState() {
 				} else {
 					return ('' + cell.sub[0].txt).trim() + prev;
 				}
-			}, '') === '';
+			}, '') !== '';
 			return row;
 		})
 	}
@@ -142,7 +144,12 @@ function showMessage(msg, isError, persistent) {
 }
 
 function setButtonVisiblity() {
-	var rows = findAll("tr", findOne("#dataTable tbody")), max = rows.length - 1;
+	var rows = findAll("tr", findOne("#dataTable tbody")),
+		max = rows.length - 1,
+		keys = data.labels.map(function (row) { return row.id; }),
+		sortedKeys = keys.slice(0).sort();
+
+	findOne('[data-toggle=sortLabels]').style.display = keys.join('') === sortedKeys.join('') ? 'none' : '';
 
 	rows.forEach(function (row, index) {
 		findAll("[data-toggle]", row).forEach(function (btn) {

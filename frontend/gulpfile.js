@@ -33,7 +33,7 @@ gulp.task("js", () => {
 			"js/_init.js"
 		])
 		.pipe(concat("scripts.js"))
-		.pipe(wrap())
+		.pipe(when(isProd, wrap()))
 		.pipe(when(isProd, uglify({
 			mangle: {
 				toplevel: true

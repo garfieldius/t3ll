@@ -34,6 +34,18 @@ callbacks = {
 		setButtonVisiblity();
 		serializeState();
 	},
+	sortLabels: function () {
+		data.labels.sort(function (a, b) {
+			if (a.id === b.id) {
+				return 0;
+			} else {
+				return a.id > b.id ? 1 : -1
+			}
+		});
+		renderState();
+		setButtonVisiblity();
+		serializeState();
+	},
 	add: function (btn) {
 		var row = findParent(btn, "TR"),
 			rowData = {
@@ -53,8 +65,8 @@ callbacks = {
 			row.parentNode.appendChild(newRow);
 		}
 		tainted = true;
-		setButtonVisiblity();
 		serializeState();
+		setButtonVisiblity();
 	},
 	remove: function (btn) {
 		var row = findParent(btn, "TR");
@@ -164,11 +176,12 @@ function runCallbacks(event, type) {
 			if (el.dataset && el.dataset["toggle"]) {
 				break;
 			}
+
 			el = el.parentNode;
 		}
 	}
 
-	if (el && !el.classList.contains("disabled") && el.dataset && el.dataset["toggle"]) {
+	if (el && (el.classList + "").indexOf("disabled") === -1 && el.dataset && el.dataset["toggle"]) {
 		if (!el.dataset["event"] || el.dataset["event"] == type) {
 			var cb = el.dataset["toggle"];
 
