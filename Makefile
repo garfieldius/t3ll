@@ -2,7 +2,7 @@
 NODE_ENV = production
 BUILDFLAGS = -ldflags "-w -s -X main.Version=$(shell git tag -l | sort | tail -n 1)"
 
-ifneq ($(findstring $(MAKECMDGOALS), debug),)
+ifneq ($(findstring debug,$(MAKECMDGOALS)),)
 	NODE_ENV = development
 	BUILDFLAGS = -tags debug -ldflags "-X main.Version=master@$(shell git rev-parse --short HEAD) -X github.com/garfieldius/t3ll/server.Dir=$(shell pwd)"
 endif
