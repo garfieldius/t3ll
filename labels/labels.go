@@ -183,9 +183,24 @@ func Open(src string) (*Labels, error) {
 	return nil, errors.New("Cannot read file " + src)
 }
 
+var identTest = regexp.MustCompile("\n[ \t]+<")
+
+// indentOfFile checks for the identation of the first tag
+func indentOfFile(filename string) string {
+	if data, err := ioutil.ReadFile(filename); err == nil {
+		for _, match := range identTest.FindAll(data, -1) {
+			if len(match) > 3 {
+				return string(match)[1 : len(match)-2]
+			}
+		}
+	}
+	return "    "
+}
+
 // LangFile describes a reader for Labels from a XML source
 type LangFile interface {
 	Labels() *Labels
+	IndentChar() string
 }
 
 // Labels is the root object of all translations

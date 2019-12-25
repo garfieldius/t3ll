@@ -57,6 +57,12 @@ func (l *T3Label) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// IndentChar determines the string for indentatio or
+// XML tags
+func (t *T3Root) IndentChar() string {
+	return indentOfFile(t.SourceFile)
+}
+
 // Labels returns all Labels of a XML
 func (t *T3Root) Labels() *Labels {
 	data := &Labels{

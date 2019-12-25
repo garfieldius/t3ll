@@ -63,7 +63,7 @@ func (l *Labels) Save() error {
 
 func doSave(d converter, done chan error) {
 	if langData := d.XML(); langData != nil {
-		buf, err := xml.MarshalIndent(langData, "", "    ")
+		buf, err := xml.MarshalIndent(langData, "", langData.IndentChar())
 		if err != nil {
 			done <- err
 			return

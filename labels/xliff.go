@@ -91,6 +91,12 @@ func (x *XliffRoot) Labels() *Labels {
 	return nil // Noop
 }
 
+// IndentChar determines the string for indentatio or
+// XML tags
+func (x *XliffRoot) IndentChar() string {
+	return indentOfFile(x.SourceFile)
+}
+
 // XliffFile is the actual root node of a Xliff document
 type XliffFile struct {
 	SrcLang string       `xml:"source-language,attr,omitempty"`
