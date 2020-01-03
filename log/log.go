@@ -1,10 +1,9 @@
-// Package log is a convenience wrapper around go's log and fmt packages
-// It is not, by intention, a sophisticated logging package
-
 // Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
 // This is free software; it is provided under the terms of the MIT License
 // See the file LICENSE or <https://opensource.org/licenses/MIT> for details
 
+// Package log is a convenience wrapper around go's log and fmt packages
+// It is not, by intention, a sophisticated logging package
 package log
 
 import (
