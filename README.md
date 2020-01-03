@@ -20,19 +20,18 @@ Example:
 # Import key
 gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 0D1F16703AB055AA
 
-VERSION=1.0.0
+VERSION=$(curl -sSL 'https://api.github.com/repos/garfieldius/t3ll/releases/latest' | jq -r '.tag_name')
 ARCH=linux_x64
 
 # Download binary and signature
-curl -sSLo t3ll https://github.com/garfieldius/t3ll/releases/download/v${VERSION}/t3ll_${ARCH}
-curl -sSLo t3ll.sig https://github.com/garfieldius/t3ll/releases/download/v${VERSION}/t3ll_${ARCH}.sig
+curl -sSLo t3ll https://github.com/garfieldius/t3ll/releases/download/${VERSION}/t3ll_${ARCH}
+curl -sSLo t3ll.sig https://github.com/garfieldius/t3ll/releases/download/${VERSION}/t3ll_${ARCH}.sig
 
 # Verify
 gpg --verify t3ll.sig t3ll
 
 # Install
-mv t3ll /usr/local/bin
-chmod +x /usr/local/bin/t3ll
+install -m 0755 t3ll /usr/local/bin/
 ```
 
 #### Building from source
@@ -62,15 +61,14 @@ cd ${GOPATH}/src/github.com/garfieldius/t3ll
 ... and use `make` to build it:
 
 ```bash
-# This will create a (debug) binary in the current directory
+# This will create a production binary in the current directory
 make
 
-# Install the (debug) binary into ${GOPATH}/bin
-make install
+# Build a debug binary. Has the same functions but VERY verbose logging to stdout
+make debug
 
-# This will create a release binary for Linux, Windows
-# and MacOS in the folder dist/
-make dist
+# Install the binary into /usr/local/bin
+make install
 ```
 
 ## Usage
