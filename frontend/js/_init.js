@@ -20,9 +20,11 @@ window.addEventListener("keydown", function (event) {
 		cell, row, table,
 		tdNum = 0,
 		trNum = 0,
-		isQuit = char == "w" || char == "q";
+		newActive,
+		isQuit = char == "w" || char == "q",
+		tries = 10000;
 
-	if (key == 9 || isMeta) {
+	if (key == 9 || isAlt) {
 		hasInput = el && ["INPUT", "TEXTAREA"].indexOf(el.tagName) > -1;
 
 		if (hasInput) {
@@ -35,26 +37,62 @@ window.addEventListener("keydown", function (event) {
 		}
 	}
 
+	function moveToNextCell() {
+		tdNum++;
+		if (tdNum >= row.cells.length - 1) {
+			tdNum = 0;
+			trNum++;
+		}
+
+		if (trNum >= table.rows.length) {
+			trNum = 1;
+		}
+	}
+
+	function isVisible(el) {
+		var td = findParent(el, ["TD"]), tr;
+
+		if (td && td.style.display !== "none") {
+			tr = findParent(td, ["TR"]);
+
+			if (tr && tr.style.display !== "none") {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	if (key == 9) {
 		if (hasInput) {
-			tdNum++;
-			if (tdNum >= row.cells.length - 1) {
-				tdNum = 0;
-				trNum++;
-			}
-
-			if (trNum >= table.rows.length) {
-				trNum = 1;
-			}
+			moveToNextCell();
 		} else {
 			tdNum = 0;
 			trNum = 1;
+		}
+
+		while (!newActive) {
+			newActive = findOne(
+				"input,textarea",
+				findOne("#dataTable").rows[trNum].cells[tdNum]
+			);
+
+			if (!isVisible(newActive)) {
+				newActive = null;
+				moveToNextCell();
+			}
+
+			if (!tries--) {
+				return;
+			}
 		}
 
 		activeElement = findOne(
 			"input,textarea",
 			findOne("#dataTable").rows[trNum].cells[tdNum]
 		);
+
+		activeElement = newActive;
 		activeElement.focus();
 		event.preventDefault();
 	} else if (isMeta || isCtrl || isAlt) {
@@ -75,63 +113,109 @@ window.addEventListener("keydown", function (event) {
 				event.preventDefault();
 				break;
 
-			case isQuit && (isMeta || isCtrl || isAlt):
-				callbacks.close();
-				event.preventDefault();
-				break;
-
-			case (key == 8 || key == 46) && hasInput && (isMeta || isCtrl || isAlt):
+			// Remove row
+			case (key == 8 || key == 46) && hasInput && isAlt:
 				callbacks.remove(el);
 				event.preventDefault();
 				break;
 
-			case (key == 107 || key == 187) && hasInput && isCtrl:
+			// Add row
+			case (key == 107 || key == 187) && hasInput && isAlt:
 				callbacks.add(el);
 				event.preventDefault();
 				break;
 
-			case key == 37 && hasInput && isCtrl:
-				if (cell && tdNum > 0 && isMeta) {
+			// Move left
+			case key == 37 && hasInput && isAlt && cell && tdNum > 0:
+				while (true) {
+					tdNum--;
+
+					if (tdNum < 0) {
+						return;
+					}
+
 					activeElement = findOne(
 						"input,textarea",
-						table.rows[trNum].cells[tdNum - 1]
+						row.cells[tdNum]
 					);
-					activeElement.focus();
-					event.preventDefault();
+
+					if (isVisible(activeElement)) {
+						break;
+					}
 				}
+
+				activeElement.focus();
+				event.preventDefault();
 				break;
 
-			case key == 39 && hasInput && isCtrl:
-				if (isMeta && cell && tdNum < row.cells.length - 1) {
+			// Move right
+			case key == 39 && hasInput && isAlt && cell && tdNum < row.cells.length - 1:
+				while (true) {
+					tdNum++;
+
+					// -1 because there is an additional column on the right!
+					if (tdNum >= row.cells.length - 1) {
+						return;
+					}
+
 					activeElement = findOne(
 						"input,textarea",
-						table.rows[trNum].cells[tdNum + 1]
+						row.cells[tdNum]
 					);
-					activeElement.focus();
-					event.preventDefault();
+
+					if (isVisible(activeElement)) {
+						break;
+					}
 				}
+
+				activeElement.focus();
+				event.preventDefault();
 				break;
 
-			case key == 38 && hasInput && isCtrl:
-				if (isMeta && row && row.rowIndex > 1) {
+			// Move up
+			case key == 38 && hasInput && isAlt && row && row.rowIndex > 1:
+				while (true) {
+					trNum--;
+
+					if (trNum < 0) {
+						return;
+					}
+
 					activeElement = findOne(
 						"input,textarea",
-						table.rows[trNum - 1].cells[tdNum]
+						table.rows[trNum].cells[tdNum]
 					);
-					activeElement.focus();
-					event.preventDefault();
+
+					if (isVisible(activeElement)) {
+						break;
+					}
 				}
+
+				activeElement.focus();
+				event.preventDefault();
 				break;
 
-			case key == 40 && hasInput && isCtrl:
-				if (isMeta && row && row.rowIndex < table.rows.length - 1) {
+			// Move down
+			case key == 40 && hasInput && isAlt && row && row.rowIndex < table.rows.length - 1:
+				while (true) {
+					trNum++;
+
+					if (trNum >= table.rows.length) {
+						return;
+					}
+
 					activeElement = findOne(
 						"input,textarea",
-						table.rows[trNum + 1].cells[tdNum]
+						table.rows[trNum].cells[tdNum]
 					);
-					activeElement.focus();
-					event.preventDefault();
+
+					if (isVisible(activeElement)) {
+						break;
+					}
 				}
+
+				activeElement.focus();
+				event.preventDefault();
 		}
 	}
 });
