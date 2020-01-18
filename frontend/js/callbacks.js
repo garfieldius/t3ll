@@ -45,6 +45,7 @@ callbacks = {
 		renderState();
 		setButtonVisiblity();
 		serializeState();
+		tainted = true;
 	},
 	add: function (btn) {
 		var row = findParent(btn, "TR"),
