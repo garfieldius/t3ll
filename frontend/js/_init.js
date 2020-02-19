@@ -10,21 +10,20 @@
 
 window.addEventListener("keydown", function (event) {
 	var
-		key = event.which,
-		char = String.fromCharCode(key).toLowerCase(),
+		keychar = (event.key + "").toLowerCase(),
 		isCtrl = event.ctrlKey,
 		isMeta = event.metaKey,
 		isAlt = event.altKey,
+		metaActive = isMac ? (isCtrl && event.shiftKey) : isAlt,
 		el = activeElement,
 		hasInput = false,
 		cell, row, table,
 		tdNum = 0,
 		trNum = 0,
 		newActive,
-		isQuit = char == "w" || char == "q",
 		tries = 10000;
 
-	if (key == 9 || isAlt) {
+	if (keychar === "tab" || isCtrl || isMeta || isAlt || metaActive) {
 		hasInput = el && ["INPUT", "TEXTAREA"].indexOf(el.tagName) > -1;
 
 		if (hasInput) {
@@ -49,6 +48,19 @@ window.addEventListener("keydown", function (event) {
 		}
 	}
 
+	function moveToPreviousCell() {
+		tdNum--;
+		if (tdNum < 0) {
+			tdNum = row.cells.length - 1;
+			trNum--;
+		}
+
+		if (trNum < 0) {
+			trNum = table.rows.length - 1;
+			tdNum = row.cells.length - 1;
+		}
+	}
+
 	function isVisible(el) {
 		var td = findParent(el, ["TD"]), tr;
 
@@ -63,7 +75,7 @@ window.addEventListener("keydown", function (event) {
 		return false;
 	}
 
-	if (key == 9) {
+	if (keychar === "tab" && !event.shiftKey) {
 		if (hasInput) {
 			moveToNextCell();
 		} else {
@@ -95,7 +107,40 @@ window.addEventListener("keydown", function (event) {
 		activeElement = newActive;
 		activeElement.focus();
 		event.preventDefault();
-	} else if (isMeta || isCtrl || isAlt) {
+	} else if (keychar === "tab" && event.shiftKey) {
+		if (hasInput) {
+			moveToPreviousCell();
+		} else {
+			trNum = table.rows.length - 1;
+			tdNum = row.cells.length - 1;
+		}
+
+		while (!newActive) {
+			newActive = findOne(
+				"input,textarea",
+				findOne("#dataTable").rows[trNum].cells[tdNum]
+			);
+
+			if (!isVisible(newActive)) {
+				newActive = null;
+				moveToNextCell();
+			}
+
+			if (!tries--) {
+				return;
+			}
+		}
+
+		activeElement = findOne(
+			"input,textarea",
+			findOne("#dataTable").rows[trNum].cells[tdNum]
+		);
+
+		activeElement = newActive;
+		activeElement.focus();
+		event.preventDefault();
+
+	} else if (isMeta || isCtrl || isAlt || metaActive) {
 		hasInput = el && ["INPUT", "TEXTAREA"].indexOf(el.tagName) > -1;
 
 		if (hasInput) {
@@ -108,25 +153,26 @@ window.addEventListener("keydown", function (event) {
 		}
 
 		switch (true) {
-			case char == 's' && (isMeta || isCtrl || isAlt):
+			// Save document
+			case keychar === 's' && (isMeta || isCtrl || isAlt):
 				callbacks.save();
 				event.preventDefault();
 				break;
 
 			// Remove row
-			case (key == 8 || key == 46) && hasInput && isAlt:
+			case (keychar === "backspace" || keychar === "delete") && hasInput && metaActive:
 				callbacks.remove(el);
 				event.preventDefault();
 				break;
 
 			// Add row
-			case (key == 107 || key == 187) && hasInput && isAlt:
+			case keychar === "+" && hasInput && metaActive:
 				callbacks.add(el);
 				event.preventDefault();
 				break;
 
 			// Move left
-			case key == 37 && hasInput && isAlt && cell && tdNum > 0:
+			case keychar === "arrowleft" && hasInput && metaActive && cell && tdNum > 0:
 				while (true) {
 					tdNum--;
 
@@ -149,7 +195,7 @@ window.addEventListener("keydown", function (event) {
 				break;
 
 			// Move right
-			case key == 39 && hasInput && isAlt && cell && tdNum < row.cells.length - 1:
+			case keychar === "arrowright" && hasInput && metaActive && cell && tdNum < row.cells.length - 1:
 				while (true) {
 					tdNum++;
 
@@ -173,7 +219,7 @@ window.addEventListener("keydown", function (event) {
 				break;
 
 			// Move up
-			case key == 38 && hasInput && isAlt && row && row.rowIndex > 1:
+			case keychar === "arrowup" && hasInput && metaActive && row && row.rowIndex > 1:
 				while (true) {
 					trNum--;
 
@@ -196,7 +242,7 @@ window.addEventListener("keydown", function (event) {
 				break;
 
 			// Move down
-			case key == 40 && hasInput && isAlt && row && row.rowIndex < table.rows.length - 1:
+			case keychar === "arrowdown" && hasInput && metaActive && row && row.rowIndex < table.rows.length - 1:
 				while (true) {
 					trNum++;
 

@@ -9,6 +9,7 @@ var
 	callbacks = {},
 	filterNonTranslated = false,
 	tainted = false,
+	isMac = /^Mac/i.test(navigator.platform),
 	knownLanguages = {
 		"en": "English",
 		"af": "Afrikaans",

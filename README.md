@@ -1,10 +1,12 @@
 # TYPO3 Local Lang
 
-This is a small utility program to edit localization files in Xlif or the legacy format for [TYPO3 CMS](https://www.typo3.org/).
+This is a small utility program to edit localization files in Xlif or the legacy
+format for [TYPO3 CMS](https://www.typo3.org/).
 
 ## Installation
 
-t3ll opens its editor inside a Google Chrome or Chromium window. One of this must be available on your system.
+t3ll opens its editor inside a Google Chrome or Chromium window. One of this must
+be available on your system.
 
 There are no installer or package manager files, but installation is still easy:
 
@@ -36,7 +38,8 @@ install -m 0755 t3ll /usr/local/bin/
 
 #### Building from source
 
-t3ll is written in go and uses node.js and yarn modules for building its frontend, so these tools need to be installed and properly configured before proceeding.
+t3ll is written in go and uses node.js and yarn modules for building its frontend,
+so these tools need to be installed and properly configured before proceeding.
 
 Then simply clone the repository:
 
@@ -73,7 +76,8 @@ make install
 
 ## Usage
 
-t3ll is called from the command line. It takes exactly one argument: the XML or Xliff file to edit.
+t3ll is called from the command line. It takes exactly one argument: the XML or
+Xliff file to edit.
 
 ```bash
 t3ll fr.locallang.xlf
@@ -82,19 +86,35 @@ t3ll fr.locallang.xlf
 t3ll locallang.xml
 ```
 
-In the former case, the file can have a language prefix, or not. t3ll will automatically load all available translations within the same folder, but only those having the same *base name*. eg.: loading the file `fr.locallang.xlf` will also load `locallang.xlf` and `it.locallang.xlf`, but not `fr.locallang_be.xlf`.
+In the former case, the file can have a language prefix, or not. t3ll will
+automatically load all available translations within the same folder, but only
+those having the same *base name*. eg.: loading the file `fr.locallang.xlf` will
+also load `locallang.xlf` and `it.locallang.xlf`, but not `fr.locallang_be.xlf`.
 
 If a file does not exist, it will be created.
 
-Once the file is read, the editing mask will open in a chromium or google chrome window. It's interface should be self explanatory as it is very simple and reduced to the absolute minimum.
+Once the file is read, the editing mask will open in a chromium or google chrome
+window. It's interface should be self explanatory as it is very simple and
+reduced to the absolute minimum.
 
 There are several shortcuts in the browser window:
 
-* <kbd>Tab</kbd> will focus the first input, jumping to the next if one is already focused. If the last input is active, the first will be focused again.
-* <kbd>Cmd</kbd> / <kbd>Ctrl</kbd> / <kbd>Alt</kbd> + <kbd>s</kbd>  will save the file
-* <kbd>Alt</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd> will move the focus accordingly if an input is selected.
-* <kbd>Alt</kbd> + <kbd>Backspace</kbd> / <kbd>Del</kbd> will delete a row if an input or textarea is focused
-* <kbd>Alt</kbd> + <kbd>+</kbd> will add a bew row below the current if an input or textarea is focused
+<kbd>Meta</kbd> is <kbd>Ctrl</kbd>+<kbd>Shift</kbd> on MacOS, <kbd>Alt</kbd> on
+other systems.
+
+* <kbd>Tab</kbd> will focus the first input, jumping to the next if one is
+  already focused. If the last input is active, the first will be focused again.
+* <kbd>Shift</kbd>+<kbd>Tab</kbd> will focus the last input, jumping to the
+  previous if one is already focused. If the first input is active, the last
+  will be focused again.
+* <kbd>Cmd</kbd> / <kbd>Ctrl</kbd> / <kbd>Alt</kbd> + <kbd>s</kbd>  will save
+  the file
+* <kbd>Meta</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd>
+  will move the focus accordingly if an input is selected.
+* <kbd>Meta</kbd> + <kbd>Backspace</kbd> / <kbd>Del</kbd> will delete a row if
+  an input or textarea is focused
+* <kbd>Meta</kbd> + <kbd>+</kbd> will add a bew row below the current if an
+  input or textarea is focused
 
 When converting from XML to XLIF, the old .xml file will not be deleted, this must be done manually.
 
