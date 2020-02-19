@@ -16,7 +16,7 @@ var
 		"bs": "Bosnian",
 		"bg": "Bulgarian",
 		"ca": "Catalan",
-		"ch": "Chinese (Simpl.)",
+		"ch": "Chinese (Simple)",
 		"cs": "Czech",
 		"da": "Danish",
 		"de": "German",
@@ -44,6 +44,8 @@ var
 		"ko": "Korean",
 		"lt": "Lithuanian",
 		"lv": "Latvian",
+		"mi": "Maori",
+		"mk": "Macedonian",
 		"ms": "Malay",
 		"nl": "Dutch",
 		"no": "Norwegian",
@@ -52,6 +54,7 @@ var
 		"pt_BR": "Brazilian Portuguese",
 		"ro": "Romanian",
 		"ru": "Russian",
+		"rw": "Kinyarwanda",
 		"sk": "Slovak",
 		"sl": "Slovenian",
 		"sq": "Albanian",
@@ -61,7 +64,7 @@ var
 		"tr": "Turkish",
 		"uk": "Ukrainian",
 		"vi": "Vietnamese",
-		"zh": "Chinese (Trad.)"
+		"zh": "Chinese (Trad)"
 	},
 	data = {},
 	sortedLangs = [];
