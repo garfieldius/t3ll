@@ -19,6 +19,9 @@ clean:
 	rm -rf frontend/build dist
 	rm -f server/html.go
 
+clobber: clean
+	rm -rf frontend/node_modules
+
 .PHONY: install
 install: t3ll
 	install -m 0755 t3ll /usr/local/bin/
