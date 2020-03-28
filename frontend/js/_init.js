@@ -63,6 +63,48 @@ window.addEventListener("keydown", function (event) {
 		}
 	}
 
+	function moveUp() {
+		while (true) {
+			trNum--;
+
+			if (trNum < 0) {
+				return;
+			}
+
+			activeElement = findOne(
+				"input,textarea",
+				table.rows[trNum].cells[tdNum]
+			);
+
+			if (isVisible(activeElement)) {
+				break;
+			}
+		}
+
+		activeElement.focus();
+	}
+
+	function moveDown() {
+		while (true) {
+			trNum++;
+
+			if (trNum >= table.rows.length) {
+				return;
+			}
+
+			activeElement = findOne(
+				"input,textarea",
+				table.rows[trNum].cells[tdNum]
+			);
+
+			if (isVisible(activeElement)) {
+				break;
+			}
+		}
+
+		activeElement.focus();
+	}
+
 	function isVisible(el) {
 
 		var td = findParent(el, ["TD"]), tr;
@@ -154,14 +196,16 @@ window.addEventListener("keydown", function (event) {
 				break;
 
 			// Remove row
-			case (keychar === "backspace" || keychar === "delete") && hasInput && metaActive:
+			case (keychar === "backspace" || keychar === "delete" || keychar === "_" || keychar === "-") && hasInput && metaActive:
+				moveDown();
 				callbacks.remove(el);
 				event.preventDefault();
 				break;
 
 			// Add row
-			case keychar === "+" && hasInput && metaActive:
+			case (keychar === "+" || keychar === "*") && hasInput && metaActive:
 				callbacks.add(el);
+				moveDown();
 				event.preventDefault();
 				break;
 
@@ -214,47 +258,13 @@ window.addEventListener("keydown", function (event) {
 
 			// Move up
 			case keychar === "arrowup" && hasInput && metaActive && row && row.rowIndex > 1:
-				while (true) {
-					trNum--;
-
-					if (trNum < 0) {
-						return;
-					}
-
-					activeElement = findOne(
-						"input,textarea",
-						table.rows[trNum].cells[tdNum]
-					);
-
-					if (isVisible(activeElement)) {
-						break;
-					}
-				}
-
-				activeElement.focus();
+				moveUp();
 				event.preventDefault();
 				break;
 
 			// Move down
 			case keychar === "arrowdown" && hasInput && metaActive && row && row.rowIndex < table.rows.length - 1:
-				while (true) {
-					trNum++;
-
-					if (trNum >= table.rows.length) {
-						return;
-					}
-
-					activeElement = findOne(
-						"input,textarea",
-						table.rows[trNum].cells[tdNum]
-					);
-
-					if (isVisible(activeElement)) {
-						break;
-					}
-				}
-
-				activeElement.focus();
+				moveDown();
 				event.preventDefault();
 		}
 	}
