@@ -53,13 +53,13 @@ server/html.go: frontend/build/index.html
 	node embed-html.js
 
 dist/t3ll_linux_x64: server/html.go
-	mkdir -p dist && GOOS=linux GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_linux_x64
+	mkdir -p dist && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_linux_x64
 
 dist/t3ll_macosx_x64: server/html.go
-	mkdir -p dist && GOOS=darwin GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_macosx_x64
+	mkdir -p dist && CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_macosx_x64
 
 dist/t3ll_windows_x64.exe: server/html.go
-	mkdir -p dist && GOOS=windows GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_windows_x64.exe
+	mkdir -p dist && CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_windows_x64.exe
 
 dist/t3ll_windows_x64.exe.sig: dist/t3ll_windows_x64.exe
 	cd dist && $(GPG_CMD) --output t3ll_windows_x64.exe.sig t3ll_windows_x64.exe
