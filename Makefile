@@ -5,7 +5,7 @@ VERSION ?= $(shell git tag -l | sort | tail -n 1 | sed -e 's,^v,,g')
 NODE_ENV = production
 BUILDFLAGS = -ldflags "-w -s -X main.Version=$(shell git tag -l | sort | tail -n 1) -X main.Year=$(shell date +%Y)"
 GPG_CMD = gpg --sign --detach-sign --armor --local-user $(GPG_KEY)
-TAR_CMD =  tar --numeric-owner --create --gzip --transform 's,dist/,,' --transform 's,_linux_x64,,' --transform 's,_macosx_x64,,' --file
+TAR_CMD =  tar --numeric-owner --create --gzip --file
 
 ifneq ($(findstring debug,$(MAKECMDGOALS)),)
     NODE_ENV = development
@@ -79,11 +79,29 @@ dist/sha256sum: dist/t3ll_linux_x64 dist/t3ll_macosx_x64 dist/t3ll_windows_x64.e
 dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz.sha256.txt: dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz
 	printf $(shell sha256sum dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz | cut -b-64) > dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz.sha256.txt
 
-dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz: dist/t3ll_linux_x64
-	$(TAR_CMD) dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz dist/t3ll_linux_x64 README.md LICENSE
-
 dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt: dist/t3ll-$(VERSION).sierra.bottle.tar.gz
 	printf $(shell sha256sum dist/t3ll-$(VERSION).sierra.bottle.tar.gz | cut -b-64) > dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt
 
-dist/t3ll-$(VERSION).sierra.bottle.tar.gz: dist/t3ll_macosx_x64
-	$(TAR_CMD) dist/t3ll-$(VERSION).sierra.bottle.tar.gz dist/t3ll_macosx_x64 README.md LICENSE
+dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz: dist/.brew/linux/t3ll/$(VERSION)/bin/t3ll dist/.brew/linux/t3ll/$(VERSION)/README.md  dist/.brew/linux/t3ll/$(VERSION)/LICENSE
+	$(TAR_CMD) dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz -C dist/.brew/linux ./t3ll
+
+dist/t3ll-$(VERSION).sierra.bottle.tar.gz: dist/.brew/macosx/t3ll/$(VERSION)/bin/t3ll dist/.brew/macosx/t3ll/$(VERSION)/README.md  dist/.brew/macosx/t3ll/$(VERSION)/LICENSE
+	$(TAR_CMD) dist/t3ll-$(VERSION).sierra.bottle.tar.gz -C dist/.brew/macosx ./t3ll
+
+dist/.brew/linux/t3ll/$(VERSION)/bin/t3ll: dist/t3ll_linux_x64
+	mkdir -p dist/.brew/linux/t3ll/$(VERSION)/bin && cp dist/t3ll_linux_x64 dist/.brew/linux/t3ll/$(VERSION)/bin/t3ll
+
+dist/.brew/macosx/t3ll/$(VERSION)/bin/t3ll: dist/t3ll_macosx_x64
+	mkdir -p dist/.brew/macosx/t3ll/$(VERSION)/bin && cp dist/t3ll_macosx_x64 dist/.brew/macosx/t3ll/$(VERSION)/bin/t3ll
+
+dist/.brew/macosx/t3ll/$(VERSION)/README.md:
+	mkdir -p dist/.brew/macosx/t3ll/$(VERSION) && cp -a README.md dist/.brew/macosx/t3ll/$(VERSION)/README.md
+
+dist/.brew/linux/t3ll/$(VERSION)/README.md:
+	mkdir -p dist/.brew/linux/t3ll/$(VERSION) && cp -a README.md dist/.brew/linux/t3ll/$(VERSION)/README.md
+
+dist/.brew/macosx/t3ll/$(VERSION)/LICENSE:
+	mkdir -p dist/.brew/macosx/t3ll/$(VERSION) && cp -a LICENSE dist/.brew/macosx/t3ll/$(VERSION)/LICENSE
+
+dist/.brew/linux/t3ll/$(VERSION)/LICENSE:
+	mkdir -p dist/.brew/linux/t3ll/$(VERSION) && cp -a LICENSE dist/.brew/linux/t3ll/$(VERSION)/LICENSE
