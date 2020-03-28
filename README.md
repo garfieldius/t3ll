@@ -21,9 +21,13 @@ brew install t3ll
 
 #### Binary downloads
 
-Go to the [releases page](https://github.com/garfieldius/t3ll/releases) and download the right file for your system. Rename it to `t3ll` / `t3ll.exe` and put it into `$PATH` / `%PATH%`.
+Go to the [releases page](https://github.com/garfieldius/t3ll/releases) and download the
+right file for your system. Rename it to `t3ll` / `t3ll.exe` and put it into `$PATH`
+/ `%PATH%`.
 
-All binaries can be checked via gpg. The .sig files contain signatures created with the key `0D1F16703AB055AA`. It is available on most common keyservers or on <https://grossberger-ge.org/gpg.asc>
+All binaries can be checked via gpg. The .sig files contain signatures created with the
+key `0D1F16703AB055AA`. It is available on most common keyservers or on
+<https://grossberger-ge.org/gpg.asc>
 
 Example:
 
@@ -50,10 +54,9 @@ install -m 0755 t3ll /usr/local/bin/
 t3ll is written in go and uses node.js and yarn modules for building its frontend,
 so these tools need to be installed and properly configured before proceeding.
 
-Then simply clone the repository and use `make` to build it::
+Then simply clone the repository and use `make` to build it:
 
 ```bash
-
 git clone https://github.com/garfieldius/t3ll.git
 cd t3ll
 
@@ -61,6 +64,7 @@ cd t3ll
 make
 
 # Build a debug program. Has the same functions but VERY verbose logging to stdout
+# and readable frontend sources
 make debug
 
 # Install the program into /usr/local/bin
@@ -81,10 +85,14 @@ t3ll locallang.xml
 
 In the former case, the file can have a language prefix, or not. t3ll will
 automatically load all available translations within the same folder, but only
-those having the same *base name*. eg.: loading the file `fr.locallang.xlf` will
-also load `locallang.xlf` and `it.locallang.xlf`, but not `fr.locallang_be.xlf`.
+those having the same **base name**. That is the name of the file without any
+language prefix. eg.: loading the file `fr.locallang.xlf` will also load `
+locallang.xlf` and `it.locallang.xlf`, but not `fr.locallang_backend.xlf`.
 
 If a file does not exist, it will be created.
+
+Only file names with a suffix / extension of .xml, .xlf, .xlif or .xliff are
+supported. Others will be treated as an unknown file type.
 
 Once the file is read, the editing mask will open in a chromium or google chrome
 window. It's interface should be self explanatory as it is very simple and
@@ -103,13 +111,14 @@ other systems.
 * <kbd>Cmd</kbd> / <kbd>Ctrl</kbd> / <kbd>Alt</kbd> + <kbd>s</kbd>  will save
   the file
 * <kbd>Meta</kbd> + <kbd>←</kbd> / <kbd>↑</kbd> / <kbd>↓</kbd> / <kbd>→</kbd>
-  will move the focus accordingly if an input is selected.
-* <kbd>Meta</kbd> + <kbd>Backspace</kbd> / <kbd>Del</kbd> will delete a row if
-  an input or textarea is focused
-* <kbd>Meta</kbd> + <kbd>+</kbd> will add a bew row below the current if an
-  input or textarea is focused
+  will move the focus accordingly if a field is focused.
+* <kbd>Meta</kbd> + <kbd>Backspace</kbd> / <kbd>Del</kbd> will delete the focused
+  row if a field is focused. The row below will be the new focused.
+* <kbd>Meta</kbd> + <kbd>+</kbd> will add a new row below the current if a field
+  is focused
 
-When converting from XML to XLIF, the old .xml file will not be deleted, this must be done manually.
+When converting from XML to XLIF, the old .xml file will not be deleted, this must
+be done manually.
 
 ## License
 
