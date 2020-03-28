@@ -8,7 +8,16 @@ format for [TYPO3 CMS](https://www.typo3.org/).
 t3ll opens its editor inside a Google Chrome or Chromium window. One of this must
 be available on your system.
 
-There are no installer or package manager files, but installation is still easy:
+Installation can be done with homebrew (MacOS and Linux) or simple binary downloads:
+
+#### Homebrew
+
+Tap into `garfieldius/t3ll` and install the package `t3ll`:
+
+```bash
+brew tap garfieldius/t3ll
+brew install t3ll
+```
 
 #### Binary downloads
 
