@@ -205,7 +205,6 @@ window.addEventListener("keydown", function (event) {
 			// Add row
 			case (keychar === "+" || keychar === "*") && hasInput && metaActive:
 				callbacks.add(el);
-				moveDown();
 				event.preventDefault();
 				break;
 

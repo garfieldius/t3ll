@@ -68,6 +68,14 @@ callbacks = {
 		tainted = true;
 		serializeState();
 		setButtonVisiblity();
+
+		var newInput = findOne('input', newRow);
+
+		if (newInput) {
+			newInput.focus()
+			newInput.select();
+		}
+
 	},
 	remove: function (btn) {
 		var row = findParent(btn, "TR");
