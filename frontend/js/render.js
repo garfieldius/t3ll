@@ -9,6 +9,10 @@ function renderState() {
 		headers = [],
 		rows = [];
 
+	if (data.documentTitle) {
+		document.title = data.documentTitle;
+	}
+
 	selectLangs.appendChild(tree({
 		name: "option",
 		txt: "Add language",

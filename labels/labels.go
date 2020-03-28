@@ -201,6 +201,19 @@ func indentOfFile(filename string) string {
 	return "    "
 }
 
+func extPathOfFile(file string) string {
+	remainder := file
+
+	for len(remainder) > 2 {
+		remainder = filepath.Dir(remainder)
+		if stat, err := os.Stat(remainder + "/ext_emconf.php"); err == nil && stat != nil && !stat.IsDir() {
+			return "EXT:" + file[len(remainder)+1:]
+		}
+	}
+
+	return filepath.Base(file)
+}
+
 // LangFile describes a reader for Labels from a XML source
 type LangFile interface {
 	Labels() *Labels
@@ -209,6 +222,7 @@ type LangFile interface {
 
 // Labels is the root object of all translations
 type Labels struct {
+	File      string   `json:"documentTitle"`
 	Type      XMLType  `json:"format"`
 	FromFile  string   `json:"-"`
 	SrcXlif   *Xliff   `json:"-"`

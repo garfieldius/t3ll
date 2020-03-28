@@ -68,6 +68,7 @@ func (t *T3Root) Labels() *Labels {
 	data := &Labels{
 		Type:      XMLLegacy,
 		FromFile:  t.SourceFile,
+		File:      extPathOfFile(t.SourceFile),
 		SrcLegacy: t,
 		Languages: make([]string, 0),
 		Data:      make([]*Label, 0),

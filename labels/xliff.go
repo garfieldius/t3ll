@@ -25,6 +25,7 @@ func (x *Xliff) Labels() *Labels {
 	labels := &Labels{
 		Type:      XMLXliffv1,
 		SrcXlif:   x,
+		File:      extPathOfFile(x.SourceFile),
 		FromFile:  x.SourceFile,
 		Languages: make([]string, 0),
 		Data:      make([]*Label, 0),
@@ -47,6 +48,7 @@ func (x *Xliff) Labels() *Labels {
 
 			if langCode == "en" {
 				t.Content = unit.Src
+				labels.File = extPathOfFile(file.SourceFile)
 			}
 
 			found := false
