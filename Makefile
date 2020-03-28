@@ -27,7 +27,7 @@ install: t3ll
 	install -m 0755 t3ll /usr/local/bin/
 
 .PHONY: dist
-dist: dist/t3ll_linux_x64.sig dist/t3ll_macosx_x64.sig dist/t3ll_windows_x64.exe.sig
+dist: dist/t3ll_linux_x64.sig dist/t3ll_macosx_x64.sig dist/t3ll_windows_x64.exe.sig dist/sha256sum.sig
 
 t3ll: server/html.go frontend/build/index.html
 	go build $(BUILDFLAGS)
@@ -59,3 +59,8 @@ dist/t3ll_macosx_x64.sig: dist/t3ll_macosx_x64
 dist/t3ll_linux_x64.sig: dist/t3ll_linux_x64
 	cd dist && gpg -b -a -o t3ll_linux_x64.sig t3ll_linux_x64
 
+dist/sha256sum.sig: dist/sha256sum
+	cd dist && gpg -b -a -o sha256sum.sig sha256sum
+
+dist/sha256sum: dist/t3ll_linux_x64 dist/t3ll_macosx_x64 dist/t3ll_windows_x64.exe
+	cd dist && sha256sum t3ll_linux_x64 t3ll_macosx_x64 t3ll_windows_x64.exe > sha256sum
