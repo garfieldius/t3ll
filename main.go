@@ -1,4 +1,4 @@
-// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// Copyright 2020 Georg Großberger <contact@grossberger-ge.org>
 // This is free software; it is provided under the terms of the MIT License
 // See the file LICENSE or <https://opensource.org/licenses/MIT> for details
 
@@ -32,7 +32,7 @@ func run() int {
 		log.Err("%s", err)
 		return 2
 	case file == "version":
-		fmt.Printf(versionText, Version)
+		fmt.Printf(versionText, Version, Year)
 		return 0
 	case file == "help":
 		fmt.Printf(helpText, Version)

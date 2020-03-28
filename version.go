@@ -1,4 +1,4 @@
-// Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+// Copyright 2020 Georg Großberger <contact@grossberger-ge.org>
 // This is free software; it is provided under the terms of the MIT License
 // See the file LICENSE or <https://opensource.org/licenses/MIT> for details
 
@@ -6,6 +6,9 @@ package main
 
 // Version defines the current version of t3ll
 var Version string
+
+// Year is the four digit year of the build time
+var Year string
 
 const helpText = `t3ll - TYPO3 Locallang Editor %s
 
@@ -25,7 +28,7 @@ version: Print version and license
 
 const versionText = `t3ll - TYPO3 Locallang Editor %s
 
-Copyright 2019 Georg Großberger <contact@grossberger-ge.org>
+Copyright %s Georg Großberger <contact@grossberger-ge.org>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
