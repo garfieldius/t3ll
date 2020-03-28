@@ -41,7 +41,7 @@ dist: \
     dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt
 
 t3ll: server/html.go frontend/build/index.html
-	go build $(BUILDFLAGS)
+	CGO_ENABLED=0 go build $(BUILDFLAGS)
 
 frontend/build/index.html: frontend/node_modules/.bin/gulp
 	cd frontend; NODE_ENV=$(NODE_ENV) yarn run gulp
