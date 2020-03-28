@@ -41,36 +41,20 @@ install -m 0755 t3ll /usr/local/bin/
 t3ll is written in go and uses node.js and yarn modules for building its frontend,
 so these tools need to be installed and properly configured before proceeding.
 
-Then simply clone the repository:
+Then simply clone the repository and use `make` to build it::
 
 ```bash
-# Manually
 
-mkdir -p ${GOPATH}/src/github.com/garfieldius
-cd ${GOPATH}/src/github.com/garfieldius
 git clone https://github.com/garfieldius/t3ll.git
 cd t3ll
 
-
-# or using go get, the -d flag is important because
-# building will fail without the frontend assets
-# which are not included in the repository but must
-# be built before compiling t3ll
-
-go get -d github.com/garfieldius/t3ll
-cd ${GOPATH}/src/github.com/garfieldius/t3ll
-```
-
-... and use `make` to build it:
-
-```bash
-# This will create a production binary in the current directory
+# This will create a production program in the current directory
 make
 
-# Build a debug binary. Has the same functions but VERY verbose logging to stdout
+# Build a debug program. Has the same functions but VERY verbose logging to stdout
 make debug
 
-# Install the binary into /usr/local/bin
+# Install the program into /usr/local/bin
 make install
 ```
 
