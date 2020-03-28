@@ -87,4 +87,3 @@ dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt: dist/t3ll-$(VERSION).sierr
 
 dist/t3ll-$(VERSION).sierra.bottle.tar.gz: dist/t3ll_macosx_x64
 	$(TAR_CMD) dist/t3ll-$(VERSION).sierra.bottle.tar.gz dist/t3ll_macosx_x64 README.md LICENSE
-

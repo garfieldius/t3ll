@@ -33,6 +33,8 @@ window.addEventListener("keydown", function (event) {
 
 			tdNum = cell.cellIndex;
 			trNum = row.rowIndex;
+		} else {
+			table = findOne("#dataTable");
 		}
 	}
 
@@ -62,6 +64,7 @@ window.addEventListener("keydown", function (event) {
 	}
 
 	function isVisible(el) {
+
 		var td = findParent(el, ["TD"]), tr;
 
 		if (td && td.style.display !== "none") {
@@ -99,11 +102,6 @@ window.addEventListener("keydown", function (event) {
 			}
 		}
 
-		activeElement = findOne(
-			"input,textarea",
-			findOne("#dataTable").rows[trNum].cells[tdNum]
-		);
-
 		activeElement = newActive;
 		activeElement.focus();
 		event.preventDefault();
@@ -112,7 +110,8 @@ window.addEventListener("keydown", function (event) {
 			moveToPreviousCell();
 		} else {
 			trNum = table.rows.length - 1;
-			tdNum = row.cells.length - 1;
+			row = table.rows[trNum];
+			tdNum = row.cells.length - 2;
 		}
 
 		while (!newActive) {
@@ -123,18 +122,13 @@ window.addEventListener("keydown", function (event) {
 
 			if (!isVisible(newActive)) {
 				newActive = null;
-				moveToNextCell();
+				moveToPreviousCell();
 			}
 
 			if (!tries--) {
 				return;
 			}
 		}
-
-		activeElement = findOne(
-			"input,textarea",
-			findOne("#dataTable").rows[trNum].cells[tdNum]
-		);
 
 		activeElement = newActive;
 		activeElement.focus();
