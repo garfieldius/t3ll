@@ -99,7 +99,7 @@ reduced to the absolute minimum.
 
 There are several shortcuts in the browser window:
 
-<kbd>Meta</kbd> is <kbd>Ctrl</kbd>+<kbd>Shift</kbd> on MacOS, <kbd>Alt</kbd> on
+<kbd>Meta</kbd> is <kbd>Ctrl</kbd>+<kbd>Shift</kbd> on MacOS, <kbd>Alt</kbd>+<kbd>Shift</kbd> on
 other systems.
 
 * <kbd>Tab</kbd> will focus the first input, jumping to the next if one is

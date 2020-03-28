@@ -14,7 +14,7 @@ window.addEventListener("keydown", function (event) {
 		isCtrl = event.ctrlKey,
 		isMeta = event.metaKey,
 		isAlt = event.altKey,
-		metaActive = isMac ? (isCtrl && event.shiftKey) : isAlt,
+		metaActive = (isMac ? isCtrl : isAlt) && event.shiftKey,
 		el = activeElement,
 		hasInput = false,
 		cell, row, table,
