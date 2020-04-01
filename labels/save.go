@@ -35,7 +35,7 @@ func (l *Labels) Save() error {
 				lang: lang,
 			}
 
-			if len(l.SrcXlif.Files) >= i+1 {
+			if l.SrcXlif != nil && len(l.SrcXlif.Files) >= i+1 {
 				c.file = l.SrcXlif.Files[i].File
 			}
 
