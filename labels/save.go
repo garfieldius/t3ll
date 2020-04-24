@@ -74,8 +74,8 @@ func doSave(d converter, done chan error) {
 			buf = append(xmlStart, buf...)
 		}
 
-		if err := ioutil.WriteFile(filename, buf, 0644); err != nil {
-			done <- err
+		if werr := ioutil.WriteFile(filename, buf, 0644); werr != nil {
+			done <- werr
 			return
 		}
 	}

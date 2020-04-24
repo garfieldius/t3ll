@@ -15,6 +15,8 @@ callbacks = {
 		findAll(".is-label", row).forEach(function (label) {
 			label.dataset["key"] = input.value;
 		});
+		serializeState();
+		setButtonVisiblity();
 	},
 	setContent: function () {
 		serializeState();
@@ -24,15 +26,15 @@ callbacks = {
 		tainted = true;
 		var row = findParent(el, ["TR"]);
 		row.parentNode.insertBefore(row, row.previousSibling);
-		setButtonVisiblity();
 		serializeState();
+		setButtonVisiblity();
 	},
 	moveDown: function (el) {
 		tainted = true;
 		var row = findParent(el, ["TR"]);
 		row.parentNode.insertBefore(row, row.nextSibling.nextSibling);
-		setButtonVisiblity();
 		serializeState();
+		setButtonVisiblity();
 	},
 	sortLabels: function () {
 		data.labels.sort(function (a, b) {
@@ -43,8 +45,8 @@ callbacks = {
 			}
 		});
 		renderState();
-		setButtonVisiblity();
 		serializeState();
+		setButtonVisiblity();
 		tainted = true;
 	},
 	add: function (btn) {
@@ -82,8 +84,8 @@ callbacks = {
 		delete data.labels[findOne(".is-key", row).value];
 		row.parentNode.removeChild(row);
 		tainted = true;
-		setButtonVisiblity();
 		serializeState();
+		setButtonVisiblity();
 	},
 	save: function () {
 		doSave();

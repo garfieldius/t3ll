@@ -154,6 +154,21 @@ function setButtonVisiblity() {
 		sortedKeys = keys.slice(0).sort();
 
 	findOne('[data-toggle=sortLabels]').style.display = keys.join('') === sortedKeys.join('') ? 'none' : '';
+	findOne('[data-toggle=filterNotTranslated]').parentNode.style.display = (function () {
+		if (data.languages.length < 2) {
+			return false;
+		}
+
+		var c = Array.from(findOne('#dataTable').querySelector('textarea')).reduce(function (prev, current) {
+			if ((current.value + "").trim() !== "") {
+				prev++;
+			}
+
+			return prev;
+		}, 0);
+
+		return c > 0;
+	})() ? '' : 'none';
 
 	rows.forEach(function (row, index) {
 		findAll("[data-toggle]", row).forEach(function (btn) {
