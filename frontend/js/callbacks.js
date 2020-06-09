@@ -92,6 +92,7 @@ callbacks = {
 	},
 	convert: function () {
 		findOne("#ToXliff").value = "1";
+		tainted = true;
 		doSave();
 		findOne("#ToXliffMessage").style.display = "none";
 	},
@@ -208,9 +209,8 @@ function getFormData() {
 	d.append("data", JSON.stringify(data));
 
 	if (findOne("#ToXliff").value === "1") {
-		d.append("format", "xlif");
+		d.append("format", "xlf");
 	}
-
 	return d;
 }
 
