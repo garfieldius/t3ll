@@ -70,7 +70,7 @@ func doSave(d converter, done chan error) {
 		}
 
 		filename := d.File()
-		if strings.HasSuffix(filename, ".xlf") {
+		if !strings.HasSuffix(filename, ".xml") {
 			buf = append(xmlStart, buf...)
 		}
 

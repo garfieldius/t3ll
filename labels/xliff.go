@@ -5,11 +5,15 @@
 package labels
 
 import (
+	"bytes"
+	"encoding/xml"
+	"io/ioutil"
 	"path/filepath"
 	"time"
 
 	"github.com/garfieldius/t3ll/log"
 
+	"github.com/jinzhu/copier"
 	"github.com/kr/pretty"
 )
 
@@ -207,7 +211,7 @@ func (c *XliffConverter) XML() LangFile {
 		return nil
 	}
 
-	x := &XliffRoot{
+	x := XliffRoot{
 		SourceFile: c.src.FromFile,
 		Language:   c.lang,
 		Version:    "1.2",
@@ -215,7 +219,25 @@ func (c *XliffConverter) XML() LangFile {
 		File:       f,
 	}
 
-	return x
+	cp := XliffRoot{}
+
+	if err := copier.Copy(&cp, &x); err == nil {
+		if oldFileData, err := ioutil.ReadFile(c.File()); err == nil {
+			oldXlif := new(XliffRoot)
+			if err = xml.Unmarshal(oldFileData, oldXlif); err == nil {
+				if oldXlif.File != nil && oldXlif.File.Date != "" {
+					cp.File.Date = oldXlif.File.Date
+					oldXml, _ := xml.MarshalIndent(&oldXlif, "", "  ")
+					newXml, _ := xml.MarshalIndent(&cp, "", "  ")
+					if oldXml != nil && newXml != nil && bytes.Equal(oldXml, newXml) {
+						return nil
+					}
+				}
+			}
+		}
+	}
+
+	return &x
 }
 
 // File determines the desired target file of this document
