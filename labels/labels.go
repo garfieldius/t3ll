@@ -198,7 +198,7 @@ func indentOfFile(filename string) string {
 			}
 		}
 	}
-	return "    "
+	return "	"
 }
 
 func extPathOfFile(file string) string {
