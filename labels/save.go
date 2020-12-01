@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	xmlStart = []byte(`<?xml version="1.0" encoding="utf-8" standalone="yes"?>` + "\n")
+	xmlStart = []byte(`<?xml version="1.0" encoding="UTF-8"?>` + "\n")
 )
 
 // Save will marshal the labels to the given XML type and store its result to disk

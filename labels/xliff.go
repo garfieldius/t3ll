@@ -82,6 +82,7 @@ func (x *Xliff) Labels() *Labels {
 type XliffRoot struct {
 	XMLName    string     `xml:"xliff"`
 	Version    string     `xml:"version,attr,omitempty"`
+	XMLNS      string     `xml:"xmlns,attr,omitempty"`
 	File       *XliffFile `xml:"file,omitempty"`
 	Language   string     `xml:"-"`
 	SourceFile string     `xml:"-"`
@@ -137,10 +138,10 @@ type XliffBody struct {
 
 // XliffUnit is a single ID + Content unit of a Xliff document
 type XliffUnit struct {
-	ID  string `xml:"id,attr,omitempty"`
-	ResName  string `xml:"resname,attr,omitempty"`
-	Src string `xml:"source,omitempty"`
-	To  string `xml:"target,omitempty"`
+	ID      string `xml:"id,attr,omitempty"`
+	ResName string `xml:"resname,attr,omitempty"`
+	Src     string `xml:"source,omitempty"`
+	To      string `xml:"target,omitempty"`
 }
 
 // XliffConverter will convert a Xliff structure to struct Lables
@@ -209,7 +210,8 @@ func (c *XliffConverter) XML() LangFile {
 	x := &XliffRoot{
 		SourceFile: c.src.FromFile,
 		Language:   c.lang,
-		Version:    "1.0",
+		Version:    "1.2",
+		XMLNS:      "urn:oasis:names:tc:xliff:document:1.2",
 		File:       f,
 	}
 
