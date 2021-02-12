@@ -1,8 +1,9 @@
 module github.com/garfieldius/t3ll
 
-go 1.13
+go 1.15
 
 require (
-	github.com/jinzhu/copier v0.1.0
-	github.com/kr/pretty v0.2.0
+	github.com/jinzhu/copier v0.2.4
+	github.com/kr/pretty v0.2.1
+	github.com/kr/text v0.2.0 // indirect
 )
