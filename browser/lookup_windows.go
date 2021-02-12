@@ -10,6 +10,7 @@ var files = []string{
 }
 
 var paths = []string{
+	`C:\Program Files\Google\Chrome\Application\chrome.exe`,
 	`C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`,
 	`C:\Users\${USER_HOME}\AppData\Local\Google\Chrome\Application\chrome.exe`,
 }
