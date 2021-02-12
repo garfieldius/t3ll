@@ -201,11 +201,14 @@ func indentOfFile(filename string) string {
 	return "	"
 }
 
+var winRootTest = regexp.MustCompile(`^[a-zA-Z]:(\\+)?$`)
+
 func extPathOfFile(file string) string {
 	remainder := file
 
-	for len(remainder) > 2 {
+	for len(remainder) > 2 && !winRootTest.MatchString(remainder) {
 		remainder = filepath.Dir(remainder)
+		log.Msg("Checking for ext_emconf.php in %s", remainder)
 		if stat, err := os.Stat(remainder + "/ext_emconf.php"); err == nil && stat != nil && !stat.IsDir() {
 			return "EXT:" + file[len(remainder)+1:]
 		}
