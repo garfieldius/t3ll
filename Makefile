@@ -22,7 +22,6 @@ debug: t3ll
 clean:
 	rm -f t3ll t3ll.exe
 	rm -rf frontend/build dist
-	rm -f server/html.go
 
 clobber: clean
 	rm -rf frontend/node_modules
@@ -40,7 +39,7 @@ dist: \
     dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz.sha256.txt dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz.sha256.txt \
     dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt
 
-t3ll: server/html.go frontend/build/index.html
+t3ll: frontend/build/index.html
 	CGO_ENABLED=0 go build $(BUILDFLAGS)
 
 frontend/build/index.html: frontend/node_modules/.bin/gulp
@@ -49,16 +48,13 @@ frontend/build/index.html: frontend/node_modules/.bin/gulp
 frontend/node_modules/.bin/gulp:
 	cd frontend; yarn install --prefer-offline --frozen-lockfile
 
-server/html.go: frontend/build/index.html
-	node embed-html.js
-
-dist/t3ll_linux_x64: server/html.go
+dist/t3ll_linux_x64: frontend/build/index.html
 	mkdir -p dist && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_linux_x64
 
-dist/t3ll_macosx_x64: server/html.go
+dist/t3ll_macosx_x64: frontend/build/index.html
 	mkdir -p dist && CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_macosx_x64
 
-dist/t3ll_windows_x64.exe: server/html.go
+dist/t3ll_windows_x64.exe: frontend/build/index.html
 	mkdir -p dist && CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_windows_x64.exe
 
 dist/t3ll_windows_x64.exe.sig: dist/t3ll_windows_x64.exe

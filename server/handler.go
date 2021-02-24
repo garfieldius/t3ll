@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"sync"
+	_ "embed"
 
 	"github.com/garfieldius/t3ll/labels"
 	"github.com/garfieldius/t3ll/log"
@@ -21,6 +22,9 @@ var (
 	invalidCSV  = []byte(`{"success":false,"message":"Invalid CSV data"}`)
 	heartbeat   = []byte(`{"success":true,"message":"OK"}`)
 )
+
+//go:embed index.html
+var html []byte
 
 type handler struct {
 	state   *labels.Labels

@@ -3,6 +3,6 @@
 *.xlf
 *.xml
 .vscode
-server/html.go
+/server/index.html
 /t3ll*
 /dist
