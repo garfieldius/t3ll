@@ -33,11 +33,13 @@ install: t3ll
 .PHONY: dist
 dist: \
     dist/t3ll_linux_x64 dist/t3ll_linux_x64.sig \
-    dist/t3ll_macosx_x64 dist/t3ll_macosx_x64.sig \
+    dist/t3ll_macos_x64 dist/t3ll_macos_x64.sig \
+    dist/t3ll_macos_arm64 dist/t3ll_macos_arm64.sig \
     dist/t3ll_windows_x64.exe dist/t3ll_windows_x64.exe.sig \
     dist/sha256sum dist/sha256sum.sig \
     dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz.sha256.txt dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz.sha256.txt \
-    dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt
+    dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt \
+    dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz.sha256.txt dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz.sha256.txt
 
 t3ll: frontend/build/index.html
 	CGO_ENABLED=0 go build $(BUILDFLAGS)
@@ -51,8 +53,11 @@ frontend/node_modules/.bin/gulp:
 dist/t3ll_linux_x64: frontend/build/index.html
 	mkdir -p dist && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_linux_x64
 
-dist/t3ll_macosx_x64: frontend/build/index.html
-	mkdir -p dist && CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_macosx_x64
+dist/t3ll_macos_x64: frontend/build/index.html
+	mkdir -p dist && CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_macos_x64
+
+dist/t3ll_macos_arm64: frontend/build/index.html
+	mkdir -p dist && CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build $(BUILDFLAGS) -o dist/t3ll_macos_arm64
 
 dist/t3ll_windows_x64.exe: frontend/build/index.html
 	mkdir -p dist && CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_windows_x64.exe
@@ -60,8 +65,11 @@ dist/t3ll_windows_x64.exe: frontend/build/index.html
 dist/t3ll_windows_x64.exe.sig: dist/t3ll_windows_x64.exe
 	cd dist && $(GPG_CMD) --output t3ll_windows_x64.exe.sig t3ll_windows_x64.exe
 
-dist/t3ll_macosx_x64.sig: dist/t3ll_macosx_x64
-	cd dist && $(GPG_CMD) --output t3ll_macosx_x64.sig t3ll_macosx_x64
+dist/t3ll_macos_x64.sig: dist/t3ll_macos_x64
+	cd dist && $(GPG_CMD) --output t3ll_macos_x64.sig t3ll_macos_x64
+
+dist/t3ll_macos_arm64.sig: dist/t3ll_macos_arm64
+	cd dist && $(GPG_CMD) --output t3ll_macos_arm64.sig t3ll_macos_arm64
 
 dist/t3ll_linux_x64.sig: dist/t3ll_linux_x64
 	cd dist && $(GPG_CMD) --output t3ll_linux_x64.sig t3ll_linux_x64
@@ -69,8 +77,8 @@ dist/t3ll_linux_x64.sig: dist/t3ll_linux_x64
 dist/sha256sum.sig: dist/sha256sum
 	cd dist && $(GPG_CMD) --output sha256sum.sig sha256sum
 
-dist/sha256sum: dist/t3ll_linux_x64 dist/t3ll_macosx_x64 dist/t3ll_windows_x64.exe
-	cd dist && sha256sum t3ll_linux_x64 t3ll_macosx_x64 t3ll_windows_x64.exe > sha256sum
+dist/sha256sum: dist/t3ll_linux_x64 dist/t3ll_macos_x64 dist/t3ll_macos_arm64 dist/t3ll_windows_x64.exe
+	cd dist && sha256sum t3ll_linux_x64 t3ll_macos_x64 t3ll_macos_arm64 t3ll_windows_x64.exe > sha256sum
 
 dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz.sha256.txt: dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz
 	printf $(shell sha256sum dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz | cut -b-64) > dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz.sha256.txt
@@ -78,26 +86,41 @@ dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz.sha256.txt: dist/t3ll-$(VERSION)
 dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt: dist/t3ll-$(VERSION).sierra.bottle.tar.gz
 	printf $(shell sha256sum dist/t3ll-$(VERSION).sierra.bottle.tar.gz | cut -b-64) > dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt
 
+dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz.sha256.txt: dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz
+	printf $(shell sha256sum dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz | cut -b-64) > dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz.sha256.txt
+
 dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz: dist/.brew/linux/t3ll/$(VERSION)/bin/t3ll dist/.brew/linux/t3ll/$(VERSION)/README.md  dist/.brew/linux/t3ll/$(VERSION)/LICENSE
 	$(TAR_CMD) dist/t3ll-$(VERSION).x86_64_linux.bottle.tar.gz -C dist/.brew/linux ./t3ll
 
-dist/t3ll-$(VERSION).sierra.bottle.tar.gz: dist/.brew/macosx/t3ll/$(VERSION)/bin/t3ll dist/.brew/macosx/t3ll/$(VERSION)/README.md  dist/.brew/macosx/t3ll/$(VERSION)/LICENSE
-	$(TAR_CMD) dist/t3ll-$(VERSION).sierra.bottle.tar.gz -C dist/.brew/macosx ./t3ll
+dist/t3ll-$(VERSION).sierra.bottle.tar.gz: dist/.brew/macos-x64/t3ll/$(VERSION)/bin/t3ll dist/.brew/macos-x64/t3ll/$(VERSION)/README.md  dist/.brew/macos-x64/t3ll/$(VERSION)/LICENSE
+	$(TAR_CMD) dist/t3ll-$(VERSION).sierra.bottle.tar.gz -C dist/.brew/macos-x64 ./t3ll
+
+dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz: dist/.brew/macos-arm64/t3ll/$(VERSION)/bin/t3ll dist/.brew/macos-arm64/t3ll/$(VERSION)/README.md  dist/.brew/macos-arm64/t3ll/$(VERSION)/LICENSE
+	$(TAR_CMD) dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz -C dist/.brew/macos-arm64 ./t3ll
 
 dist/.brew/linux/t3ll/$(VERSION)/bin/t3ll: dist/t3ll_linux_x64
 	mkdir -p dist/.brew/linux/t3ll/$(VERSION)/bin && cp dist/t3ll_linux_x64 dist/.brew/linux/t3ll/$(VERSION)/bin/t3ll
 
-dist/.brew/macosx/t3ll/$(VERSION)/bin/t3ll: dist/t3ll_macosx_x64
-	mkdir -p dist/.brew/macosx/t3ll/$(VERSION)/bin && cp dist/t3ll_macosx_x64 dist/.brew/macosx/t3ll/$(VERSION)/bin/t3ll
+dist/.brew/macos-x64/t3ll/$(VERSION)/bin/t3ll: dist/t3ll_macos_x64
+	mkdir -p dist/.brew/macos-x64/t3ll/$(VERSION)/bin && cp dist/t3ll_macos_x64 dist/.brew/macos-x64/t3ll/$(VERSION)/bin/t3ll
 
-dist/.brew/macosx/t3ll/$(VERSION)/README.md:
-	mkdir -p dist/.brew/macosx/t3ll/$(VERSION) && cp -a README.md dist/.brew/macosx/t3ll/$(VERSION)/README.md
+dist/.brew/macos-arm64/t3ll/$(VERSION)/bin/t3ll: dist/t3ll_macos_arm64
+	mkdir -p dist/.brew/macos-arm64/t3ll/$(VERSION)/bin && cp dist/t3ll_macos_arm64 dist/.brew/macos-arm64/t3ll/$(VERSION)/bin/t3ll
+
+dist/.brew/macos-x64/t3ll/$(VERSION)/README.md:
+	mkdir -p dist/.brew/macos-x64/t3ll/$(VERSION) && cp -a README.md dist/.brew/macos-x64/t3ll/$(VERSION)/README.md
+
+dist/.brew/macos-arm64/t3ll/$(VERSION)/README.md:
+	mkdir -p dist/.brew/macos-arm64/t3ll/$(VERSION) && cp -a README.md dist/.brew/macos-arm64/t3ll/$(VERSION)/README.md
 
 dist/.brew/linux/t3ll/$(VERSION)/README.md:
 	mkdir -p dist/.brew/linux/t3ll/$(VERSION) && cp -a README.md dist/.brew/linux/t3ll/$(VERSION)/README.md
 
-dist/.brew/macosx/t3ll/$(VERSION)/LICENSE:
-	mkdir -p dist/.brew/macosx/t3ll/$(VERSION) && cp -a LICENSE dist/.brew/macosx/t3ll/$(VERSION)/LICENSE
+dist/.brew/macos-x64/t3ll/$(VERSION)/LICENSE:
+	mkdir -p dist/.brew/macos-x64/t3ll/$(VERSION) && cp -a LICENSE dist/.brew/macos-x64/t3ll/$(VERSION)/LICENSE
+
+dist/.brew/macos-arm64/t3ll/$(VERSION)/LICENSE:
+	mkdir -p dist/.brew/macos-arm64/t3ll/$(VERSION) && cp -a LICENSE dist/.brew/macos-arm64/t3ll/$(VERSION)/LICENSE
 
 dist/.brew/linux/t3ll/$(VERSION)/LICENSE:
 	mkdir -p dist/.brew/linux/t3ll/$(VERSION) && cp -a LICENSE dist/.brew/linux/t3ll/$(VERSION)/LICENSE
