@@ -19,7 +19,7 @@ type Browser struct {
 	Done   chan error
 }
 
-// Start will create a new browser process
+// Start will create a new browser window
 func (b *Browser) Start(url string) error {
 	bin, err := lookup()
 	if err != nil {
@@ -27,8 +27,20 @@ func (b *Browser) Start(url string) error {
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	log.Msg("Running %s --disable-background-mode --disable-plugins --disable-plugins-discovery --reset-variation-state --single-tab-mode --app=%s", bin, url)
-	cmd := exec.CommandContext(ctx, bin, "--disable-background-mode", "--disable-plugins", "--disable-plugins-discovery", "--reset-variation-state", "--single-tab-mode", "--app="+url)
+
+	chromeParams := []string{
+		"--bwsi",
+		"--disable-extensions",
+		"--disable-background-mode",
+		"--disable-plugins",
+		"--disable-plugins-discovery",
+		"--reset-variation-state",
+		"--single-tab-mod",
+		"--app="+url,
+	}
+
+	log.Msg("Running %v", chromeParams)
+	cmd := exec.CommandContext(ctx, bin, chromeParams...)
 	err = cmd.Start()
 	if err != nil {
 		log.Err("Did not start: %s", err)
