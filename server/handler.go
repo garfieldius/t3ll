@@ -6,10 +6,11 @@ package server
 
 import (
 	"bytes"
+	_ "embed"
 	"encoding/json"
 	"net/http"
 	"sync"
-	_ "embed"
+	"time"
 
 	"github.com/garfieldius/t3ll/labels"
 	"github.com/garfieldius/t3ll/log"
@@ -45,6 +46,9 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case r.URL.Path == "/hb":
 		d.body = heartbeat
 		d.status = 200
+		muHb.Lock()
+		lastHb = time.Now()
+		muHb.Unlock()
 		break
 	case r.Method == "GET" && r.URL.Path == "/":
 		d.body = html

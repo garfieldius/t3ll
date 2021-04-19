@@ -24,6 +24,9 @@ type Server struct {
 	Host string
 }
 
+var lastHb = time.Now()
+var muHb = sync.RWMutex{}
+
 // Start creates a http server listener
 func (s *Server) Start(state *labels.Labels, quitSig chan struct{}) error {
 	var l net.Listener
@@ -57,6 +60,8 @@ func (s *Server) Start(state *labels.Labels, quitSig chan struct{}) error {
 		}
 	}()
 
+	go s.checkHeartbeat()
+
 	return nil
 }
 
@@ -73,4 +78,24 @@ func (s *Server) Stop() {
 	cancel()
 
 	s.srv = nil
+}
+
+func (s *Server) checkHeartbeat() {
+	t := time.NewTicker(time.Second)
+	log.Msg("Started heartbeat monitor")
+
+	for {
+		<- t.C
+		log.Msg("Checking last heartbeat")
+		n := time.Now().Unix()
+
+		muHb.RLock()
+		before := lastHb.Unix() < n - 1
+		muHb.RUnlock()
+
+		if before {
+			log.Msg("Last heartbeat too long ago, stopping server")
+			s.Stop()
+		}
+	}
 }
