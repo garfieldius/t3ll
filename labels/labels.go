@@ -187,14 +187,15 @@ func Open(src string) (*Labels, error) {
 	return nil, errors.New("Cannot read file " + src)
 }
 
-var identTest = regexp.MustCompile("\n[ \t]+<")
+var indentTest = regexp.MustCompile("\n[ \t]+<")
+var indentClean = regexp.MustCompile(`[^\t ]+`)
 
 // indentOfFile checks for the identation of the first tag
 func indentOfFile(filename string) string {
 	if data, err := ioutil.ReadFile(filename); err == nil {
-		for _, match := range identTest.FindAll(data, -1) {
-			if len(match) > 3 {
-				return string(match)[1 : len(match)-2]
+		for _, match := range indentTest.FindAll(data, -1) {
+			if len(match) > 2 {
+				return indentClean.ReplaceAllString(string(match), "")
 			}
 		}
 	}
