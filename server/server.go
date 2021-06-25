@@ -85,12 +85,12 @@ func (s *Server) checkHeartbeat() {
 	log.Msg("Started heartbeat monitor")
 
 	for {
-		<- t.C
+		<-t.C
 		log.Msg("Checking last heartbeat")
 		n := time.Now().Unix()
 
 		muHb.RLock()
-		before := lastHb.Unix() < n - 1
+		before := lastHb.Unix() < n-1
 		muHb.RUnlock()
 
 		if before {

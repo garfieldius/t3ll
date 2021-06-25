@@ -36,7 +36,7 @@ func (b *Browser) Start(url string) error {
 		"--disable-plugins-discovery",
 		"--reset-variation-state",
 		"--single-tab-mod",
-		"--app="+url,
+		"--app=" + url,
 	}
 
 	log.Msg("Running %v", chromeParams)
