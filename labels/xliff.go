@@ -107,13 +107,14 @@ func (x *XliffRoot) IndentChar() string {
 
 // XliffFile is the actual root node of a Xliff document
 type XliffFile struct {
-	SrcLang string       `xml:"source-language,attr,omitempty"`
-	ToLang  string       `xml:"target-language,attr,omitempty"`
-	Orig    string       `xml:"original,attr,omitempty"`
-	Name    string       `xml:"product-name,attr,omitempty"`
-	Date    string       `xml:"date,attr,omitempty"`
-	Header  *XliffHeader `xml:"header,omitempty"`
-	Body    *XliffBody   `xml:"body,omitempty"`
+	SrcLang  string       `xml:"source-language,attr"`
+	ToLang   string       `xml:"target-language,attr,omitempty"`
+	Orig     string       `xml:"original,attr"`
+	Datatype string       `xml:"datatype,attr"`
+	Name     string       `xml:"product-name,attr,omitempty"`
+	Date     string       `xml:"date,attr,omitempty"`
+	Header   *XliffHeader `xml:"header,omitempty"`
+	Body     *XliffBody   `xml:"body,omitempty"`
 }
 
 // XliffHeader is a collection of common metadata
@@ -162,14 +163,20 @@ func (c *XliffConverter) XML() LangFile {
 		Units: make([]*XliffUnit, 0, len(c.src.Data)),
 	}
 	f := &XliffFile{
-		SrcLang: "en",
-		Date:    time.Now().Format(time.RFC3339),
-		Body:    b,
+		SrcLang:  "en",
+		Date:     time.Now().Format(time.RFC3339),
+		Body:     b,
+		Datatype: "plaintext",
 	}
 
 	if c.file != nil {
+		if c.file.Datatype != "" {
+			f.Datatype = c.file.Datatype
+		}
+		if c.file.Orig != "" {
+			f.Orig = c.file.Orig
+		}
 		f.Header = c.file.Header
-		f.Orig = c.file.Orig
 		f.Name = c.file.Name
 	}
 
