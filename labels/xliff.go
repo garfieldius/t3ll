@@ -146,7 +146,7 @@ type XliffBody struct {
 type XliffUnit struct {
 	ID      string `xml:"id,attr,omitempty"`
 	ResName string `xml:"resname,attr,omitempty"`
-	Src     string `xml:"source,omitempty"`
+	Src     string `xml:"source"`
 	To      string `xml:"target,omitempty"`
 }
 

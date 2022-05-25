@@ -2,6 +2,7 @@
 .idea
 *.xlf
 *.xml
+*.xsd
 .vscode
 /server/index.html
 /t3ll*
