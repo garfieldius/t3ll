@@ -12,10 +12,10 @@ Installation can be done with homebrew (MacOS and Linux) or simple binary downlo
 
 #### Homebrew
 
-Tap into `garfieldius/t3ll` and install the package `t3ll`:
+Tap into `garfieldius/taps` and install the package `t3ll`:
 
 ```bash
-brew tap garfieldius/t3ll
+brew tap garfieldius/taps
 brew install t3ll
 ```
 
