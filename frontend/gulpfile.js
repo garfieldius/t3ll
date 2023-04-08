@@ -3,7 +3,7 @@
 // See the labels LICENSE or <https://opensource.org/licenses/MIT> for details
 
 const gulp = require("gulp");
-const sass = require("gulp-sass");
+const sass = require('gulp-sass')(require('sass'));
 const bs = require("browser-sync").create();
 const csso = require("gulp-csso");
 const uglify = require("gulp-uglify");
