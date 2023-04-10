@@ -5,8 +5,8 @@ format for [TYPO3 CMS](https://www.typo3.org/).
 
 ## Installation
 
-t3ll opens its editor inside a Google Chrome or Chromium window. One of this must
-be available on your system.
+t3ll opens its editor inside a Google Chrome or Chromium window. If none can be found
+on the system, the latest version will be downloaded automatically.
 
 Installation can be done with homebrew (MacOS and Linux) or simple binary downloads:
 
