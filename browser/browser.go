@@ -8,9 +8,9 @@ package browser
 
 import (
 	"context"
-	"os/exec"
-
 	"github.com/garfieldius/t3ll/log"
+	"github.com/go-rod/rod/lib/launcher"
+	"os/exec"
 )
 
 // Browser handles a chromium or google chrome process
@@ -21,32 +21,36 @@ type Browser struct {
 
 // Start will create a new browser window
 func (b *Browser) Start(url string) error {
-	bin, err := lookup()
-	if err != nil {
-		return err
+	br := launcher.NewBrowser()
+	l := launcher.NewAppMode(url)
+
+	bin, has := launcher.LookPath()
+	if !has {
+		downloadedBin, err := br.Get()
+
+		if err != nil {
+			return err
+		}
+		log.Msg("Using downloaded chrome located at %s", downloadedBin)
+		l.Bin(downloadedBin)
+	} else {
+		log.Msg("Using alredy installed chrome located at %s", bin)
+		l.Bin(bin)
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-
-	chromeParams := []string{
-		"--bwsi",
-		"--disable-extensions",
-		"--disable-background-mode",
-		"--disable-plugins",
-		"--disable-plugins-discovery",
-		"--reset-variation-state",
-		"--single-tab-mod",
-		"--app=" + url,
-	}
+	chromeParams := l.FormatArgs()
 
 	log.Msg("Running %v", chromeParams)
+
 	cmd := exec.CommandContext(ctx, bin, chromeParams...)
-	err = cmd.Start()
+	err := cmd.Start()
 	if err != nil {
 		log.Err("Did not start: %s", err)
 		cancel()
 		return err
 	}
+
 	b.cancel = cancel
 	b.Done = make(chan error)
 
