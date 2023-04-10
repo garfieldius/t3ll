@@ -41,11 +41,13 @@ dist: \
     dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt \
     dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz.sha256.txt dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz.sha256.txt
 
-t3ll: frontend/build/index.html
+t3ll: frontend/build/index.html $(shell find . -type f -iname "*.go")
 	CGO_ENABLED=0 go build $(BUILDFLAGS)
+	touch t3ll
 
-frontend/build/index.html: frontend/node_modules/.bin/gulp
+frontend/build/index.html: frontend/node_modules/.bin/gulp $(shell find frontend/js -type f) $(shell find frontend/scss -type f) $(shell find frontend/templates -type f)
 	cd frontend; NODE_ENV=$(NODE_ENV) yarn run gulp
+	touch frontend/build/index.html
 
 frontend/node_modules/.bin/gulp:
 	cd frontend; yarn install --prefer-offline --frozen-lockfile
