@@ -57,7 +57,7 @@ func (l *T3Label) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
-// IndentChar determines the string for indentatio or
+// IndentChar determines the string for indentation or
 // XML tags
 func (t *T3Root) IndentChar() string {
 	return indentOfFile(t.SourceFile)

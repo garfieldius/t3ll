@@ -99,7 +99,7 @@ func (x *XliffRoot) Labels() *Labels {
 	return nil // Noop
 }
 
-// IndentChar determines the string for indentatio or
+// IndentChar determines the string for indentation or
 // XML tags
 func (x *XliffRoot) IndentChar() string {
 	return indentOfFile(x.SourceFile)
@@ -150,7 +150,7 @@ type XliffUnit struct {
 	To      string `xml:"target,omitempty"`
 }
 
-// XliffConverter will convert a Xliff structure to struct Lables
+// XliffConverter will convert a Xliff structure to struct Labels
 type XliffConverter struct {
 	src  *Labels
 	file *XliffFile
@@ -260,7 +260,7 @@ func (c *XliffConverter) File() string {
 	}
 
 	full := d + string(filepath.Separator) + p + f
-	log.Msg("Nomalized from %s to %s", c.src.FromFile, full)
+	log.Msg("Normalized from %s to %s", c.src.FromFile, full)
 
 	return full
 }

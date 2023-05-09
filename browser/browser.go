@@ -34,7 +34,7 @@ func (b *Browser) Start(url string) error {
 		log.Msg("Using downloaded chrome located at %s", downloadedBin)
 		l.Bin(downloadedBin)
 	} else {
-		log.Msg("Using alredy installed chrome located at %s", bin)
+		log.Msg("Using already installed chrome located at %s", bin)
 		l.Bin(bin)
 	}
 
