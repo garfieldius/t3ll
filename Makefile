@@ -9,7 +9,7 @@ TAR_CMD =  tar --numeric-owner --create --gzip --file
 
 ifneq ($(findstring debug,$(MAKECMDGOALS)),)
     NODE_ENV = development
-    BUILDFLAGS = -tags debug -ldflags "-X main.Version=master@$(shell git rev-parse --short HEAD) -X github.com/garfieldius/t3ll/server.Dir=$(shell pwd) -X main.Year=$(shell date +%Y)"
+    BUILDFLAGS = -tags debug -ldflags "-X main.Version=master@$(shell git rev-parse --short HEAD) -X main.Year=$(shell date +%Y)"
 endif
 
 .PHONY: build
