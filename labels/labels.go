@@ -31,7 +31,7 @@ const (
 	XMLLegacy XMLType = "xml"
 )
 
-var xliffLangPrefix = regexp.MustCompile(`^[a-z]{2,3}\.`)
+var xliffLangPrefix = regexp.MustCompile(`^[a-zA-Z_]{2,10}\.`)
 
 // New create a new Labels object for the given file
 // That file should not exist yet, because its content will
@@ -104,7 +104,7 @@ func Open(src string) (*Labels, error) {
 			return nil, err
 		}
 		tree.SourceFile = abs
-		log.Msg("Unmarshaled %s into %# v", abs, pretty.Formatter(tree))
+		log.Msg("Unmarshalled %s into %# v", abs, pretty.Formatter(tree))
 		return tree.Labels(), nil
 
 	case strings.HasSuffix(abs, ".xlf") || strings.HasSuffix(abs, ".xlif") || strings.HasSuffix(abs, ".xliff"):
