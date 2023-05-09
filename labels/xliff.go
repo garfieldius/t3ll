@@ -48,6 +48,7 @@ func (x *Xliff) Labels() *Labels {
 			t := &Translation{
 				Language: langCode,
 				Content:  unit.To,
+				Approved: unit.Approved,
 			}
 
 			if langCode == "en" {
@@ -144,10 +145,11 @@ type XliffBody struct {
 
 // XliffUnit is a single ID + Content unit of a Xliff document
 type XliffUnit struct {
-	ID      string `xml:"id,attr,omitempty"`
-	ResName string `xml:"resname,attr,omitempty"`
-	Src     string `xml:"source"`
-	To      string `xml:"target,omitempty"`
+	ID       string `xml:"id,attr,omitempty"`
+	ResName  string `xml:"resname,attr,omitempty"`
+	Approved string `xml:"approved,attr,omitempty"`
+	Src      string `xml:"source"`
+	To       string `xml:"target,omitempty"`
 }
 
 // XliffConverter will convert a Xliff structure to struct Labels
@@ -190,10 +192,17 @@ func (c *XliffConverter) XML() LangFile {
 	for _, label := range c.src.Data {
 		for _, trans := range label.Translations {
 			if trans.Language == l {
+				a := trans.Approved
+
+				if a != "no" && a != "yes" {
+					a = ""
+				}
+
 				u := &XliffUnit{
 					ResName: label.ID,
 					// ID is not the correct attribute for this, but is used by TYPO3
-					ID: label.ID,
+					ID:       label.ID,
+					Approved: a,
 				}
 
 				if c.lang == "en" {

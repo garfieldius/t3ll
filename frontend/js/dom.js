@@ -134,7 +134,9 @@ function makeRow(row) {
 
 		row.trans.forEach(function (lbl) {
 			if (lbl.lng == lang) {
+				console.log(lbl);
 				cell.sub[0].txt = lbl.content;
+				cell.sub[0].data.approved = lbl.approved;
 			}
 		});
 

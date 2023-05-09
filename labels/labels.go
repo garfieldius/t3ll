@@ -44,6 +44,7 @@ func New(name string) (*Labels, error) {
 			ID: "new.1",
 			Translations: []*Translation{{
 				Language: "en",
+				Approved: "",
 				Content:  "",
 			}},
 		}},
@@ -244,5 +245,6 @@ type Label struct {
 // Translation is the text of a label in the given language
 type Translation struct {
 	Content  string `json:"content"`
+	Approved string `json:"approved"`
 	Language string `json:"lng"`
 }

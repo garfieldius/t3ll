@@ -18,7 +18,11 @@ callbacks = {
 		serializeState();
 		setButtonVisiblity();
 	},
-	setContent: function () {
+	setContent: function (input) {
+		if (input.dataset.approved) {
+			input.dataset.approved = "no";
+		}
+
 		serializeState();
 		tainted = true;
 	},
@@ -224,7 +228,8 @@ function serializeState() {
 			key = el.dataset["key"];
 			labels.push({
 				lng: el.dataset["lang"],
-				content: el.value
+				content: el.value,
+				approved: el.dataset.approved || ""
 			});
 		});
 

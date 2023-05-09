@@ -98,6 +98,23 @@ Once the file is read, the editing mask will open in a chromium or google chrome
 window. It's interface should be self explanatory as it is very simple and
 reduced to the absolute minimum.
 
+### Approved translations
+
+t3ll itself does not support to approve labels because editing and approving a label
+is contradictory to the process of explicitly approving a translations.
+
+Existing approvals are kept or revoked under the following conditions:
+
+* If a label is set to approved and its content does not change, that approval is kept
+* If a label is approved and changed, the approval is set to "no"
+* If a "key" for labels changed, the approval is not changed. Only a change to a label
+  itself will "revoke" the approval.
+
+New labels or labels without an "approved" attribute will not have it set. Only already
+set approvals are kept or changed.
+
+### Shortcuts
+
 There are several shortcuts in the browser window:
 
 <kbd>Meta</kbd> is <kbd>Ctrl</kbd>+<kbd>Shift</kbd> on MacOS, <kbd>Alt</kbd>+<kbd>Shift</kbd> on
