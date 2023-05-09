@@ -1,3 +1,4 @@
+//go:build !debug
 // +build !debug
 
 // Copyright 2020 Georg Großberger <contact@grossberger-ge.org>
