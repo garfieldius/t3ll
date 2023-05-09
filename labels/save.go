@@ -6,7 +6,7 @@ package labels
 
 import (
 	"encoding/xml"
-	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/garfieldius/t3ll/log"
@@ -76,7 +76,7 @@ func doSave(d converter, done chan error) {
 
 		buf = append(buf, byte("\n"[0]))
 
-		if werr := ioutil.WriteFile(filename, buf, 0644); werr != nil {
+		if werr := os.WriteFile(filename, buf, 0644); werr != nil {
 			done <- werr
 			return
 		}

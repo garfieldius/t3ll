@@ -7,7 +7,7 @@ package labels
 import (
 	"bytes"
 	"encoding/xml"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -240,7 +240,7 @@ func (c *XliffConverter) XML() LangFile {
 	cp := XliffRoot{}
 
 	if err := copier.Copy(&cp, &x); err == nil {
-		if oldFileData, err := ioutil.ReadFile(c.File()); err == nil {
+		if oldFileData, err := os.ReadFile(c.File()); err == nil {
 			oldXlif := new(XliffRoot)
 			if err = xml.Unmarshal(oldFileData, oldXlif); err == nil {
 				if oldXlif.File != nil && oldXlif.File.Date != "" {

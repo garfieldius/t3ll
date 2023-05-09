@@ -9,7 +9,6 @@ package labels
 import (
 	"encoding/xml"
 	"errors"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -90,7 +89,7 @@ func Open(src string) (*Labels, error) {
 		return New(abs)
 	}
 
-	data, err := ioutil.ReadFile(abs)
+	data, err := os.ReadFile(abs)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +132,7 @@ func Open(src string) (*Labels, error) {
 
 		dir := filepath.Dir(abs)
 		start := filepath.Base(abs)
-		files, err := ioutil.ReadDir(dir)
+		files, err := os.ReadDir(dir)
 		if err != nil {
 			return nil, err
 		}
@@ -154,7 +153,7 @@ func Open(src string) (*Labels, error) {
 				continue
 			}
 
-			data, err := ioutil.ReadFile(targetPath)
+			data, err := os.ReadFile(targetPath)
 			if err != nil {
 				log.Msg("Cannot read file %s: %s", err)
 				continue
@@ -193,7 +192,7 @@ var indentClean = regexp.MustCompile(`[^\t ]+`)
 
 // indentOfFile checks for the identation of the first tag
 func indentOfFile(filename string) string {
-	if data, err := ioutil.ReadFile(filename); err == nil {
+	if data, err := os.ReadFile(filename); err == nil {
 		for _, match := range indentTest.FindAll(data, -1) {
 			if len(match) > 2 {
 				return indentClean.ReplaceAllString(string(match), "")
