@@ -8,12 +8,10 @@ import (
 	"bytes"
 	_ "embed"
 	"encoding/json"
-	"net/http"
-	"sync"
-	"time"
-
 	"github.com/garfieldius/t3ll/labels"
 	"github.com/garfieldius/t3ll/log"
+	"net/http"
+	"sync"
 )
 
 var (
@@ -21,7 +19,6 @@ var (
 	saveSuccess = []byte(`{"success":true,"message":"File saved successfully"}`)
 	saveError   = []byte(`{"success":false,"message":"Error during save"}`)
 	invalidCSV  = []byte(`{"success":false,"message":"Invalid CSV data"}`)
-	heartbeat   = []byte(`{"success":true,"message":"OK"}`)
 )
 
 //go:embed index.html
@@ -43,13 +40,6 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch {
-	case r.URL.Path == "/hb":
-		d.body = heartbeat
-		d.status = 200
-		muHb.Lock()
-		lastHb = time.Now()
-		muHb.Unlock()
-		break
 	case r.Method == "GET" && r.URL.Path == "/":
 		d.body = html
 		d.ctype = "text/html"

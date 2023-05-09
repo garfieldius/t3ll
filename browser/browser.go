@@ -32,11 +32,12 @@ func (b *Browser) Start(url string) error {
 			return err
 		}
 		log.Msg("Using downloaded chrome located at %s", downloadedBin)
-		l.Bin(downloadedBin)
+		bin = downloadedBin
 	} else {
 		log.Msg("Using already installed chrome located at %s", bin)
-		l.Bin(bin)
 	}
+
+	l.Bin(bin)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	chromeParams := l.FormatArgs()
@@ -60,6 +61,8 @@ func (b *Browser) Start(url string) error {
 		if err != nil && !cmd.ProcessState.Success() {
 			log.Err("Browser quit unexpectedly")
 			b.Done <- err
+		} else {
+			b.Done <- nil
 		}
 	}()
 
