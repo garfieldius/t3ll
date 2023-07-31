@@ -1,5 +1,4 @@
 //go:build !debug
-// +build !debug
 
 // Copyright 2020 Georg Großberger <contact@grossberger-ge.org>
 // This is free software; it is provided under the terms of the MIT License
