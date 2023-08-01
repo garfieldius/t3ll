@@ -21,7 +21,8 @@ debug: t3ll
 .PHONY: clean
 clean:
 	rm -f t3ll t3ll.exe
-	rm -rf frontend/build dist
+	rm -rf dist
+	rm -rf frontend/build server/index.html
 
 clobber: clean
 	rm -rf frontend/node_modules
