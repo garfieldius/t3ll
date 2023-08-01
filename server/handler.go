@@ -47,11 +47,6 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		d.status = 200
 		d.ctype = "text/html"
 		break
-	case r.Method == "GET" && r.URL.Path == "/quit":
-		log.Msg("Received quit signal")
-		d.status = 201
-		h.quitSig <- struct{}{}
-		break
 	case r.Method == "GET" && r.URL.Path == "/csv":
 		buf := new(bytes.Buffer)
 		err := writeCsv(h.state, buf)
