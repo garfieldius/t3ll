@@ -9,7 +9,7 @@ TAR_CMD =  tar --numeric-owner --create --gzip --file
 
 ifneq ($(findstring debug,$(MAKECMDGOALS)),)
     NODE_ENV = development
-    BUILDFLAGS = -tags debug -ldflags "-X main.Version=master@$(shell git rev-parse --short HEAD) -X main.Year=$(shell date +%Y)"
+    BUILDFLAGS = -tags debug -ldflags "-X main.Version=main@$(shell git rev-parse --short HEAD) -X main.Year=$(shell date +%Y)"
 endif
 
 .PHONY: build
@@ -30,6 +30,14 @@ clobber: clean
 install: t3ll
 	install -m 0755 t3ll /usr/local/bin/
 
+.PHONY: debug-run
+debug-run: t3ll
+	./t3ll test.xlf
+
+.PHONY: fix
+fix:
+	go fmt ./...
+
 .PHONY: dist
 dist: \
     dist/t3ll_linux_x64 dist/t3ll_linux_x64.sig \
@@ -41,27 +49,30 @@ dist: \
     dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt dist/t3ll-$(VERSION).sierra.bottle.tar.gz.sha256.txt \
     dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz.sha256.txt dist/t3ll-$(VERSION).arm64_big_sur.bottle.tar.gz.sha256.txt
 
-t3ll: frontend/build/index.html $(shell find . -type f -iname "*.go")
+t3ll: server/index.html $(shell find . -type f -iname "*.go")
 	CGO_ENABLED=0 go build $(BUILDFLAGS)
 	touch t3ll
 
+server/index.html: frontend/build/index.html
+	cp frontend/build/index.html server/index.html
+
 frontend/build/index.html: frontend/node_modules/.bin/gulp $(shell find frontend/js -type f) $(shell find frontend/scss -type f) $(shell find frontend/templates -type f)
 	cd frontend; NODE_ENV=$(NODE_ENV) yarn run gulp
-	touch frontend/build/index.html
+	touch server/index.html
 
 frontend/node_modules/.bin/gulp:
 	cd frontend; yarn install --prefer-offline --frozen-lockfile
 
-dist/t3ll_linux_x64: frontend/build/index.html
+dist/t3ll_linux_x64: server/index.html
 	mkdir -p dist && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_linux_x64
 
-dist/t3ll_macos_x64: frontend/build/index.html
+dist/t3ll_macos_x64: server/index.html
 	mkdir -p dist && CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_macos_x64
 
-dist/t3ll_macos_arm64: frontend/build/index.html
+dist/t3ll_macos_arm64: server/index.html
 	mkdir -p dist && CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build $(BUILDFLAGS) -o dist/t3ll_macos_arm64
 
-dist/t3ll_windows_x64.exe: frontend/build/index.html
+dist/t3ll_windows_x64.exe: server/index.html
 	mkdir -p dist && CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_windows_x64.exe
 
 dist/t3ll_windows_x64.exe.sig: dist/t3ll_windows_x64.exe

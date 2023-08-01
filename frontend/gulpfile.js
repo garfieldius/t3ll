@@ -58,7 +58,6 @@ gulp.task("html", gulp.series(gulp.parallel("css", "js"), () => {
 		.pipe(inline())
 		.pipe(when(isProd, chtml()))
 		.pipe(gulp.dest("./build/"))
-		.pipe(gulp.dest("../server/"))
 }));
 
 gulp.task("default", gulp.parallel("html"));
