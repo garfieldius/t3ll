@@ -46,7 +46,11 @@ func (s *Server) Start(state *labels.Labels, quitSig chan struct{}) error {
 	}
 
 	s.srv = &http.Server{}
-	s.srv.Handler = handler{state: state, quitSig: quitSig, mu: new(sync.Mutex)}
+	s.srv.Handler = handler{st: &handlerState{
+		state:   state,
+		mu:      new(sync.Mutex),
+		quitSig: quitSig,
+	}}
 	s.Done = make(chan error)
 
 	go func() {

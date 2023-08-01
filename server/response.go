@@ -6,7 +6,6 @@ package server
 
 import (
 	"github.com/garfieldius/t3ll/log"
-	"github.com/kr/pretty"
 	"net/http"
 	"strconv"
 )
@@ -30,8 +29,6 @@ func (r response) write(w http.ResponseWriter) {
 		log.Msg("Sending content-disposition header")
 		w.Header().Set("Content-Disposition", "attachment; filename=\""+r.dlName+"\"")
 	}
-
-	log.Msg("Respond to % #v with headers % #v", pretty.Formatter(r), pretty.Formatter(w.Header()))
 
 	if r.status > 199 && r.status < 504 {
 		w.WriteHeader(r.status)

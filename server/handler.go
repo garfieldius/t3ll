@@ -26,15 +26,19 @@ var (
 //go:embed index.html
 var html []byte
 
-type handler struct {
-	state   *labels.Labels
+type handlerState struct {
 	mu      *sync.Mutex
+	state   *labels.Labels
 	quitSig chan struct{}
 }
 
+type handler struct {
+	st *handlerState
+}
+
 func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h.mu.Lock()
-	defer h.mu.Unlock()
+	h.st.mu.Lock()
+	defer h.st.mu.Unlock()
 
 	d := response{
 		status: 404,
@@ -49,12 +53,12 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		break
 	case r.Method == "GET" && r.URL.Path == "/csv":
 		buf := new(bytes.Buffer)
-		err := writeCsv(h.state, buf)
+		err := writeCsv(h.st.state, buf)
 		if err != nil {
 			d.status = 500
 			d.body = invalidCSV
 		} else {
-			name := strings.TrimSuffix(h.state.File, filepath.Ext(h.state.File))
+			name := strings.TrimSuffix(h.st.state.File, filepath.Ext(h.st.state.File))
 			d.status = 200
 			d.ctype = "text/csv"
 			d.dlName = name + ".csv"
@@ -63,30 +67,30 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		break
 	case r.Method == "POST" && r.URL.Path == "/csv":
-		newState, err := readCsv(r.Body, h.state, r.URL.Query().Get("mode"))
+		newState, err := readCsv(r.Body, h.st.state, r.URL.Query().Get("mode"))
 		if err != nil {
 			d.status = 400
 			d.body = invalidCSV
 		} else {
 			d.status = 200
-			h.state = newState
+			h.st.state = newState
 			d.body = saveSuccess
 		}
 		break
 	case r.Method == "GET" && r.URL.Path == "/data":
-		d.body, _ = json.Marshal(h.state)
+		d.body, _ = json.Marshal(h.st.state)
 		d.status = 200
 		break
 	case r.Method == "POST" && r.URL.Path == "/save":
 		src := []byte(r.FormValue("data"))
-		newState, err := saveHandler(src, r.FormValue("format"), h.state)
+		newState, err := saveHandler(src, r.FormValue("format"), h.st.state)
 		if err != nil {
 			log.Err("Cannot save data: %s", err)
 			d.body = saveError
 			d.status = 400
 		} else {
 			d.status = 200
-			h.state = newState
+			h.st.state = newState
 			d.body = saveSuccess
 		}
 		break

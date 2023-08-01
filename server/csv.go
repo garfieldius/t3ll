@@ -6,6 +6,8 @@ package server
 
 import (
 	"encoding/csv"
+	"github.com/garfieldius/t3ll/log"
+	"github.com/kr/pretty"
 	"io"
 	"sort"
 
@@ -86,15 +88,18 @@ func readCsv(from io.Reader, data *labels.Labels, mode string) (*labels.Labels, 
 		}
 	}
 
+	log.Msg("Loaded CSV data % #v", pretty.Formatter(newData))
+
 	if mode != "replace" {
 		newData = mergeLabels(data, newData)
+		log.Msg("Merged CSV data with existing into % #v", pretty.Formatter(newData))
 	}
 
 	if err := newData.Save(); err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	return newData, nil
 }
 
 func mergeLabels(a, b *labels.Labels) *labels.Labels {
