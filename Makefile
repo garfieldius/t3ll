@@ -3,13 +3,16 @@ GPG_KEY ?= 4C29A601B8AD9DFAE9641C0F0D1F16703AB055AA
 VERSION ?= $(shell git tag -l | sort | tail -n 1 | sed -e 's,^v,,g')
 
 NODE_ENV = production
-BUILDFLAGS = -ldflags "-w -s -X main.Version=$(shell git tag -l | sort | tail -n 1) -X main.Year=$(shell date +%Y)"
+BUILDFLAGS = -ldflags "-X main.Version=main@$(shell git rev-parse --short HEAD) -X main.Year=$(shell date +%Y)"
 GPG_CMD = gpg --sign --detach-sign --armor --local-user $(GPG_KEY)
 TAR_CMD =  tar --numeric-owner --create --gzip --file
 
 ifneq ($(findstring debug,$(MAKECMDGOALS)),)
     NODE_ENV = development
-    BUILDFLAGS = -ldflags "-X main.Version=main@$(shell git rev-parse --short HEAD) -X main.Year=$(shell date +%Y)"
+endif
+
+ifneq ($(findstring dist,$(MAKECMDGOALS)),)
+	BUILDFLAGS = -ldflags "-w -s -X main.Version=$(shell git tag -l | sort | tail -n 1) -X main.Year=$(shell date +%Y)"
 endif
 
 .PHONY: build
