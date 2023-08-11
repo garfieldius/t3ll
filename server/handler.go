@@ -60,10 +60,17 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			d.status = 500
 			d.body = invalidCSV
 		} else {
-			name := strings.TrimSuffix(h.st.state.File, filepath.Ext(h.st.state.File))
+			name := strings.Replace(h.st.state.File, "\\", "/", -1)
+
+			if strings.Contains(name, "/") {
+				name = filepath.Base(name)
+			}
+
+			name = strings.TrimSuffix(name, filepath.Ext(name)) + ".csv"
+
 			d.status = 200
 			d.ctype = "text/csv"
-			d.dlName = name + ".csv"
+			d.dlName = name
 			d.body = buf.Bytes()
 			log.Infof("Sending CSV as %s", d.dlName)
 		}
