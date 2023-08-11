@@ -14,7 +14,8 @@ import (
 	"time"
 
 	"github.com/garfieldius/t3ll/labels"
-	"github.com/garfieldius/t3ll/log"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Server is a http server sending and receiving data of the app
@@ -34,7 +35,7 @@ func (s *Server) Start(state *labels.Labels, quitSig chan struct{}) error {
 		l, err = net.Listen("tcp", s.Host)
 
 		if err != nil {
-			log.Msg("Cannot start server on %s: %s", s.Host, err)
+			log.Infof("Cannot start server on %s: %s", s.Host, err)
 			time.Sleep(10 * time.Millisecond)
 		} else {
 			break

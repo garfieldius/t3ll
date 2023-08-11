@@ -8,12 +8,14 @@ import (
 	"bytes"
 	_ "embed"
 	"encoding/json"
-	"github.com/garfieldius/t3ll/labels"
-	"github.com/garfieldius/t3ll/log"
 	"net/http"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/garfieldius/t3ll/labels"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -63,7 +65,7 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			d.ctype = "text/csv"
 			d.dlName = name + ".csv"
 			d.body = buf.Bytes()
-			log.Msg("Sending CSV as %s", d.dlName)
+			log.Infof("Sending CSV as %s", d.dlName)
 		}
 		break
 	case r.Method == "POST" && r.URL.Path == "/csv":
@@ -85,7 +87,7 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		src := []byte(r.FormValue("data"))
 		newState, err := saveHandler(src, r.FormValue("format"), h.st.state)
 		if err != nil {
-			log.Err("Cannot save data: %s", err)
+			log.Errorf("Cannot save data: %s", err)
 			d.body = saveError
 			d.status = 400
 		} else {

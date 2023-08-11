@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/garfieldius/t3ll/log"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -23,7 +23,7 @@ func (l *Labels) Save() error {
 
 	switch l.Type {
 	case XMLLegacy:
-		log.Msg("Create legacy converter for %s", l.FromFile)
+		log.Infof("Create legacy converter for %s", l.FromFile)
 		jobs = []converter{&LocallangConverter{src: l}}
 		break
 	case XMLXliffv1:
@@ -54,7 +54,7 @@ func (l *Labels) Save() error {
 		err := <-msgs
 		if err != nil {
 			lastErr = err
-			log.Err("Error during save op: %s", err)
+			log.Errorf("Error during save: %s", err)
 		}
 	}
 

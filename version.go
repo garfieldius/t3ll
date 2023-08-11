@@ -12,10 +12,13 @@ var Year string
 
 const helpText = `t3ll - TYPO3 Locallang Editor %s
 
-Usage: t3ll <filename>|help|version
+Usage: t3ll [-d|--debug] <filename>|help|version
 
 <filename> must be a text file in UTF-8 encoding, containing
 a xliff or TYPO3 locallang XML structure.
+
+If flag -d or --debug is set, logging to stdout will include
+info and debug messages.
 
 If the filename argument is valid, but does not point to an
 existing file, it is created.

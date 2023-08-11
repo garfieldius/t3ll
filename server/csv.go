@@ -6,12 +6,13 @@ package server
 
 import (
 	"encoding/csv"
-	"github.com/garfieldius/t3ll/log"
-	"github.com/kr/pretty"
 	"io"
 	"sort"
 
 	"github.com/garfieldius/t3ll/labels"
+
+	"github.com/kr/pretty"
+	log "github.com/sirupsen/logrus"
 )
 
 func writeCsv(src *labels.Labels, to io.Writer) error {
@@ -88,11 +89,11 @@ func readCsv(from io.Reader, data *labels.Labels, mode string) (*labels.Labels, 
 		}
 	}
 
-	log.Msg("Loaded CSV data % #v", pretty.Formatter(newData))
+	log.Debugf("Loaded CSV data % #v", pretty.Formatter(newData))
 
 	if mode != "replace" {
 		newData = mergeLabels(data, newData)
-		log.Msg("Merged CSV data with existing into % #v", pretty.Formatter(newData))
+		log.Debugf("Merged CSV data with existing into % #v", pretty.Formatter(newData))
 	}
 
 	if err := newData.Save(); err != nil {

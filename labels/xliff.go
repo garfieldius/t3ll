@@ -11,10 +11,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/garfieldius/t3ll/log"
-
 	"github.com/jinzhu/copier"
 	"github.com/kr/pretty"
+	log "github.com/sirupsen/logrus"
 )
 
 // Xliff is the root of all languages and labels
@@ -78,7 +77,7 @@ func (x *Xliff) Labels() *Labels {
 		labels.Languages = append(labels.Languages, langCode)
 	}
 
-	log.Msg("Converted xlif into %# v", pretty.Formatter(labels))
+	log.Debugf("Converted xlif into %# v", pretty.Formatter(labels))
 
 	return labels
 }
@@ -269,7 +268,7 @@ func (c *XliffConverter) File() string {
 	}
 
 	full := d + string(filepath.Separator) + p + f
-	log.Msg("Normalized from %s to %s", c.src.FromFile, full)
+	log.Infof("Normalized target file path from %s to %s", c.src.FromFile, full)
 
 	return full
 }

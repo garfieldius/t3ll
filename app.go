@@ -11,8 +11,8 @@ import (
 
 	"github.com/garfieldius/t3ll/browser"
 	"github.com/garfieldius/t3ll/labels"
-	"github.com/garfieldius/t3ll/log"
 	"github.com/garfieldius/t3ll/server"
+	log "github.com/sirupsen/logrus"
 )
 
 // App represents the application consisting of server and browser process
@@ -38,23 +38,23 @@ func (a *App) Run(state *labels.Labels) error {
 	select {
 	case <-quitSig:
 	case <-cancel:
-		log.Msg("Received quit signal")
+		log.Infof("Received quit signal")
 		s.Stop()
 		b.Stop()
 		return nil
 
 	case err := <-s.Done:
-		log.Msg("Server quit, stop browser and quit")
+		log.Infof("Server quit, stop browser and quit")
 		if err != nil {
-			log.Err("Server stopped with error: %s", err)
+			log.Errorf("Server stopped with error: %s", err)
 		}
 		b.Stop()
 		return nil
 
 	case err := <-b.Done:
-		log.Msg("Browser quit, stop server and quit")
+		log.Infof("Browser quit, stop server and quit")
 		if err != nil {
-			log.Err("Browser stopped with error: %s", err)
+			log.Infof("Browser stopped with error: %s", err)
 		}
 		s.Stop()
 		return nil
@@ -70,12 +70,19 @@ func (a *App) Init() (string, *labels.Labels, error) {
 		return "", nil, errors.New("not enough arguments")
 	}
 
+	log.SetLevel(log.ErrorLevel)
+
 	for _, arg := range os.Args[1:] {
+		if arg == "-d" || arg == "--debug" {
+			log.SetLevel(log.TraceLevel)
+			continue
+		}
+
 		if arg == "version" || arg == "help" {
 			return arg, nil, nil
 		}
 
-		log.Msg("Checking argument %s", arg)
+		log.Infof("Checking argument %s", arg)
 
 		if len(arg) < 4 || arg[0:1] == "-" {
 			continue
@@ -83,7 +90,7 @@ func (a *App) Init() (string, *labels.Labels, error) {
 
 		s, err := labels.Open(arg)
 		if err != nil {
-			log.Msg("Cannot open %s: %s", arg, err)
+			log.Infof("Cannot open %s: %s", arg, err)
 			continue
 		}
 

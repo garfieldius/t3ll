@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/garfieldius/t3ll/log"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func run() int {
 	var exitCode = 0
 	defer func() {
 		if err := recover(); err != nil {
-			log.Err("%s", err)
+			log.Errorf("%s", err)
 			exitCode = 4
 		}
 	}()
@@ -29,7 +29,7 @@ func run() int {
 
 	switch {
 	case err != nil:
-		log.Err("%s", err)
+		log.Errorf("%s", err)
 		return 2
 	case file == "version":
 		fmt.Printf(versionText, Version, Year)
@@ -39,7 +39,7 @@ func run() int {
 		return 0
 	default:
 		if err := app.Run(state); err != nil {
-			log.Err("%s", err)
+			log.Errorf("%s", err)
 			return 1
 		}
 	}

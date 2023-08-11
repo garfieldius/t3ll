@@ -63,10 +63,6 @@ cd t3ll
 # This will create a production program in the current directory
 make
 
-# Build a debug program. Has the same functions but VERY verbose logging to stdout
-# and readable frontend sources
-make debug
-
 # Install the program into /usr/local/bin
 make install
 ```
@@ -97,6 +93,9 @@ supported. Others will be treated as an unknown file type.
 Once the file is read, the editing mask will open in a chromium or google chrome
 window. It's interface should be self explanatory as it is very simple and
 reduced to the absolute minimum.
+
+Debug logging will write verbose messages to stdout. This can be enabled with the
+flag `-d` or `--debug`. This flag must be set before the filename, e.g.: `t3ll -d locallang.xlf`
 
 ### Approved translations
 

@@ -9,7 +9,7 @@ import (
 
 	"github.com/kr/pretty"
 
-	"github.com/garfieldius/t3ll/log"
+	log "github.com/sirupsen/logrus"
 )
 
 // T3Root is the root element of a legacy XML
@@ -100,7 +100,7 @@ func (t *T3Root) Labels() *Labels {
 		}
 	}
 
-	log.Msg("Converted ll tree into %# v", pretty.Formatter(data))
+	log.Debugf("Converted ll tree into %# v", pretty.Formatter(data))
 
 	return data
 }
@@ -143,7 +143,7 @@ func (c *LocallangConverter) XML() LangFile {
 
 	res := &T3Root{Data: data}
 
-	log.Msg("Converted data to %# v", pretty.Formatter(res))
+	log.Debugf("Converted data to %# v", pretty.Formatter(res))
 
 	return res
 }

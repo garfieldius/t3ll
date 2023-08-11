@@ -9,7 +9,7 @@ TAR_CMD =  tar --numeric-owner --create --gzip --file
 
 ifneq ($(findstring debug,$(MAKECMDGOALS)),)
     NODE_ENV = development
-    BUILDFLAGS = -tags debug -ldflags "-X main.Version=main@$(shell git rev-parse --short HEAD) -X main.Year=$(shell date +%Y)"
+    BUILDFLAGS = -ldflags "-X main.Version=main@$(shell git rev-parse --short HEAD) -X main.Year=$(shell date +%Y)"
 endif
 
 .PHONY: build
@@ -33,7 +33,7 @@ install: t3ll
 
 .PHONY: debug-run
 debug-run: t3ll
-	./t3ll test.xlf
+	./t3ll --debug test.xlf
 
 .PHONY: fix
 fix:

@@ -8,7 +8,8 @@ import (
 	"encoding/json"
 
 	"github.com/garfieldius/t3ll/labels"
-	"github.com/garfieldius/t3ll/log"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func saveHandler(data []byte, format string, cur *labels.Labels) (*labels.Labels, error) {
@@ -24,7 +25,7 @@ func saveHandler(data []byte, format string, cur *labels.Labels) (*labels.Labels
 	newData.Type = cur.Type
 
 	if format == string(labels.XMLXliffv1) {
-		log.Msg("Converting to xliff")
+		log.Infof("Converting to xliff")
 		newData.Type = labels.XMLXliffv1
 		newData.FromFile = newData.FromFile[:len(newData.FromFile)-3] + "xlf"
 	}

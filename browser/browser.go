@@ -8,8 +8,8 @@ package browser
 
 import (
 	"context"
-	"github.com/garfieldius/t3ll/log"
 	"github.com/go-rod/rod/lib/launcher"
+	log "github.com/sirupsen/logrus"
 	"os/exec"
 )
 
@@ -26,15 +26,16 @@ func (b *Browser) Start(url string) error {
 
 	bin, has := launcher.LookPath()
 	if !has {
+		log.Infof("No chrome found in path, downloading")
 		downloadedBin, err := br.Get()
 
 		if err != nil {
 			return err
 		}
-		log.Msg("Using downloaded chrome located at %s", downloadedBin)
+		log.Infof("Using downloaded chrome located at %s", downloadedBin)
 		bin = downloadedBin
 	} else {
-		log.Msg("Using already installed chrome located at %s", bin)
+		log.Infof("Using already installed chrome located at %s", bin)
 	}
 
 	l.Bin(bin)
@@ -42,12 +43,12 @@ func (b *Browser) Start(url string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	chromeParams := l.FormatArgs()
 
-	log.Msg("Running %v", chromeParams)
+	log.Infof("Running chrome with params %v", chromeParams)
 
 	cmd := exec.CommandContext(ctx, bin, chromeParams...)
 	err := cmd.Start()
 	if err != nil {
-		log.Err("Did not start: %s", err)
+		log.Errorf("Chrome did not start: %s", err)
 		cancel()
 		return err
 	}
@@ -57,9 +58,9 @@ func (b *Browser) Start(url string) error {
 
 	go func() {
 		err := cmd.Wait()
-		log.Msg("Finished browser process with %s", err)
+		log.Infof("Finished browser process with %s", err)
 		if err != nil && !cmd.ProcessState.Success() {
-			log.Err("Browser quit unexpectedly")
+			log.Errorf("Browser quit unexpectedly")
 			b.Done <- err
 		} else {
 			b.Done <- nil

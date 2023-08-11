@@ -17,7 +17,7 @@ import (
 
 	"github.com/kr/pretty"
 
-	"github.com/garfieldius/t3ll/log"
+	log "github.com/sirupsen/logrus"
 )
 
 // XMLType sets the type of XML schema a file has
@@ -52,11 +52,11 @@ func New(name string) (*Labels, error) {
 	switch {
 	case strings.HasSuffix(name, ".xml"):
 		l.Type = XMLLegacy
-		log.Msg("Using legacy XML for %s", name)
+		log.Infof("Using legacy XML for %s", name)
 		break
 	case strings.HasSuffix(name, ".xlf") || strings.HasSuffix(name, ".xlif") || strings.HasSuffix(name, ".xliff"):
 		l.Type = XMLXliffv1
-		log.Msg("Using XLIF for %s", name)
+		log.Infof("Using XLIF for %s", name)
 		base := path.Base(name)
 		if xliffLangPrefix.MatchString(base) {
 			lang := base[0:strings.Index(base, ".")]
@@ -84,8 +84,8 @@ func Open(src string) (*Labels, error) {
 
 	_, err = os.Stat(abs)
 	if err != nil {
-		log.Msg("Cannot stat %s: %s", abs, err)
-		log.Msg("Naively assuming file does not exist and create one")
+		log.Warnf("Cannot stat %s: %s", abs, err)
+		log.Infof("Naively assuming file does not exist and create one")
 		return New(abs)
 	}
 
@@ -103,7 +103,7 @@ func Open(src string) (*Labels, error) {
 			return nil, err
 		}
 		tree.SourceFile = abs
-		log.Msg("Unmarshalled %s into %# v", abs, pretty.Formatter(tree))
+		log.Debugf("Unmarshalled %s into %# v", abs, pretty.Formatter(tree))
 		return tree.Labels(), nil
 
 	case strings.HasSuffix(abs, ".xlf") || strings.HasSuffix(abs, ".xlif") || strings.HasSuffix(abs, ".xliff"):
@@ -149,20 +149,20 @@ func Open(src string) (*Labels, error) {
 			}
 
 			if info.IsDir() || !strings.HasSuffix(targetPath, name) {
-				log.Msg("Ignoring entry %s", targetPath)
+				log.Infof("Ignoring entry %s", targetPath)
 				continue
 			}
 
 			data, err := os.ReadFile(targetPath)
 			if err != nil {
-				log.Msg("Cannot read file %s: %s", err)
+				log.Warnf("Cannot read file %s: %s", err)
 				continue
 			}
 
 			xlif := new(XliffRoot)
 			err = xml.Unmarshal(data, xlif)
 			if err != nil {
-				log.Err("Cannot unmarshal data of file %s: %s", targetPath, err)
+				log.Errorf("Cannot unmarshal data of file %s: %s", targetPath, err)
 				continue
 			}
 
@@ -180,7 +180,7 @@ func Open(src string) (*Labels, error) {
 			all.Files = append(all.Files, xlif)
 		}
 
-		log.Msg("Marshalled Xlif into %# v", pretty.Formatter(all))
+		log.Debugf("Marshalled Xlif into %# v", pretty.Formatter(all))
 		return all.Labels(), nil
 	}
 
@@ -190,7 +190,7 @@ func Open(src string) (*Labels, error) {
 var indentTest = regexp.MustCompile("\n[ \t]+<")
 var indentClean = regexp.MustCompile(`[^\t ]+`)
 
-// indentOfFile checks for the identation of the first tag
+// indentOfFile checks for the indentation of the first tag
 func indentOfFile(filename string) string {
 	if data, err := os.ReadFile(filename); err == nil {
 		for _, match := range indentTest.FindAll(data, -1) {
@@ -209,7 +209,7 @@ func extPathOfFile(file string) string {
 
 	for len(remainder) > 2 && !winRootTest.MatchString(remainder) {
 		remainder = filepath.Dir(remainder)
-		log.Msg("Checking for ext_emconf.php in %s", remainder)
+		log.Infof("Checking for ext_emconf.php in %s", remainder)
 		if stat, err := os.Stat(remainder + "/ext_emconf.php"); err == nil && stat != nil && !stat.IsDir() {
 			return "EXT:" + file[len(remainder)+1:]
 		}

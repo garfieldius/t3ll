@@ -5,9 +5,10 @@
 package server
 
 import (
-	"github.com/garfieldius/t3ll/log"
 	"net/http"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type response struct {
@@ -26,7 +27,7 @@ func (r response) write(w http.ResponseWriter) {
 	w.Header().Set("Content-Length", strconv.Itoa(len(r.body)))
 
 	if r.dlName != "" {
-		log.Msg("Sending content-disposition header")
+		log.Infof("Sending content-disposition header")
 		w.Header().Set("Content-Disposition", "attachment; filename=\""+r.dlName+"\"")
 	}
 
