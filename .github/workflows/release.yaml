@@ -72,10 +72,10 @@ jobs:
 
       - name: Update homebrew tap
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TAP_TOKEN }}
-          GITHUB_USER: ${{ secrets.GITHUB_TAP_USER }}
+          HTTP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          HTTP_GITHUB_USER: ${{ secrets.HOMEBREW_TAP_USER }}
         run: |
-          git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/garfieldius/homebrew-taps.git taps
+          git clone https://${HTTP_GITHUB_USER}:${HTTP_GITHUB_TOKEN}@github.com/garfieldius/homebrew-taps.git taps
           cd taps
           ./generate.sh t3ll
           git add .
