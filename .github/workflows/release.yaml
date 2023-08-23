@@ -1,0 +1,83 @@
+
+name: Release
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+jobs:
+
+  release-github:
+    name: Create Github Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.20'
+
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+
+      - name: Set Version Output
+        id: vars
+        run: |
+          v=${GITHUB_REF#refs/tags/v}
+          echo ::set-output name=version::${v}
+          echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+
+      - name: Compile Release
+        run: |
+          make dist
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: t3ll ${{ steps.vars.outputs.tag }}
+          body_path: dist/release_body.txt
+          files: |
+            dist/shasum256
+            dist/shasum256.sig
+            dist/t3ll_linux_x64
+            dist/t3ll_linux_x64.sig
+            dist/t3ll_linux_arm64
+            dist/t3ll_linux_arm64.sig
+            dist/t3ll_macos_x64
+            dist/t3ll_macos_x64.sig
+            dist/t3ll_macos_arm64
+            dist/t3ll_macos_arm64.sig
+            dist/t3ll_windows_x64.exe
+            dist/t3ll_windows_x64.exe.sig
+            dist/t3ll_windows_arm64.exe
+            dist/t3ll_windows_arm64.exe.sig
+            dist/t3ll-${{ steps.vars.outputs.version }}.x86_64_linux.bottle.tar.gz
+            dist/t3ll-${{ steps.vars.outputs.version }}.x86_64_linux.bottle.tar.gz.sha256.txt
+            dist/t3ll-${{ steps.vars.outputs.version }}.sierra.bottle.tar.gz
+            dist/t3ll-${{ steps.vars.outputs.version }}.sierra.bottle.tar.gz.sha256.txt
+            dist/t3ll-${{ steps.vars.outputs.version }}.arm64_big_sur.bottle.tar.gz
+            dist/t3ll-${{ steps.vars.outputs.version }}.arm64_big_sur.bottle.tar.gz.sha256.txt
+
+      - name: Update homebrew tap
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TAP_TOKEN }}
+          GITHUB_USER: ${{ secrets.GITHUB_TAP_USER }}
+        run: |
+          git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/garfieldius/homebrew-taps.git taps
+          cd taps
+          ./generate.sh t3ll
+          git add .
+          git commit --author="Georg Großberger <contact@grossberger-ge.org>" -m "Update t3ll to ${{ steps.vars.outputs.tag }}"
+          git push origin

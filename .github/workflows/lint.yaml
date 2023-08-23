@@ -1,0 +1,26 @@
+
+name: 'Code Style'
+
+on: [ push, pull_request ]
+
+jobs:
+  lint-go:
+    runs-on: ubuntu-latest
+    name: Go Code Style Check
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.20'
+
+      - name: Run Go Linter
+        run: |
+          DIFF=$(gofmt -e -d .)
+          if [[ "${DIFF}" != "" ]]; then
+              echo ${DIFF}
+              exit 1
+          fi
+
