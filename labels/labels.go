@@ -206,11 +206,21 @@ var winRootTest = regexp.MustCompile(`^[a-zA-Z]:(\\+)?$`)
 
 func extPathOfFile(file string) string {
 	remainder := file
+	previous := ""
 
-	for len(remainder) > 2 && !winRootTest.MatchString(remainder) {
+	for len(remainder) > 4 && !winRootTest.MatchString(remainder) {
+		previous = remainder
 		remainder = filepath.Dir(remainder)
+		if previous == remainder {
+			log.Infof("Reached root, not checking further")
+			break
+		}
 		log.Infof("Checking for ext_emconf.php in %s", remainder)
 		if stat, err := os.Stat(remainder + "/ext_emconf.php"); err == nil && stat != nil && !stat.IsDir() {
+			return "EXT:" + file[len(remainder)+1:]
+		}
+		log.Infof("Checking for composer.json in %s", remainder)
+		if stat, err := os.Stat(remainder + "/composer.json"); err == nil && stat != nil && !stat.IsDir() {
 			return "EXT:" + file[len(remainder)+1:]
 		}
 	}
