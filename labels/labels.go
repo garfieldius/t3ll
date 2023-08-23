@@ -30,7 +30,7 @@ const (
 	XMLLegacy XMLType = "xml"
 )
 
-var xliffLangPrefix = regexp.MustCompile(`^(af|ar|bs|bg|ca|ch|cs|cy|da|de|el|eo|es|et|eu|fa|fi|fo|fr|fr_CA|gl|he|hi|hr|hu|is|it|ja|ka|kl|km|ko|lb|lt|lv|mi|mk|ms|nl|no|pl|pt|pt_BR|ro|ru|rw|sk|sl|sn|sq|sr|sv|th|tr|uk|vi|zh|zh_CN|zh_HK|zh_Hans_CN)\.`)
+var xliffLangPrefix = regexp.MustCompile(`^(af|ar|bs|bg|ca|ch|cs|cy|da|de|el|eo|es|et|eu|fa|fi|fo|fr|fr_CA|gl|he|hi|hr|hu|is|it|ja|ka|kl|km|ko|lb|lt|lv|mi|mk|ms|nl|no|bk|pl|pt|pt_BR|ro|ru|rw|sk|sl|sn|sq|sr|sv|th|tr|uk|vi|zh|zh_CN|zh_HK|zh_Hans_CN)\.`)
 
 // New create a new Labels object for the given file
 // That file should not exist yet, because its content will
