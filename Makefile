@@ -1,5 +1,6 @@
 
 GPG_KEY ?= 4C29A601B8AD9DFAE9641C0F0D1F16703AB055AA
+VERSION_TAG ?= $(shell git tag -l | sort | tail -n 1)
 VERSION ?= $(shell git tag -l | sort | tail -n 1 | sed -e 's,^v,,g')
 
 NODE_ENV = production
@@ -35,7 +36,8 @@ install: t3ll
 	install -m 0755 t3ll /usr/local/bin/
 
 .PHONY: debug-run
-debug-run: t3ll
+debug-run:
+	$(MAKE) debug
 	./t3ll --debug test.xlf
 
 .PHONY: fix
@@ -44,6 +46,7 @@ fix:
 
 .PHONY: dist
 dist: \
+    dist/release_body.txt \
     dist/t3ll_linux_x64 dist/t3ll_linux_x64.sig \
     dist/t3ll_macos_x64 dist/t3ll_macos_x64.sig \
     dist/t3ll_macos_arm64 dist/t3ll_macos_arm64.sig \
@@ -59,13 +62,21 @@ t3ll: server/index.html $(shell find . -type f -iname "*.go")
 
 server/index.html: frontend/build/index.html
 	cp frontend/build/index.html server/index.html
-
-frontend/build/index.html: frontend/node_modules/.bin/gulp $(shell find frontend/js -type f) $(shell find frontend/scss -type f) $(shell find frontend/templates -type f)
-	cd frontend; NODE_ENV=$(NODE_ENV) yarn run gulp
 	touch server/index.html
 
-frontend/node_modules/.bin/gulp:
-	cd frontend; yarn install --prefer-offline --frozen-lockfile
+frontend/build/index.html: frontend/node_modules/.yarn-integrity $(shell find frontend/js -type f) $(shell find frontend/scss -type f) $(shell find frontend/templates -type f)
+	cd frontend; NODE_ENV=$(NODE_ENV) yarn run gulp
+	touch frontend/build/index.html
+
+frontend/node_modules/.yarn-integrity:
+	yarn --cwd frontend install --prefer-offline --frozen-lockfile
+	touch frontend/node_modules/.yarn-integrity
+
+dist/release_body.txt:
+	mkdir -p dist
+	git tag -l --format='%(contents:subject)' $(VERSION_TAG) > dist/release_body.txt
+	echo "" >> dist/release_body.txt
+	git tag -l --format='%(contents:body)' $(VERSION_TAG) >> dist/release_body.txt
 
 dist/t3ll_linux_x64: server/index.html
 	mkdir -p dist && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(BUILDFLAGS) -o dist/t3ll_linux_x64
