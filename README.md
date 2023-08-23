@@ -8,7 +8,7 @@ format for [TYPO3 CMS](https://www.typo3.org/).
 t3ll opens its editor inside a Google Chrome or Chromium window. If none can be found
 on the system, the latest version will be downloaded automatically.
 
-Installation can be done with homebrew (MacOS and Linux) or simple binary downloads:
+Installation can be done with homebrew (macOS and Linux) or simple binary downloads:
 
 #### Homebrew
 
@@ -90,8 +90,8 @@ If a file does not exist, it will be created.
 Only file names with a suffix / extension of .xml, .xlf, .xlif or .xliff are
 supported. Others will be treated as an unknown file type.
 
-Once the file is read, the editing mask will open in a chromium or google chrome
-window. It's interface should be self explanatory as it is very simple and
+Once the file is read, the editing mask will open in a chromium or Google Chrome
+window. It's interface should be self-explanatory as it is very simple and
 reduced to the absolute minimum.
 
 Debug logging will write verbose messages to stdout. This can be enabled with the
