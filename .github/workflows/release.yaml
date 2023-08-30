@@ -41,7 +41,7 @@ jobs:
 
       - name: Compile Release
         run: |
-          make dist
+          make dist VERSION="${{ steps.vars.outputs.version }}" VERSION_TAG="${{ steps.vars.outputs.tag }}"
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1

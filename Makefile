@@ -2,9 +2,11 @@
 GPG_KEY ?= 4C29A601B8AD9DFAE9641C0F0D1F16703AB055AA
 VERSION_TAG ?= $(shell git tag -l | sort | tail -n 1)
 VERSION ?= $(shell git tag -l | sort | tail -n 1 | sed -e 's,^v,,g')
+YEAR ?= $(shell date +%Y)
+GIT_REV ?= $(shell git rev-parse --short HEAD)
 
 NODE_ENV = production
-BUILDFLAGS = -ldflags "-X main.Version=main@$(shell git rev-parse --short HEAD) -X main.Year=$(shell date +%Y)"
+BUILDFLAGS = -ldflags "-X main.Version=main@$(GIT_REV) -X main.Year=$(YEAR)"
 GPG_CMD = gpg --sign --detach-sign --armor --local-user $(GPG_KEY)
 TAR_CMD =  tar --numeric-owner --create --gzip --file
 
@@ -13,7 +15,7 @@ ifneq ($(findstring debug,$(MAKECMDGOALS)),)
 endif
 
 ifneq ($(findstring dist,$(MAKECMDGOALS)),)
-	BUILDFLAGS = -ldflags "-w -s -X main.Version=$(shell git tag -l | sort | tail -n 1) -X main.Year=$(shell date +%Y)"
+	BUILDFLAGS = -ldflags "-w -s -X main.Version=$(VERSION) -X main.Year=$(YEAR)"
 endif
 
 .PHONY: build
@@ -74,8 +76,6 @@ frontend/node_modules/.yarn-integrity:
 
 dist/release_body.txt:
 	mkdir -p dist
-	git tag -l --format='%(contents:subject)' $(VERSION_TAG) > dist/release_body.txt
-	echo "" >> dist/release_body.txt
 	git tag -l --format='%(contents:body)' $(VERSION_TAG) >> dist/release_body.txt
 
 dist/t3ll_linux_x64: server/index.html
