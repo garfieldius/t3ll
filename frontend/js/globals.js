@@ -52,7 +52,7 @@ var
 		"ms": "Malay",
 		"nl": "Dutch",
 		"no": "Norwegian",
-		"bk": "Norwegian (Bokmål)",
+		"nb": "Norwegian (Bokmål)",
 		"pl": "Polish",
 		"pt": "Portuguese",
 		"pt_BR": "Brazilian Portuguese",
