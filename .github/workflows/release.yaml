@@ -48,6 +48,7 @@ jobs:
         with:
           name: t3ll ${{ steps.vars.outputs.tag }}
           body_path: dist/release_body.txt
+          draft: true
           files: |
             dist/shasum256
             dist/shasum256.sig
@@ -69,15 +70,3 @@ jobs:
             dist/t3ll-${{ steps.vars.outputs.version }}.sierra.bottle.tar.gz.sha256.txt
             dist/t3ll-${{ steps.vars.outputs.version }}.arm64_big_sur.bottle.tar.gz
             dist/t3ll-${{ steps.vars.outputs.version }}.arm64_big_sur.bottle.tar.gz.sha256.txt
-
-      - name: Update homebrew tap
-        env:
-          HTTP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-          HTTP_GITHUB_USER: ${{ secrets.HOMEBREW_TAP_USER }}
-        run: |
-          git clone https://${HTTP_GITHUB_USER}:${HTTP_GITHUB_TOKEN}@github.com/garfieldius/homebrew-taps.git taps
-          cd taps
-          ./generate.sh t3ll
-          git add .
-          git commit --author="Georg Großberger <contact@grossberger-ge.org>" -m "Update t3ll to ${{ steps.vars.outputs.tag }}"
-          git push origin
