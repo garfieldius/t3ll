@@ -35,9 +35,8 @@ jobs:
       - name: Set Version Output
         id: vars
         run: |
-          v=${GITHUB_REF#refs/tags/v}
-          echo ::set-output name=version::${v}
-          echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+          echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Compile Release
         run: |
