@@ -178,6 +178,10 @@ function doSave() {
 
 	serializeState();
 
+	if (!data.labels.length) {
+		return showMessage("List must contain at least one entry", true)
+	}
+
 	xhr("save", getFormData(), function (err, data) {
 		showMessage(err || data.error || data.message, err || data.error);
 		tainted = false;
