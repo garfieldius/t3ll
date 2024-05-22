@@ -4,6 +4,7 @@ VERSION_TAG ?= $(shell git tag -l | sort | tail -n 1)
 VERSION ?= $(shell git tag -l | sort | tail -n 1 | sed -e 's,^v,,g')
 YEAR ?= $(shell date +%Y)
 GIT_REV ?= $(shell git rev-parse --short HEAD)
+DIR ?= /usr/local/bin/
 
 NODE_ENV = production
 BUILDFLAGS = -ldflags "-X main.Version=main@$(GIT_REV) -X main.Year=$(YEAR)"
@@ -35,7 +36,7 @@ clobber: clean
 
 .PHONY: install
 install: t3ll
-	install -m 0755 t3ll /usr/local/bin/
+	install -m 0755 t3ll $(DIR)
 
 .PHONY: debug-run
 debug-run:
