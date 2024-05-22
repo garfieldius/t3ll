@@ -86,7 +86,6 @@ func (x *Xliff) Labels() *Labels {
 type XliffRoot struct {
 	XMLName    string     `xml:"xliff"`
 	Version    string     `xml:"version,attr,omitempty"`
-	XMLNST3    string     `xml:"xmlns:t3,attr,omitempty"`
 	XMLNS      string     `xml:"xmlns,attr,omitempty"`
 	File       *XliffFile `xml:"file,omitempty"`
 	Language   string     `xml:"-"`
@@ -231,7 +230,6 @@ func (c *XliffConverter) XML() LangFile {
 		SourceFile: c.src.FromFile,
 		Language:   c.lang,
 		Version:    "1.2",
-		XMLNST3:    "http://typo3.org/schemas/xliff",
 		XMLNS:      "urn:oasis:names:tc:xliff:document:1.2",
 		File:       f,
 	}
