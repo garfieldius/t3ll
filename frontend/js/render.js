@@ -177,8 +177,14 @@ function setButtonVisiblity() {
 
 		if (index == 0) {
 			findOne("[data-toggle=moveUp]", row).classList.add("disabled");
-		} else if (index == max) {
+		}
+
+		if (index == max) {
 			findOne("[data-toggle=moveDown]", row).classList.add("disabled");
+		}
+
+		if (rows.length < 2) {
+			findOne("[data-toggle=remove]", row).classList.add("disabled");
 		}
 	});
 }
