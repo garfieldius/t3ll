@@ -215,13 +215,15 @@ func extPathOfFile(file string) string {
 			log.Infof("Reached root, not checking further")
 			break
 		}
-		log.Infof("Checking for ext_emconf.php in %s", remainder)
-		if stat, err := os.Stat(remainder + "/ext_emconf.php"); err == nil && stat != nil && !stat.IsDir() {
-			return "EXT:" + file[len(remainder)+1:]
-		}
-		log.Infof("Checking for composer.json in %s", remainder)
-		if stat, err := os.Stat(remainder + "/composer.json"); err == nil && stat != nil && !stat.IsDir() {
-			return "EXT:" + file[len(remainder)+1:]
+
+		files := []string{"ext_emconf.php", "composer.json"}
+
+		for _, f := range files {
+			log.Infof("Checking for %s in %s", f, remainder)
+			if stat, err := os.Stat(remainder + "/" + f); err == nil && stat != nil && !stat.IsDir() {
+				parent := filepath.Dir(remainder)
+				return "EXT:" + file[len(parent)+1:]
+			}
 		}
 	}
 
