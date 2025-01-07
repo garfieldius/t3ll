@@ -140,25 +140,9 @@ func mergeLabels(a, b *labels.Labels) *labels.Labels {
 		}
 	}
 
-	for _, la := range a.Data {
-		ln := &labels.Label{
-			ID:           la.ID,
-			Translations: make([]*labels.Translation, 0),
-		}
+	res.Data = a.CopyData()
 
-		for _, ta := range la.Translations {
-			tn := &labels.Translation{
-				Language: ta.Language,
-				Content:  ta.Content,
-			}
-
-			ln.Translations = append(ln.Translations, tn)
-		}
-
-		res.Data = append(res.Data, ln)
-	}
-
-	for i, lb := range b.Data {
+	for _, lb := range b.CopyData() {
 		var ln *labels.Label
 
 		for _, la := range res.Data {
@@ -174,24 +158,7 @@ func mergeLabels(a, b *labels.Labels) *labels.Labels {
 				Translations: make([]*labels.Translation, 0),
 			}
 
-			old := res.Data
-			res.Data = make([]*labels.Label, 0)
-			k := 0
-			added := false
-
-			for j := 0; j < len(old)+1; j++ {
-				if j == i {
-					res.Data = append(res.Data, ln)
-					added = true
-				} else {
-					res.Data = append(res.Data, old[k])
-					k++
-				}
-			}
-
-			if !added {
-				res.Data = append(res.Data, ln)
-			}
+			res.Data = append(res.Data, ln)
 		}
 
 		for _, tb := range lb.Translations {

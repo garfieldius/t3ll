@@ -247,6 +247,31 @@ type Labels struct {
 	Data      []*Label `json:"labels"`
 }
 
+// CopyData creates a copy of all labels and translations
+// keeping the (pointer) values in Data unchanged
+func (l *Labels) CopyData() []*Label {
+	c := make([]*Label, len(l.Data))
+
+	for i, label := range l.Data {
+		t := make([]*Translation, len(label.Translations))
+
+		for j, trans := range label.Translations {
+			t[j] = &Translation{
+				Language: trans.Language,
+				Content:  trans.Content,
+				Approved: trans.Approved,
+			}
+		}
+
+		c[i] = &Label{
+			ID:           label.ID,
+			Translations: t,
+		}
+	}
+
+	return c
+}
+
 // Label is a single label, containing one or more translations
 type Label struct {
 	ID           string         `json:"id"`
