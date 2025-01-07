@@ -144,7 +144,6 @@ type XliffBody struct {
 // XliffUnit is a single ID + Content unit of a Xliff document
 type XliffUnit struct {
 	ID       string `xml:"id,attr,omitempty"`
-	ResName  string `xml:"resname,attr,omitempty"`
 	Approved string `xml:"approved,attr,omitempty"`
 	Src      string `xml:"source"`
 	To       string `xml:"target,omitempty"`
@@ -197,8 +196,6 @@ func (c *XliffConverter) XML() LangFile {
 				}
 
 				u := &XliffUnit{
-					ResName: label.ID,
-					// ID is not the correct attribute for this, but is used by TYPO3
 					ID:       label.ID,
 					Approved: a,
 				}
