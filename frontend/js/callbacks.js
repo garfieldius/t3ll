@@ -168,7 +168,7 @@ function doUpload(file, replace) {
 		showMessage(err, true)
 	};
 
-	reader.readAsBinaryString(file);
+	reader.readAsText(file, 'utf-8');
 }
 
 function doSave() {
